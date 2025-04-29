@@ -25,7 +25,7 @@ Unity and C$\#$ was the software planned for use for the visualiser. It had a bu
 The visualiser now runs inside python, running the \textit{pyQtGraph} module. This module builds on its parent module \textit{pyQt} for creating python GUIs by adding graphical support such as plotting, adding legends, multiple subplots and dynamic plotting, where the figure could update as it receives updates from the predictor in real time. This was an excellent choice as this module allowed the project to be kept in python, a language everybody in the group understood, without sacrificing dynamic updates from our predictor in real time which is what was needed. 
 \subsection{Installation instructions}
 \subsection{Classes}
-There are two classes, a \textbf{MainWindow} class and a \textbf{Plot} class. \textbf{MainWindow} runs the GUI, keeping track of plots. It instantiates the GUI by setting a graphical layout unit and window size, it instantiates the subplots chosen prior to its instantiation using the \textbf{Plot} class. The \textbf{Plot} class is responsible for each subplot. It takes initial data matrices (numpy arrays) $x$ and $y$ to begin the plot. The dimensionality of $x$ and $y$ should be $M\times N$ where $M$ is the number of lines and $N$ is the number of observations. \\ 
+There are two classes, a \textbf{MainWindow} class and a \textbf{Plot} class. \textbf{MainWindow} runs the GUI, keeping track of plots. It instantiates the GUI by setting a graphical layout unit and window size, it instantiates the subplots chosen prior to its instantiation using the \textbf{Plot} class. The \textbf{Plot} class is responsible for each subplot. It takes initial data matrices (Python Lists) $x$ and $y$ to begin the plot. The dimensionality of $x$ and $y$ should be $M\times N$ where $M$ is the number of lines and $N$ is the number of observations. \\ 
 Plot takes as inputs: 
 \begin{itemize}
 \item Its allocated subplot,
@@ -46,6 +46,8 @@ Where \textit{Args} is a dictionary of local information that specific plot need
 \item Label style,
 \item Title style
 \end{itemize}
+
+\textit{Arg} profiles are loaded when a \textbf{MainWindow} class is instantiated. Each plot has its respective \textit{profile} encased in a JSON file, and is used for styling the plot.
 
 Within the \textbf{Plot} class, there is an \textit{update} function. This allows for appending new data given by the predictor to the existing array and plots it. It removes the oldest addition to the array and appends the new value. 
 \section{Plots}
