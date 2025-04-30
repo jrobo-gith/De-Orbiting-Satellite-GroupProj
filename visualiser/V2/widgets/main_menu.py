@@ -60,6 +60,12 @@ class MainMenu(QWidget):
         layout.addWidget(credits_button, stretch=5)
         layout.addWidget(exit_button, stretch=5)
         layout.addWidget(space_taker2, stretch=20)
+<<<<<<< HEAD:visualiser/V2/widgets/main_menu.py
+=======
+
+
+
+>>>>>>> main:visualiser/V2/main_menu.py
 
 
         self.setLayout(layout)
