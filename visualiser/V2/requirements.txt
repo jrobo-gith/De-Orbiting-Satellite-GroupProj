@@ -1,0 +1,3 @@
+numpy==1.24.3
+pyqtgraph==0.13.7
+QtPy==2.2.0

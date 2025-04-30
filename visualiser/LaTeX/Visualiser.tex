@@ -23,7 +23,13 @@ Data visualisation is the art of representing data such that it maximises the qu
 \subsection{A change in software}
 Unity and C$\#$ was the software planned for use for the visualiser. It had a built in Graphical User Interface (GUI) and was able to convert large amounts of data into highly customisable graphs. Upon reflection, and some guidance from the academics, it became apparent that using as many as three languages to complete this project was too much. Moreover, the transfer of data was proving to be difficult as running a python venv inside of C$\#$ and converting its output to C$\#$ arrays was a significant bottleneck. Instead a Pythonic approach became the apparent option. \\
 The visualiser now runs inside python, running the \textit{pyQtGraph} module. This module builds on its parent module \textit{pyQt} for creating python GUIs by adding graphical support such as plotting, adding legends, multiple subplots and dynamic plotting, where the figure could update as it receives updates from the predictor in real time. This was an excellent choice as this module allowed the project to be kept in python, a language everybody in the group understood, without sacrificing dynamic updates from our predictor in real time which is what was needed. 
-\subsection{Installation instructions}
+\subsection{Requirements}
+The following python packages are required for the visualiser and are NOT standard packages such as numpy:
+\begin{itemize}
+\item PyQt5
+\item pyqtgraph
+\end{itemize}
+The file \textit{requirements.txt} contains all required packages which can be run in the terminal.
 \subsection{Classes}
 There are two classes, a \textbf{MainWindow} class and a \textbf{Plot} class. \textbf{MainWindow} runs the GUI, keeping track of plots. It instantiates the GUI by setting a graphical layout unit and window size, it instantiates the subplots chosen prior to its instantiation using the \textbf{Plot} class. The \textbf{Plot} class is responsible for each subplot. It takes initial data matrices (Python Lists) $x$ and $y$ to begin the plot. The dimensionality of $x$ and $y$ should be $M\times N$ where $M$ is the number of lines and $N$ is the number of observations. \\ 
 Plot takes as inputs: 
