@@ -1,4 +1,4 @@
-from mainwindow import MainWindow
+from main_window import MainWindow
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore, QtGui
@@ -25,7 +25,6 @@ def create_data(helper, name):
         time.sleep(.1)
 
 
-
 init_x = [list(np.linspace(-3.0, 3.0, 100))]
 init_y = [data_gen.sinusoid(init_x[0])]
 
@@ -37,6 +36,7 @@ init_y.append(data_gen.cosine(init_x[2]))
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+
     helper = Helper()
     main = MainWindow(init_x, init_y)
     helper.changedSignal.connect(main.update_plots, QtCore.Qt.QueuedConnection)

@@ -1,5 +1,6 @@
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore
+from PyQt5.QtWidgets import QWidget
 import numpy as np
 import sys
 from plot import Plot
@@ -10,7 +11,6 @@ import time
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, init_x, init_y):
         super().__init__()
-
         self.init_x = init_x
         self.init_y = init_y
 
