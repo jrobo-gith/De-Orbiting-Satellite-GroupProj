@@ -4,18 +4,19 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from partials.navbar import Navbar
+from visualiser.V2.partials.navbar import Navbar
+
 import json
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
 
-class Instructions(QWidget):
+class Credits(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
 
         ## NAVBAR
-        navbar = Navbar("Instructions", self.stacked_widget)
+        navbar = Navbar("Credits", self.stacked_widget)
 
         container = QVBoxLayout()
         instructions_box = QWidget()
