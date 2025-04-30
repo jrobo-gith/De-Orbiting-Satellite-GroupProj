@@ -1,18 +1,9 @@
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLabel, QStackedWidget, QMainWindow
-)
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QFont
+    QWidget, QVBoxLayout)
 
-from plot import Plot
-import data_gen
-from partials.navbar import Navbar
-
-import time
-import numpy as np
+from visualiser.V2.partials.navbar import Navbar
 import json
-import threading
+
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
 

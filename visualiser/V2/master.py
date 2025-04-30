@@ -1,18 +1,12 @@
-from main_menu import MainMenu
-from instructions import Instructions
-from graphs import Graphs
-from credits import Credits
-import data_gen
+from visualiser.V2.widgets.main_menu import MainMenu
+from visualiser.V2.widgets.instructions import Instructions
+from visualiser.V2.widgets.graph_stuff.graphs import Graphs
+from visualiser.V2.widgets.credits import Credits
 
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLabel, QStackedWidget, QMainWindow)
-from PyQt5 import QtCore, QtGui, QtWidgets
+    QApplication, QStackedWidget, QMainWindow)
 import sys
 import json
-import time
-import threading
-import numpy as np
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (
     QLabel, QStackedWidget, QMainWindow)
 from PyQt5.QtCore import Qt
 import json
+import sys
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
@@ -42,6 +43,11 @@ class MainMenu(QWidget):
         credits_button.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
         credits_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(3))
 
+        exit_button = QPushButton("Exit")
+        exit_button.setFont(QFont(glob_setting['font-family'], 20))
+        exit_button.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+        exit_button.clicked.connect(sys.exit)
+
         space_taker1 = QWidget()
         space_taker2 = QWidget()
 
@@ -52,10 +58,8 @@ class MainMenu(QWidget):
         layout.addWidget(graph_button, stretch=5)
         layout.addWidget(instructions_button, stretch=5)
         layout.addWidget(credits_button, stretch=5)
-        layout.addWidget(space_taker2, stretch=25)
-
-
-
+        layout.addWidget(exit_button, stretch=5)
+        layout.addWidget(space_taker2, stretch=20)
 
 
         self.setLayout(layout)
