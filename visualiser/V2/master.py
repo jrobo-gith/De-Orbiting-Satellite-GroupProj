@@ -3,8 +3,7 @@ from visualiser.V2.widgets.instructions import Instructions
 from visualiser.V2.widgets.graph_stuff.graphs import Graphs
 from visualiser.V2.widgets.credits import Credits
 
-from PyQt5.QtWidgets import (
-    QApplication, QStackedWidget, QMainWindow)
+from PyQt5.QtWidgets import (QApplication, QStackedWidget, QMainWindow)
 import sys
 import json
 
