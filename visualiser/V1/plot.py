@@ -38,7 +38,7 @@ class Plot:
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
-        ## Plot initial values
+        # Plot initial values
         self.lines = []
         for i in range(self.num_lines):
             self.line = self.plot_line(x=init_x[i],
