@@ -1,3 +1,7 @@
+__pycache__/
+*.pyc
+
+
 # Ignore these Unity-generated folders
 [Ll]ibrary/
 [Tt]emp/
