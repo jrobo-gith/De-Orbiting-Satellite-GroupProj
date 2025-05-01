@@ -5,7 +5,7 @@ from visualiser.V2.partials.navbar import Navbar
 from visualiser.V2.widgets.graph_stuff.partials.switcher import Switcher
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
-from visualiser.V2.widgets.graph_stuff.earth_window import Earth
+from visualiser.V2.widgets.graph_stuff.earth_script import Earth
 
 import json
 import time
@@ -40,7 +40,7 @@ init_y.append(data_gen.tangent(init_x[1]))
 init_x.append(list(np.linspace(-3.0, 3.0, 100)))
 init_y.append(data_gen.cosine(init_x[2]))
 
-class Graphs(QWidget):
+class SimWidget(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
@@ -52,7 +52,7 @@ class Graphs(QWidget):
         ## SWITCHER
         switcher = Switcher(graph_earth_container)
         ## Earth window
-        earth = Earth(graph_earth_container)
+        earth = Earth()
         ## graph_script
         graph = Grapher(init_x=init_x, init_y=init_y)
 

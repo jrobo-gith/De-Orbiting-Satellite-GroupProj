@@ -1,6 +1,6 @@
 from visualiser.V2.widgets.main_menu import MainMenu
 from visualiser.V2.widgets.instructions import Instructions
-from visualiser.V2.widgets.graph_stuff.graphs import Graphs
+from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
 from visualiser.V2.widgets.credits import Credits
 
 from PyQt5.QtWidgets import (QApplication, QStackedWidget, QMainWindow)
@@ -21,7 +21,7 @@ class MasterWindow(QMainWindow):
         self.setCentralWidget(self.stacked_widget)
 
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
-        self.stacked_widget.addWidget(Graphs(self.stacked_widget))
+        self.stacked_widget.addWidget(SimWidget(self.stacked_widget))
         self.stacked_widget.addWidget(Instructions(self.stacked_widget))
         self.stacked_widget.addWidget(Credits(self.stacked_widget))
 
