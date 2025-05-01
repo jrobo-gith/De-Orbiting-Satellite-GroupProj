@@ -28,7 +28,7 @@ class MainMenu(QWidget):
         menu_welcome_text.setFont(QFont(glob_setting['font-family'], 20))
         menu_welcome_text.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
 
-        graph_button = QPushButton("Begin Simulation")
+        graph_button = QPushButton("Simulation")
         graph_button.setFont(QFont(glob_setting['font-family'], 27))
         graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
         graph_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(1))

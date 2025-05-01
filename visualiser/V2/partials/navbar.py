@@ -22,7 +22,7 @@ class Navbar(QWidget):
         title.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
 
         backarrow = QPushButton("<-")
-        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-align: left; position: fixed")
+        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-align: left; position: fixed;")
         backarrow.setFont(QFont(glob_setting['font-family'], 30))
         backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 
