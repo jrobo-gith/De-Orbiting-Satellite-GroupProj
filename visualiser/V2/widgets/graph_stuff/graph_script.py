@@ -1,10 +1,9 @@
 import json
 
 import pyqtgraph as pg
-from visualiser.V2.widgets.graph_stuff.plot import Plot
-from visualiser.V2.widgets.graph_stuff import data_gen
+from visualiser.V2.widgets.graph_stuff.single_plot import Plot
+from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget
 
 
 class Grapher(pg.GraphicsLayoutWidget):

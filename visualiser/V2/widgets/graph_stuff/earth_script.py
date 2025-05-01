@@ -1,27 +1,24 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from visualiser.V2.partials.navbar import Navbar
-from visualiser.V2.widgets.graph_stuff.partials.switcher import Switcher
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+import pyqtgraph as pg
 
 
+import json
+with open('partials/global_settings.json') as f:
+    glob_setting = json.load(f)
 
-class Earth(QWidget):
-    def __init__(self, stacked_widget):
+class Earth(pg.GraphicsLayoutWidget):
+    def __init__(self):
         super().__init__()
-        self.stacked_widget = stacked_widget
 
-        ## Navbar
-        navbar = Navbar("Landing Site Prediction", self.stacked_widget)
+        self.layout = QVBoxLayout()
 
-        ## Switching between graph and earth
-        switcher = Switcher(self.stacked_widget)
-
-        # Earth Window
-        earth_script = QWidget()
+        temp_message = QLabel("This is where the earth will be...")
+        temp_message.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        temp_message.setFont(QFont(glob_setting['font-family'], 30))
+        temp_message.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
 
 
-        container = QVBoxLayout()
-        container.addWidget(navbar, stretch=1)
-        container.addWidget(switcher, stretch=1)
-        container.addWidget(earth_script, stretch=18)
-
-        self.setLayout(container)
+        self.layout.addWidget(temp_message)
+        self.setLayout(self.layout)
