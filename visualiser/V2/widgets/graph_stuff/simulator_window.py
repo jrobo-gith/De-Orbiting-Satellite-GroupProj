@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout)
-from PyQt5 import QtCore, QtGui
-import pyqtgraph as pg
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget)
+from PyQt5 import QtCore
 
 from visualiser.V2.partials.navbar import Navbar
+from visualiser.V2.widgets.graph_stuff.partials.switcher import Switcher
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
-from visualiser.V2.widgets.graph_stuff import data_gen
+from visualiser.V2.widgets.graph_stuff.partials import data_gen
+from visualiser.V2.widgets.graph_stuff.earth_window import Earth
 
 import json
 import time
@@ -44,14 +45,24 @@ class Graphs(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
 
+        ## graph-earth stacked widget
+        graph_earth_container = QStackedWidget()
         ## NAVBAR
         navbar = Navbar("Graphs", self.stacked_widget)
-
-        container = QVBoxLayout()
+        ## SWITCHER
+        switcher = Switcher(graph_earth_container)
+        ## Earth window
+        earth = Earth(graph_earth_container)
+        ## graph_script
         graph = Grapher(init_x=init_x, init_y=init_y)
 
+        graph_earth_container.addWidget(graph)
+        graph_earth_container.addWidget(earth)
+
+        container = QVBoxLayout()
         container.addWidget(navbar, stretch=1)
-        container.addWidget(graph, stretch=20)
+        container.addWidget(switcher, stretch=1)
+        container.addWidget(graph_earth_container, stretch=18)
         self.setLayout(container)
 
         helper = Helper()
