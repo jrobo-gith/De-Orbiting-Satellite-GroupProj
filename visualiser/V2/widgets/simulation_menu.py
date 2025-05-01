@@ -31,7 +31,6 @@ class SimulationMenu(QWidget):
         start_sim.setAlignment(Qt.AlignCenter)
 
 
-
         page_container.addWidget(navbar, stretch=1)
         page_container.addLayout(start_sim, stretch=19)
         self.setLayout(page_container)
