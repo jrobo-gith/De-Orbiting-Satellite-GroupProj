@@ -26,7 +26,7 @@ class Plot:
         self.init_y = init_y
 
         self.num_lines = len(init_x)
-        print(f"Number of lines: {self.num_lines}")
+        # print(f"Number of lines: {self.num_lines}")
         self.data_gen = data_func
 
         if args["legend"]:
