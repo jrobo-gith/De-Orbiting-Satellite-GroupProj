@@ -1,6 +1,5 @@
 from visualiser.V2.widgets.main_menu import MainMenu
 from visualiser.V2.widgets.instructions import Instructions
-# from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
 from visualiser.V2.widgets.simulation_menu import SimulationMenu
 from visualiser.V2.widgets.credits import Credits
 

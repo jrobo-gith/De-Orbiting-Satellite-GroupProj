@@ -33,13 +33,6 @@ def create_data(helper, name):
         helper.changedSignal.emit(name, (outgoing_x, outgoing_y))
         time.sleep(.1)
 
-# def satellite_data_updates(helper, name):
-#     for i in range(1, len(lat)):
-#         outgoing_lat = [lat[i]]
-#         outgoing_lon = [lon[i]]
-#         helper.changedSignal.emit(name, (outgoing_lat, outgoing_lon))
-#         time.sleep(.1)
-
 init_x = [list(np.linspace(-3.0, 3.0, 100))]
 init_y = [data_gen.sinusoid(init_x[0])]
 
