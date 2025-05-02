@@ -27,7 +27,6 @@ class MasterWindow(QMainWindow):
         self.stacked_widget.addWidget(Credits(self.stacked_widget))
 
 
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MasterWindow()
