@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QPlainTextEdit, QPushButton, QHBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout)
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
@@ -20,6 +20,7 @@ class SimulationMenu(QWidget):
         page_container = QVBoxLayout()
         navbar = Navbar("Simulation Menu", self.stacked_widget)
 
+        input_position = QLineEdit()
 
         start_sim_btn = QPushButton("Start Simulation")
         start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
@@ -27,9 +28,9 @@ class SimulationMenu(QWidget):
         start_sim_btn.clicked.connect(self.loadSim)
 
         start_sim =QHBoxLayout()
+        start_sim.addWidget()
         start_sim.addWidget(start_sim_btn)
         start_sim.setAlignment(Qt.AlignCenter)
-
 
         page_container.addWidget(navbar, stretch=1)
         page_container.addLayout(start_sim, stretch=19)
