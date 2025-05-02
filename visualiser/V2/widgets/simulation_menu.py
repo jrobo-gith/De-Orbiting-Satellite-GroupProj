@@ -20,7 +20,7 @@ class SimulationMenu(QWidget):
         page_container = QVBoxLayout()
         navbar = Navbar("Simulation Menu", self.stacked_widget)
 
-        input_position = QLineEdit()
+        # input_position = QLineEdit()
 
         start_sim_btn = QPushButton("Start Simulation")
         start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
