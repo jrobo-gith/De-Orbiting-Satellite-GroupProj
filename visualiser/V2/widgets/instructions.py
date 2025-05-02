@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QStackedWidget, QMainWindow)
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QStackedWidget, QMainWindow, QScrollArea)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from visualiser.V2.partials.navbar import Navbar
@@ -14,11 +14,11 @@ class Instructions(QWidget):
         ## NAVBAR
         navbar = Navbar("Instructions", self.stacked_widget)
 
-        container = QVBoxLayout()
-        instructions_box = QWidget()
-        instructions_box.setStyleSheet(f"background-color: rgb{glob_setting['background-color']};")
+        ## Scroll bar
+        scroll_widget = QWidget()
 
+        container = QVBoxLayout()
         container.addWidget(navbar, stretch=1)
-        container.addWidget(instructions_box, stretch=20)
+        container.addWidget(scroll_widget, stretch=19)
 
         self.setLayout(container)

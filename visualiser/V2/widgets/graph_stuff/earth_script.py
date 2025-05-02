@@ -24,17 +24,36 @@ class Earth(pg.GraphicsLayoutWidget):
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)
 
-        # Convert full LatLon simulation to pixel
+        # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.lat, self.lon)
         self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('red'))
         self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('blue'))
         self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=10, brush=pg.mkBrush('Black'))
+        self.sim_plot.setOpacity(0.9)
+        self.crash_site.setOpacity(0.9)
+        self.satellite_start_position.setOpacity(0.9)
+
+        # Prediction Overlay (Alternate variable "size" to show uncertainty)
+        x, y = latlon2pixel([51.509865], [-0.118092])
+        self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+        self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(255, 0, 0))
+        self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((255, 0, 0), pen=pg.mkPen('red')))
+        self.prediction_crash_point.setOpacity(0.9)
+        self.prediction_crash_1std.setOpacity(0.5)
+        self.prediction_crash_2std.setOpacity(0.25)
 
 
+        # Add world image
         self.plot_widget.addItem(world_img)
+        # Add simulation data
         self.plot_widget.addItem(self.sim_plot)
         self.plot_widget.addItem(self.crash_site)
         self.plot_widget.addItem(self.satellite_start_position)
+        # Add prediction data
+        self.plot_widget.addItem(self.prediction_crash_point)
+        self.plot_widget.addItem(self.prediction_crash_1std)
+        self.plot_widget.addItem(self.prediction_crash_2std)
+
 
         # Plotting details
         self.plot_widget.setAspectLocked(True)
@@ -99,9 +118,13 @@ class Earth(pg.GraphicsLayoutWidget):
 
     def prediction_overlay_switch(self):
         if self.prediction_checkbox.isChecked():
-            print("Prediction Checked!")
+            self.prediction_crash_point.show()
+            self.prediction_crash_1std.show()
+            self.prediction_crash_2std.show()
         else:
-            print("Prediction Not Checked!")
+            self.prediction_crash_point.hide()
+            self.prediction_crash_1std.hide()
+            self.prediction_crash_2std.hide()
 
 def latlon2pixel(lat:list, lon:list, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """Returns pixel values for lat and lon. Returns tuple (x, y)"""
