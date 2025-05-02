@@ -28,7 +28,7 @@ class SimulationMenu(QWidget):
         start_sim_btn.clicked.connect(self.loadSim)
 
         start_sim =QHBoxLayout()
-        start_sim.addWidget()
+        # start_sim.addWidget()
         start_sim.addWidget(start_sim_btn)
         start_sim.setAlignment(Qt.AlignCenter)
 
