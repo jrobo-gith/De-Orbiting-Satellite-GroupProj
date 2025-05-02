@@ -24,12 +24,11 @@ class Earth(pg.GraphicsLayoutWidget):
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)
 
-        # Convert LatLon to pixel
+        # Convert full LatLon simulation to pixel
         full_sim_pixels = latlon2pixel(self.lat, self.lon)
         world_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('red'))
         crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('blue'))
         self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=10, brush=pg.mkBrush('Black'))
-
 
         self.plot_widget.addItem(world_img)
         self.plot_widget.addItem(world_plot)
@@ -50,10 +49,9 @@ class Earth(pg.GraphicsLayoutWidget):
     @QtCore.pyqtSlot(str, tuple)
     def update_satellite_position(self, name, update):
         lat, lon = update
-        self.plot_widget.removeItem(self.satellite_start_position)
-        self.satellite_start_position.setData(lat, lon)
-        self.plot_widget.addItem(self.satellite_start_position)
-        self.setLayout(self.layout)
+        x, y = latlon2pixel(lat, lon)
+        self.satellite_start_position.setData(x, y)
+
 
 def latlon2pixel(lat:list, lon:list, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """Returns pixel values for lat and lon. Returns tuple (x, y)"""
