@@ -1,6 +1,8 @@
 import json
 
 import pyqtgraph as pg
+from PyQt5.QtGui import QColor
+
 from visualiser.V2.widgets.graph_stuff.single_plot import Plot
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from PyQt5 import QtCore
@@ -9,6 +11,8 @@ from PyQt5 import QtCore
 class Grapher(pg.GraphicsLayoutWidget):
     def __init__(self, init_x, init_y):
         super().__init__()
+        pg.setConfigOption('foreground', 'white')
+
         self.init_x = init_x
         self.init_y = init_y
 
@@ -19,6 +23,10 @@ class Grapher(pg.GraphicsLayoutWidget):
             velocity = json.load(f)
         with open('profiles/position.json') as f:
             position = json.load(f)
+
+        background_graph_color = QColor('red')
+
+        self.setBackground(background_graph_color)
 
         self.plot_list = []
 

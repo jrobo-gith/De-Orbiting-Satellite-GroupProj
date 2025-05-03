@@ -7,6 +7,8 @@
   "grid": true,
   "pens": [{"color": [46, 134, 193], "width": 5}],
   "symbols": [["+", 0]],
+  "x-lim": "None",
+  "y-lim": "None",
   "label_style": {"color": "black", "font-size": "15px"},
   "title_style": {"color": "black", "font-size": "20px"}
 }

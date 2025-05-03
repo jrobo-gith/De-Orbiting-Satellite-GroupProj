@@ -27,7 +27,6 @@ class Plot(pg.PlotWidget):
         self.init_y = init_y
 
         self.num_lines = len(init_x)
-        # print(f"Number of lines: {self.num_lines}")
         self.data_gen = data_func
 
         if args["legend"]:
@@ -39,8 +38,10 @@ class Plot(pg.PlotWidget):
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
-        self.setStyleSheet("background-color: white")
-
+        if args['x-lim'] != "None":
+            self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
+        if args['y-lim'] != "None":
+            self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
 
         # Plot initial values
         self.lines = []
@@ -64,7 +65,7 @@ class Plot(pg.PlotWidget):
         assert type(new_data_Y) == list, print("New Y must be a list")
 
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > 100: # If the length is large than 100
+            if len(self.init_x[i]) > 100: # If the length is larger than 100
                 # Remove oldest datapoint
                 self.init_x[i] = self.init_x[i][1:]
                 self.init_y[i] = self.init_y[i][1:]
