@@ -54,7 +54,7 @@ class SimWidget(QWidget):
         ## graph-earth stacked widget
         graph_earth_container = QStackedWidget()
         ## NAVBAR
-        navbar = Navbar("Graphs", self.stacked_widget)
+        navbar = Navbar("Simuation", self.stacked_widget)
         ## SWITCHER
         switcher = Switcher(graph_earth_container)
         ## Earth window

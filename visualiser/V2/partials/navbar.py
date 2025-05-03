@@ -19,14 +19,14 @@ class Navbar(QWidget):
         title = QLabel(self.title)
         title.setAlignment(Qt.AlignHCenter)
         title.setFont(QFont(glob_setting['font-family'], 30))
-        title.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+        title.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background-color: rgb(55, 255, 55);")
 
         backarrow = QPushButton("<-")
-        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-align: left; position: fixed;")
+        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background-color: rgb(255, 255, 55);")
         backarrow.setFont(QFont(glob_setting['font-family'], 30))
         backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 
-        navbar.addWidget(backarrow, stretch=0)
+        navbar.addWidget(backarrow, stretch=1)
         navbar.addWidget(title, stretch=50)
 
         self.setLayout(navbar)
