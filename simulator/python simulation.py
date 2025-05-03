@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
 M_EARTH = 5.972e24  # Mass of Earth (kg)
 R_EARTH = 6371e3  # Radius of Earth (m)
+MU_EARTH = G * M_EARTH
 ATMOSPHERE_HEIGHT = 120e3  # Approximate height of the atmosphere (m)
 CD = 2.2  # Drag coefficient (dimensionless)
 A = 1.0  # Cross-sectional area of the satellite (m^2)
@@ -64,8 +65,8 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
 
 # Initial conditions
 altitude_initial = 300e3
-velocity_initial = 7800
 x0 = R_EARTH + altitude_initial
+velocity_initial = np.sqrt(MU_EARTH / x0)
 y0 = 0
 z0 = 0
 vx0 = 0
