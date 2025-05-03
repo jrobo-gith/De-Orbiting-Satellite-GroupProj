@@ -34,14 +34,14 @@ def create_data(helper, name):
         helper.changedSignal.emit(name, (outgoing_x, outgoing_y))
         time.sleep(.1)
 
-# init_x = [list(np.linspace(-3.0, 3.0, 100))]
-# init_y = [data_gen.sinusoid(init_x[0])]
-#
-# init_x.append(list(np.linspace(-3.0, 3.0, 100)))
-# init_y.append(data_gen.tangent(init_x[1]))
-#
-# init_x.append(list(np.linspace(-3.0, 3.0, 100)))
-# init_y.append(data_gen.cosine(init_x[2]))
+init_x = [list(np.linspace(-3.0, 3.0, 100))]
+init_y = [data_gen.sinusoid(init_x[0])]
+
+init_x.append(list(np.linspace(-3.0, 3.0, 100)))
+init_y.append(data_gen.tangent(init_x[1]))
+
+init_x.append(list(np.linspace(-3.0, 3.0, 100)))
+init_y.append(data_gen.cosine(init_x[2]))
 
 altitude_initial = 300e3
 x0 = python_simulation.R_EARTH + altitude_initial
