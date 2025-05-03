@@ -1,4 +1,5 @@
 import pyqtgraph as pg
+from PyQt5 import QtGui
 from pyqtgraph.Qt import QtWidgets, QtCore
 import numpy as np
 
@@ -33,6 +34,7 @@ class Plot(pg.PlotWidget):
             self.plot_allocation.addLegend()
         if args["grid"]:
             self.plot_allocation.showGrid(x=True, y=True)
+
 
         self.plot_allocation.setTitle(args["title"])
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
