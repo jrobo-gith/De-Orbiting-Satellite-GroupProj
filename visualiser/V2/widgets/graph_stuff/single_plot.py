@@ -2,9 +2,10 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore
 import numpy as np
 
-class Plot:
+class Plot(pg.PlotWidget):
     """Class to plot and update plots at a time"""
     def __init__(self, plot_allocation, init_x, init_y, args, data_func):
+        super().__init__()
         """
         Initialise the plot
 
@@ -38,6 +39,9 @@ class Plot:
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
+        self.setStyleSheet("background-color: white")
+
+
         # Plot initial values
         self.lines = []
         for i in range(self.num_lines):
@@ -60,9 +64,10 @@ class Plot:
         assert type(new_data_Y) == list, print("New Y must be a list")
 
         for i, self.line in enumerate(self.lines):
-            # Remove oldest datapoint
-            self.init_x[i] = self.init_x[i][1:]
-            self.init_y[i] = self.init_y[i][1:]
+            if len(self.init_x[i]) > 100: # If the length is large than 100
+                # Remove oldest datapoint
+                self.init_x[i] = self.init_x[i][1:]
+                self.init_y[i] = self.init_y[i][1:]
 
             # Add new data point
             self.init_x[i].append(new_data_X[i])

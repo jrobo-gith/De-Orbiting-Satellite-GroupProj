@@ -3,7 +3,6 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
-
 from visualiser.V2.partials.navbar import Navbar
 from visualiser.V2.widgets.graph_stuff.partials.switcher import Switcher
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
@@ -85,6 +84,7 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(title, 0, 2, Qt.AlignHCenter)
         sim_window_navbar.addWidget(self.graph_button, 0, 3, Qt.AlignHCenter)
         sim_window_navbar.addWidget(self.earth_button, 0, 4, Qt.AlignHCenter)
+
         ## Earth window
         earth = Earth(full_sim_data=(self.lat, self.lon))
         ## graph_script
