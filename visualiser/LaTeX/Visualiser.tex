@@ -1,0 +1,60 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{bm}
+
+\begin{document}
+
+\title{Visualiser - De-Orbiting Satellite Predictor}
+\author{Jack Roberts}
+\maketitle
+
+\section{Data visualisation}
+Data visualisation is the art of representing data such that it maximises the quality to quantity ratio. In other words, display the smallest quantity of data that explains as close to 100 percent of our results as possible. The project proposal, handed in during term 1 outlined the visualiser as a visual representation of the predictor (Extended Kalman Filter) and will display temporal as well as spatial data regarding the trajectory of the satellite. There are many data visualisation tools to accomplish this, such as Unity (C$\#$), matplotlib (Python), pyQtGraph (Python) or Tableau.
+\section{Methods}
+\subsection{A change in software}
+Unity and C$\#$ was the software planned for use for the visualiser. It had a built in Graphical User Interface (GUI) and was able to convert large amounts of data into highly customisable graphs. Upon reflection, and some guidance from the academics, it became apparent that using as many as three languages to complete this project was too much. Moreover, the transfer of data was proving to be difficult as running a python venv inside of C$\#$ and converting its output to C$\#$ arrays was a significant bottleneck. Instead a Pythonic approach became the apparent option. \\
+The visualiser now runs inside python, running the \textit{pyQtGraph} module. This module builds on its parent module \textit{pyQt} for creating python GUIs by adding graphical support such as plotting, adding legends, multiple subplots and dynamic plotting, where the figure could update as it receives updates from the predictor in real time. This was an excellent choice as this module allowed the project to be kept in python, a language everybody in the group understood, without sacrificing dynamic updates from our predictor in real time which is what was needed. 
+\subsection{Installation instructions}
+\subsection{Classes}
+There are two classes, a \textbf{MainWindow} class and a \textbf{Plot} class. \textbf{MainWindow} runs the GUI, keeping track of plots. It instantiates the GUI by setting a graphical layout unit and window size, it instantiates the subplots chosen prior to its instantiation using the \textbf{Plot} class. The \textbf{Plot} class is responsible for each subplot. It takes initial data matrices (Python Lists) $x$ and $y$ to begin the plot. The dimensionality of $x$ and $y$ should be $M\times N$ where $M$ is the number of lines and $N$ is the number of observations. \\ 
+Plot takes as inputs: 
+\begin{itemize}
+\item Its allocated subplot,
+\item Initial x,
+\item Initial y,
+\item Args ,
+\end{itemize}
+Where \textit{Args} is a dictionary of local information that specific plot needs to know, such as:
+\begin{itemize}
+\item Title,
+\item Label X title,
+\item Label Y title,
+\item Legend line names,
+\item Legend (Bool),
+\item Grid (Bool),
+\item Line details (line width, colour etc),
+\item Symbols (eg. each data point represented as a '+'),
+\item Label style,
+\item Title style
+\end{itemize}
+
+\textit{Arg} profiles are loaded when a \textbf{MainWindow} class is instantiated. Each plot has its respective \textit{profile} encased in a JSON file, and is used for styling the plot.
+
+Within the \textbf{Plot} class, there is an \textit{update} function. This allows for appending new data given by the predictor to the existing array and plots it. It removes the oldest addition to the array and appends the new value. 
+\section{Plots}
+There will be IDK plots, each displaying vital information representing the current state of both the satellite and the Kalman Filter's prediction of its predicted landing site. 
+
+\section{Results}
+
+
+
+\end{document}
