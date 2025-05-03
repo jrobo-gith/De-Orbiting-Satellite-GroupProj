@@ -14,6 +14,7 @@ import json
 import time
 import numpy as np
 import threading
+import matplotlib.pyplot as plt
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
@@ -56,15 +57,18 @@ initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 # Time span
 t_span = (0, 50000)
 
-
 class SimWidget(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        self.lat, self.lon, self.height = run_full_simulation(init_pos=[0,0,0],
-                                                              init_vel=[0,0,0])
+        # self.lat, self.lon, self.height = run_full_simulation(init_pos=[0,0,0],
+        #                                                       init_vel=[0,0,0])
+
+        self.solution = python_simulation.system_solver(t_span, initial_conditions, t_evals=1000)
+        self.lat, self.lon = ECEF2LatLon(self.solution.y)
+
 
         ## graph-earth stacked widget
         self.graph_earth_container = QStackedWidget()
@@ -141,4 +145,14 @@ class SimWidget(QWidget):
         self.graph_earth_container.setCurrentIndex(1)
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+
+
+def ECEF2LatLon(positions):
+    x, y, z = positions[0], positions[1], positions[2]
+    lon = np.arctan2(y, x)
+    lat = np.arctan2(z, np.sqrt(x ** 2 + y ** 2))
+
+    return lat, lon
+
+
 
