@@ -42,7 +42,6 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_1std.setOpacity(0.5)
         self.prediction_crash_2std.setOpacity(0.25)
 
-
         # Add world image
         self.plot_widget.addItem(world_img)
         # Add simulation data
@@ -54,7 +53,6 @@ class Earth(pg.GraphicsLayoutWidget):
         self.plot_widget.addItem(self.prediction_crash_1std)
         self.plot_widget.addItem(self.prediction_crash_2std)
 
-
         # Plotting details
         self.plot_widget.setAspectLocked(True)
         self.plot_widget.hideAxis('left')
@@ -64,35 +62,33 @@ class Earth(pg.GraphicsLayoutWidget):
         self.viewbox.setRange(xRange=(0, 5400), yRange=(2700, 0))
 
         # Filter details
-        self.filter_layout = QVBoxLayout()
+        self.filter_layout = QHBoxLayout()
 
         self.simulation_checkbox = QCheckBox("Show Simulation")
-        self.simulation_checkbox.setStyleSheet(f"background-color: rgb{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.simulation_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.simulation_checkbox.setChecked(True)
         self.simulation_checkbox.stateChanged.connect(self.sim_overlay_switch)
 
         self.radar_checkbox = QCheckBox("Show Radars")
-        self.radar_checkbox.setStyleSheet(f"background-color: rgb{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.radar_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.radar_checkbox.setChecked(True)
         self.radar_checkbox.stateChanged.connect(self.radar_overlay_switch)
 
         self.prediction_checkbox = QCheckBox("Show Prediction")
-        self.prediction_checkbox.setStyleSheet(f"background-color: rgb{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.prediction_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.prediction_checkbox.setChecked(True)
         self.prediction_checkbox.stateChanged.connect(self.prediction_overlay_switch)
-
 
         self.filter_layout.addWidget(self.simulation_checkbox)
         self.filter_layout.addWidget(self.radar_checkbox)
         self.filter_layout.addWidget(self.prediction_checkbox)
+        self.filter_layout.setAlignment(Qt.AlignCenter)
 
-        self.earth_filter = QHBoxLayout()
+        self.earth_filter = QVBoxLayout()
         self.earth_filter.addWidget(self.plot_widget, stretch=19)
         self.earth_filter.addLayout(self.filter_layout, stretch=1)
+        self.setLayout(self.earth_filter)
 
-        self.layout = QVBoxLayout()
-        self.layout.addLayout(self.earth_filter)
-        self.setLayout(self.layout)
 
     @QtCore.pyqtSlot(str, tuple)
     def update_satellite_position(self, name, update):

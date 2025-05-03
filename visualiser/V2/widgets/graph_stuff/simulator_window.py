@@ -1,5 +1,8 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QGridLayout, QLabel, QPushButton)
 from PyQt5 import QtCore
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
+
 
 from visualiser.V2.partials.navbar import Navbar
 from visualiser.V2.widgets.graph_stuff.partials.switcher import Switcher
@@ -52,23 +55,47 @@ class SimWidget(QWidget):
                                                               init_vel=[0,0,0])
 
         ## graph-earth stacked widget
-        graph_earth_container = QStackedWidget()
+        self.graph_earth_container = QStackedWidget()
         ## NAVBAR
-        navbar = Navbar("Graphs", self.stacked_widget)
-        ## SWITCHER
-        switcher = Switcher(graph_earth_container)
+        sim_window_navbar = QGridLayout()
+        title = QLabel("Simulation")
+        title.setFont(QFont(glob_setting['font-family'], 35))
+        title.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
+
+        backarrow = QPushButton("<--")
+        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+        backarrow.setFont(QFont(glob_setting['font-family'], 35))
+        backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
+
+        self.graph_button = QPushButton("Graph View")
+        self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
+        self.graph_button.setFont(QFont(glob_setting['font-family'], 20))
+        self.graph_button.clicked.connect(self.click_graph_button)
+
+        self.earth_button = QPushButton("Earth View")
+        self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+        self.earth_button.setFont(QFont(glob_setting['font-family'], 20))
+        self.earth_button.clicked.connect(self.click_earth_button)
+
+        filler = QLabel("FILLER")
+        filler.setStyleSheet(f"color: {glob_setting['background-color']};")
+
+        sim_window_navbar.addWidget(backarrow, 0, 0, Qt.AlignHCenter)
+        sim_window_navbar.addWidget(filler, 0, 1, Qt.AlignHCenter)
+        sim_window_navbar.addWidget(title, 0, 2, Qt.AlignHCenter)
+        sim_window_navbar.addWidget(self.graph_button, 0, 3, Qt.AlignHCenter)
+        sim_window_navbar.addWidget(self.earth_button, 0, 4, Qt.AlignHCenter)
         ## Earth window
         earth = Earth(full_sim_data=(self.lat, self.lon))
         ## graph_script
         graph = Grapher(init_x=init_x, init_y=init_y)
 
-        graph_earth_container.addWidget(graph)
-        graph_earth_container.addWidget(earth)
+        self.graph_earth_container.addWidget(graph)
+        self.graph_earth_container.addWidget(earth)
 
         container = QVBoxLayout()
-        container.addWidget(navbar, stretch=1)
-        container.addWidget(switcher, stretch=1)
-        container.addWidget(graph_earth_container, stretch=18)
+        container.addLayout(sim_window_navbar, stretch=1)
+        container.addWidget(self.graph_earth_container, stretch=18)
         self.setLayout(container)
 
         graph_helper = Helper()
@@ -78,3 +105,14 @@ class SimWidget(QWidget):
         earth_helper = Helper()
         earth_helper.changedSignal.connect(earth.update_satellite_position, QtCore.Qt.QueuedConnection)
         threading.Thread(target=radar, args=(earth_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
+
+    def click_graph_button(self):
+        self.graph_earth_container.setCurrentIndex(0)
+        self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
+        self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+
+    def click_earth_button(self):
+        self.graph_earth_container.setCurrentIndex(1)
+        self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
+        self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+
