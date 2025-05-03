@@ -62,7 +62,7 @@ class Credits(QWidget):
         credits_titles_list.append(vis_title)
 
         for credit in credits_list:
-            credit.setStyleSheet(f"color: rgb{glob_setting['font-color']}")
+            credit.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: rgba(0, 0, 0, 0.7); border-radius: 30px;")
             credit.setAlignment(Qt.AlignHCenter)
             credit.setFont(QFont(glob_setting['font-family'], 15))
         for title in credits_titles_list:

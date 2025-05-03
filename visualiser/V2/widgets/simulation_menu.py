@@ -24,16 +24,16 @@ class SimulationMenu(QWidget):
 
         start_sim_btn = QPushButton("Start Simulation")
         start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
-        start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+        start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         start_sim_btn.clicked.connect(self.loadSim)
+        start_sim_btn.setFixedWidth(250)
+        start_sim_layout = QHBoxLayout()
+        start_sim_layout.addWidget(start_sim_btn)
+        start_sim_layout.setAlignment(Qt.AlignCenter)
 
-        start_sim =QHBoxLayout()
-        # start_sim.addWidget()
-        start_sim.addWidget(start_sim_btn)
-        start_sim.setAlignment(Qt.AlignCenter)
 
         page_container.addWidget(navbar, stretch=1)
-        page_container.addLayout(start_sim, stretch=19)
+        page_container.addLayout(start_sim_layout, stretch=19)
         self.setLayout(page_container)
 
 

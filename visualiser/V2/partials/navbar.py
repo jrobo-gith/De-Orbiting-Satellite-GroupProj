@@ -20,13 +20,12 @@ class Navbar(QWidget):
 
         title = QLabel(self.name)
         title.setFont(QFont(glob_setting['font-family'], 35))
-        title.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+        title.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline;background: {glob_setting['background-color']}")
 
         backarrow = QPushButton("<--")
-        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+        backarrow.setStyleSheet(f"color: rgb{glob_setting['font-color']};background: {glob_setting['background-color']}")
         backarrow.setFont(QFont(glob_setting['font-family'], 35))
         backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
-
 
         filler = QLabel("FILLER")
         filler.setStyleSheet(f"color: {glob_setting['background-color']};")

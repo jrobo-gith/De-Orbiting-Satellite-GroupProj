@@ -82,12 +82,15 @@ class Instructions(QWidget):
         instruction_titles.append(restart_simulation_title)
 
         for instruction in instructions:
-            instruction.setStyleSheet(f"color: rgb{glob_setting['font-color']}")
+            instruction.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: rgba(0, 0, 0, 0.7); border-radius: 30px;")
             instruction.setFont(QFont(glob_setting['font-family'], 15))
             instruction.setAlignment(Qt.AlignHCenter)
 
+
         for title in instruction_titles:
             title.setFont(QFont(glob_setting['font-family'], 20, QFont.Bold))
+            instruction.setStyleSheet(f"color: rgb{glob_setting['font-color']};")
+
         container = QVBoxLayout()
         container.addWidget(navbar, stretch=1)
         container.addLayout(instructions_box, stretch=19)
