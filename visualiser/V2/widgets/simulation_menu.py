@@ -113,6 +113,11 @@ class SimulationMenu(QWidget):
         init_y_v = int(self.input_Y_vel.text())
         init_z_v = int(self.input_Z_vel.text())
 
+        positions = [init_x_p, init_y_p, init_z_p]
+        velocities = [init_x_v, init_y_v, init_z_v]
+
+
+
         initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
 
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
