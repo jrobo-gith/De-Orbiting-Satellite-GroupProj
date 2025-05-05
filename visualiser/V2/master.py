@@ -1,6 +1,3 @@
-from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.uic.Compiler.qtproxies import QtWidgets
-
 from visualiser.V2.widgets.main_menu import MainMenu
 from visualiser.V2.widgets.instructions import Instructions
 from visualiser.V2.widgets.simulation_menu import SimulationMenu

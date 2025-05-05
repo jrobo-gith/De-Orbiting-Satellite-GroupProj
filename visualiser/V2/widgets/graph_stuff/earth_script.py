@@ -35,9 +35,9 @@ class Earth(pg.GraphicsLayoutWidget):
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
         x, y = latlon2pixel([51.509865], [-0.118092])
-        self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
-        self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(255, 0, 0))
-        self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((255, 0, 0), pen=pg.mkPen('red')))
+        self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('green'), pen=pg.mkPen('green'))
+        self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
+        self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
         self.prediction_crash_point.setOpacity(0.9)
         self.prediction_crash_1std.setOpacity(0.5)
         self.prediction_crash_2std.setOpacity(0.25)
