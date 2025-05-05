@@ -44,7 +44,6 @@ def get_density_at_altitude(alt_km, lat=0, lon=0, f107=150, f107a=150, ap=4, tim
 
     print("Result shape:", result.shape)
     print("Result contents:", result)
-    print(pymsis.species_names)
     # Return density at first time, location, altitude
     return result  # kg/m³
 
