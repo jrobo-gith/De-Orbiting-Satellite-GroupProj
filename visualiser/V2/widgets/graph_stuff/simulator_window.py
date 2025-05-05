@@ -44,31 +44,31 @@ init_y.append(data_gen.tangent(init_x[1]))
 init_x.append(list(np.linspace(-3.0, 3.0, 100)))
 init_y.append(data_gen.cosine(init_x[2]))
 
-altitude_initial = 300e3
-x0 = python_simulation.R_EARTH + altitude_initial
-velocity_initial = np.sqrt(python_simulation.MU_EARTH / x0)
-y0 = 0
-z0 = 0
-vx0 = 0
-vy0 = velocity_initial
-vz0 = 0
-initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
+# altitude_initial = 300e3
+# x0 = python_simulation.R_EARTH + altitude_initial
+# velocity_initial = np.sqrt(python_simulation.MU_EARTH / x0)
+# y0 = 0
+# z0 = 0
+# vx0 = 0
+# vy0 = velocity_initial
+# vz0 = 0
+# initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
 # Time span
 t_span = (0, 50000)
 
 class SimWidget(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, initial_conditions):
         super().__init__()
         self.stacked_widget = stacked_widget
+        self.initial_conditions = initial_conditions
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        # self.lat, self.lon, self.height = run_full_simulation(init_pos=[0,0,0],
-        #                                                       init_vel=[0,0,0])
+        self.solution = python_simulation.system_solver(t_span, self.initial_conditions, t_evals=1000)
 
-        self.solution = python_simulation.system_solver(t_span, initial_conditions, t_evals=1000)
-        self.lat, self.lon = ECEF2LatLon(self.solution.y)
-
+        ## Use self.solution to compute XYZ coordinates to lat lon INCLUDING rotation of earth
+        self.lat = self.solution.y # WRONG (just to make earth sim happy)
+        self.lon = self.solution.y # WRONG (just to make earth sim happy)
 
         ## graph-earth stacked widget
         self.graph_earth_container = QStackedWidget()
@@ -83,13 +83,13 @@ class SimWidget(QWidget):
         backarrow.setFont(QFont(glob_setting['font-family'], 35))
         backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 
-        key_sim = QLabel("Simulation Data")
-        key_sim.setFont(QFont(glob_setting['font-family'], 20))
-        key_sim.setStyleSheet(f"color: rgb(0, 0, 255);")
+        self.key_sim = QLabel("Simulation Data")
+        self.key_sim.setFont(QFont(glob_setting['font-family'], 20))
+        self.key_sim.setStyleSheet(f"color: rgb(0, 0, 255);")
 
-        key_pred = QLabel("Prediction Data")
-        key_pred.setFont(QFont(glob_setting['font-family'], 20))
-        key_pred.setStyleSheet(f"color: rgb(0, 255, 0);")
+        self.key_pred = QLabel("Prediction Data")
+        self.key_pred.setFont(QFont(glob_setting['font-family'], 20))
+        self.key_pred.setStyleSheet(f"color: rgb(0, 255, 0);")
 
         self.graph_button = QPushButton("Graph View")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
@@ -110,8 +110,8 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.graph_button, 0, 3, Qt.AlignCenter)
         sim_window_navbar.addWidget(self.earth_button, 0, 4, Qt.AlignCenter)
 
-        sim_window_navbar.addWidget(key_sim, 1, 1, Qt.AlignCenter)
-        sim_window_navbar.addWidget(key_pred, 1, 3, Qt.AlignCenter)
+        sim_window_navbar.addWidget(self.key_sim, 1, 1, Qt.AlignCenter)
+        sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
 
         ## Earth window
         earth = Earth(full_sim_data=(self.lat, self.lon))
@@ -128,6 +128,7 @@ class SimWidget(QWidget):
         container.addWidget(self.graph_earth_container, stretch=18)
         self.setLayout(container)
 
+        # Set threads up to feed data into graph and earth to
         graph_helper = Helper()
         graph_helper.changedSignal.connect(graph.update_plots, QtCore.Qt.QueuedConnection)
         threading.Thread(target=create_data, args=(graph_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
@@ -140,19 +141,18 @@ class SimWidget(QWidget):
         self.graph_earth_container.setCurrentIndex(0)
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+        self.key_sim.setStyleSheet(f"color: rgb(0, 0, 255);")
+        self.key_pred.setStyleSheet(f"color: rgb(0, 255, 0);")
 
     def click_earth_button(self):
         self.graph_earth_container.setCurrentIndex(1)
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
+        self.key_sim.setStyleSheet(f"color: rgba(0, 0, 255, 0);")
+        self.key_pred.setStyleSheet(f"color: rgba(0, 255, 0, 0);")
 
 
-def ECEF2LatLon(positions):
-    x, y, z = positions[0], positions[1], positions[2]
-    lon = np.arctan2(y, x)
-    lat = np.arctan2(z, np.sqrt(x ** 2 + y ** 2))
 
-    return lat, lon
 
 
 
