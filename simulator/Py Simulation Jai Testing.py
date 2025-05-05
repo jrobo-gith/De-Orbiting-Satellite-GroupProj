@@ -36,6 +36,37 @@ def curvature_in_prime_vertical(phi):
 # Returns latitude and height above ellipsoid
 # Calculates latitude for the WGS-84 model using Bowring's method
 # RESEARCH INTO FERRARI'S METHOD FOR BETTER ACCURACY
+import numpy as np
+
+def latitude_iterator_and_height_plot(x, y, z):
+    x = np.asarray(x)
+    y = np.asarray(y)
+    z = np.asarray(z)
+
+    r = np.sqrt(x**2 + y**2)
+    phi = np.arctan(z / (r * (1 - E_SQUARED)))
+    phi_new = phi + 100  # ensures entry into the loop
+
+    converged = np.zeros_like(phi, dtype=bool)
+    max_iter = 100
+    iter_count = 0
+
+    while not np.all(converged) and iter_count < max_iter:
+        phi[~converged] = phi_new[~converged]
+        N = curvature_in_prime_vertical(phi)
+        phi_new[~converged] = np.arctan2(z[~converged] + (N[~converged] * E_SQUARED) * np.sin(phi[~converged]),
+                                         r[~converged] - (N[~converged] * E_SQUARED) * np.cos(phi[~converged]))
+        converged[~converged] = np.abs(phi_new[~converged] - phi[~converged]) <= 1e-9
+        iter_count += 1
+
+    phi_final = phi_new
+    N_final = curvature_in_prime_vertical(phi_final)
+    height = (r / np.cos(phi_final)) - N_final
+    height = np.maximum(height, 0)  # ensure non-negative height
+
+    return phi_final, height
+
+
 def latitude_iterator_and_height(x, y, z):
     r = np.sqrt(x**2 + y**2)
     phi = np.arctan(z / (r * (1 - E_SQUARED)))
@@ -68,6 +99,14 @@ def lat_long_height(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
     longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
     latitude, height = latitude_iterator_and_height(x, y, z)
+    R_earth = earth_radius_WGS84(latitude)
+    height = r - R_earth
+    return latitude, longitude, height
+
+def lat_long_height_plot(x, y, z):
+    r = np.sqrt(x**2 + y**2 + z**2)
+    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    latitude, height = latitude_iterator_and_height_plot(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth
     return latitude, longitude, height
@@ -136,7 +175,7 @@ solution = system_solver(t_span, initial_conditions, t_evals=1000)
 x_vals = solution.y[0]
 y_vals = solution.y[1]
 z_vals = solution.y[2]
-altitudes = lat_long_height(x_vals, y_vals, z_vals)[2]
+altitudes = lat_long_height_plot(x_vals, y_vals, z_vals)[2]
 
 # Plot results
 plt.figure(figsize=(10, 6))
