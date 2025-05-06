@@ -265,7 +265,7 @@ for iter in tqdm(range(num_iterations)):
                     # print(landing.y_events[0][0][:3])
                     landing_time = landing.t_events[0][0]
                     landing_position = landing.y_events[0][0][:3]
-                    landing_position_latlon = some_conversion_function_ECI_to_latlon(landing_position)
+                    landing_position_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])
                     predicted_landing_ECI.append(landing_position)
                     predicted_landing_latlon.append(landing_position_latlon)
                     predicted_landing_time.append(landing_time)
