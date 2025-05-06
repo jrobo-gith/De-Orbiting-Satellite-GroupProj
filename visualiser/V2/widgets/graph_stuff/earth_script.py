@@ -98,9 +98,10 @@ class Earth(pg.GraphicsLayoutWidget):
         self.setLayout(self.earth_filter)
 
 
-    @QtCore.pyqtSlot(str, tuple)
+    @QtCore.pyqtSlot(dict, tuple)
     def update_satellite_position(self, name, update):
-        print(f"EARTH UPDATE: {update}")
+        pass
+        # print(f"EARTH UPDATE: {update}")
         # lat, lon = update
         # x, y = latlon2pixel(lat, lon)
         # self.satellite_start_position.setData(x, y)

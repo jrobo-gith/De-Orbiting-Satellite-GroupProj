@@ -37,13 +37,14 @@ def eci2ecef_matrix(theta):
                      [-np.sin(theta), np.cos(theta), 0],
                      [0,0,1]])
 
+
 def get_sat_data():
     sat_pos_x = []
     sat_pos_y = []
     sat_pos_z = []
     t_vals = []
 
-    sat_file = os.path.join(script_dir, "sat_traj.dat")
+    sat_file = os.path.join(script_dir, 'simulator_files/sat_traj.dat')
 
     try:
         with open(sat_file, 'r') as file:
@@ -68,7 +69,7 @@ def get_sat_data():
     dt = t_vals[1] - t_vals[0]
 
     sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
-    sim_times = np.array([sim_start_time + timedelta(seconds=i*dt) for i in range(nt)])
+    sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
 
     # Compute GMST angles for simulation times
     gmst_angles = np.array([get_gmst(t) for t in sim_times])
@@ -217,12 +218,20 @@ def enu2lla(enu_coords, ref_lla_coords):
     return lla_coords
 
 # Simulate radar measurements
-def get_radar_measurements(radars, helper1, helper2):
+def get_radar_measurements(radars, earth_helper, predictor_helper):
     # Inputs  - An array of satellite positions in ECEF coordinates
     #         - A dictionary of radar objects
     # Outputs - A dictionary of measurements taken by each radar
     sat_pos_ecef, t_vals = get_sat_data()
     measurements = {key: [] for key in radars.keys()}
+
+    nt = t_vals.shape[0]
+    dt = t_vals[1] - t_vals[0]
+
+    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+    sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
+
+
     # Check every t seconds
     for i in range(t_vals.shape[0]):
         curr_sat_pos = sat_pos_ecef[i]
@@ -235,15 +244,16 @@ def get_radar_measurements(radars, helper1, helper2):
             radM = radobj.radar_measurements(rel_pos_enu)
 
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, noise=False)  # NO NOISE
+
+
+            info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj}
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM)):
                 # IN FOV
-                data = (0,1)
+                predictor_helper.changedSignal.emit(info, tuple(radM))
             else:
-                data = (0,0)
                 measurements[rname].append(np.zeros_like(radM))
-        helper1.changedSignal.emit("name", data)
-        helper2.changedSignal.emit("name", data)
+        earth_helper.changedSignal.emit(info, tuple(radM_no_noise))
 
         time.sleep(1)
     for key, vals in measurements.items():
@@ -261,14 +271,17 @@ def sat_ecef2lla(sat_pos_ecef):
     return sat_pos_lla
 
 # Function to convert satellite position in ECI to radar's local spherical coordinates
-def do_conversions(eci_coords, stime, radar_name):
+def do_conversions(eci_coords, stime, radar):
     # Inputs  - ECI coordinates of the satellite
     #         - A datetime object corresponding to the satellite position
     #         - Name of the radar
     # Outputs - An array containing range, azimuth and elevation
 
-    radar = radars[radar_name]
-    print(radar)
+    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+
+
+    # radar = radars[radar_name]
+    # print(radar)
     # Convert satellite position from ECI to ECEF
     gmst_angle = get_gmst(stime)
     Rot_eci2ecef = eci2ecef_matrix(gmst_angle)
@@ -281,7 +294,6 @@ def do_conversions(eci_coords, stime, radar_name):
     radM = radar.radar_measurements(rel_pos_enu, noise=False)
 
     return radM
-latlonheight = [[0, 1, 50], [29, 79, 19]]
 
 radars = {}
 
@@ -290,11 +302,3 @@ def initialise_radars(latlon:list):
         radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=60)
 
     return radars
-
-# radars = {
-#     "radar1": Radar([-50, -1.5, 15], azfov=120, elfov=60),
-#     "radar2": Radar([37, -1.3, 1650], azfov=120, elfov=60),
-#     "radar3": Radar([100, 0.8, 25], azfov=120, elfov=60),
-#     "radar4": Radar([0.55, 50, 70], azfov=120, elfov=60),
-#     "radar5": Radar([0, 90, 1000], azfov=120, elfov=60),
-# }

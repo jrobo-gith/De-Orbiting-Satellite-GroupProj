@@ -172,14 +172,14 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
     x_vals = solution.y[0]
     y_vals = solution.y[1]
     z_vals = solution.y[2]
-    
+
     vx_vals = solution.y[3]
     vy_vals = solution.y[4]
     vz_vals = solution.y[5]
 
     t_vals = solution.t
 
-    sat_file = 'sat_traj.dat'
+    sat_file = 'simulator_files/sat_traj.dat'
     # Write satellite data to a file
     with open(sat_file, "w") as fp:
         for i in range(solution.y[0].shape[0]):
