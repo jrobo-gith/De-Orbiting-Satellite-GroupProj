@@ -8,15 +8,11 @@ def radar(helper, name, latlon_data): # Will most likely need two helpers, one t
     """
     # Run full sim
     lat, lon = latlon_data
-    lat = (180 / np.pi) * lat
-    lon = (180 / np.pi) * lon
 
-    x = np.linspace(0, 5400, lat.shape[0])
 
     for i in range(1, len(lat)):
-        outgoing_x = [x[i]]
         outgoing_lat = [lat[i]]
         outgoing_lon = [lon[i]]
-        helper.changedSignal.emit(name, (outgoing_x, outgoing_lat, outgoing_lon))
+        helper.changedSignal.emit(name, (outgoing_lat, outgoing_lon))
         time.sleep(1)
 

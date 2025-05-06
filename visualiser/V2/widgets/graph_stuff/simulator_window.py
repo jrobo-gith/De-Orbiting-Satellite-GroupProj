@@ -7,14 +7,14 @@ from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import system_solve
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from visualiser.V2.widgets.graph_stuff.earth_script import Earth
-from visualiser.V2.simulator_files.FULL_SIM import run_full_simulation
-from visualiser.V2.simulator_files.RADAR import radar
+from visualiser.V2.simulator_files.sat_tracking import initialise_radars
+from visualiser.V2.simulator_files.sat_tracking import get_radar_measurements
+from visualiser.V2.predictor_files.predictor import Predictor
 
 import json
 import time
 import numpy as np
 import threading
-import matplotlib.pyplot as plt
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
@@ -48,10 +48,11 @@ init_y.append(data_gen.cosine(init_x[2]))
 t_span = (0, 50000)
 
 class SimWidget(QWidget):
-    def __init__(self, stacked_widget, initial_conditions):
+    def __init__(self, stacked_widget, initial_conditions, radar_list):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.initial_conditions = initial_conditions
+        self.radar_list = radar_list
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
         self.solution = system_solver(t_span, self.initial_conditions, t_evals=1000)
@@ -61,11 +62,6 @@ class SimWidget(QWidget):
 
         ## Convert x, y, z to lat lon
         self.lat, self.lon, self.height = lat_long_height_plot(self.x_sim, self.y_sim, self.z_sim)
-
-        plt.plot(self.lat)
-        plt.show()
-        plt.plot(self.lon)
-        plt.show()
 
         ## graph-earth stacked widget
         self.graph_earth_container = QStackedWidget()
@@ -112,12 +108,17 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
 
         ## Earth window
-        earth = Earth(full_sim_data=(self.lat, self.lon))
+        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.solution.t))
         ## graph_script
-        graph = Grapher(init_x=init_x, init_y=init_y)
+        self.graph = Grapher(init_x=init_x, init_y=init_y)
 
-        self.graph_earth_container.addWidget(graph)
-        self.graph_earth_container.addWidget(earth)
+        ## Predictor TESTING
+        self.predictor = Predictor()
+
+        self.radars = initialise_radars(radar_list)
+
+        self.graph_earth_container.addWidget(self.graph)
+        self.graph_earth_container.addWidget(self.earth)
 
         self.graph_earth_container.setStyleSheet("background: transparent;")
 
@@ -128,19 +129,18 @@ class SimWidget(QWidget):
 
         # Set threads up to feed data into graph and earth to
         graph_helper = Helper()
-        graph_helper.changedSignal.connect(graph.update_plots, QtCore.Qt.QueuedConnection)
+        graph_helper.changedSignal.connect(self.graph.update_plots, QtCore.Qt.QueuedConnection)
         threading.Thread(target=create_data, args=(graph_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
 
+        # Predictor
+        pred_helper = Helper()
+        pred_helper.changedSignal.connect(self.predictor.print_pred, QtCore.Qt.QueuedConnection)
+
+        # Earth
         earth_helper = Helper()
-        earth_helper.changedSignal.connect(earth.update_satellite_position, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=radar, args=(earth_helper, "redundant_name", (self.lat, self.lon)), daemon=True).start() # Target will be RADAR
+        earth_helper.changedSignal.connect(self.earth.update_satellite_position, QtCore.Qt.QueuedConnection)
 
-
-        # RADAR
-        # GIVE DATA
-        #   take data,
-
-
+        threading.Thread(target=get_radar_measurements, args=(self.radars, earth_helper, pred_helper), daemon=True).start()
 
 
     def click_graph_button(self):
@@ -156,7 +156,6 @@ class SimWidget(QWidget):
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
         self.key_sim.setStyleSheet(f"color: rgba(0, 0, 255, 0);")
         self.key_pred.setStyleSheet(f"color: rgba(0, 255, 0, 0);")
-
 
 
 
