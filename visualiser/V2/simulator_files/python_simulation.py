@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
+import os
 
 G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
 M_EARTH = 5.972e24  # Mass of Earth (kg)
@@ -22,8 +23,8 @@ def atmospheric_density(altitude):
 
 # Diff. eqns for satellite motion
 def satellite_dynamics(t, y):
-    x, y_pos, z, vx, vy, vz = y
-    r = np.sqrt(x**2 + y_pos**2 + z**2)
+    x, y, z, vx, vy, vz = y
+    r = np.sqrt(x**2 + y**2 + z**2)
     altitude = r - R_EARTH
 
     # Gravity
@@ -38,7 +39,7 @@ def satellite_dynamics(t, y):
 
     # Acceleration
     ax = F_gravity * (x / r) + F_drag_x
-    ay = F_gravity * (y_pos / r) + F_drag_y
+    ay = F_gravity * (y / r) + F_drag_y
     az = F_gravity * (z / r) + F_drag_z
 
     return [vx, vy, vz, ax, ay, az]
@@ -60,51 +61,64 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
     solution = solve_ivp(satellite_dynamics, t_span, initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition)
     return solution
 
-if __name__ == '__main__':
-    # ----------------------------- TESTING -----------------------------
-    # Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
+# ----------------------------- TESTING -----------------------------
+# Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
 
-    # Initial conditions
-    altitude_initial = 300e3
-    x0 = R_EARTH + altitude_initial
-    velocity_initial = np.sqrt(MU_EARTH / x0)
-    y0 = 0
-    z0 = 0
-    vx0 = 0
-    vy0 = velocity_initial
-    vz0 = 0
-    initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
+# Initial conditions
+altitude_initial = 400e3
+x0 = R_EARTH + altitude_initial
+velocity_initial = np.sqrt(MU_EARTH / x0)
+y0 = 0
+z0 = 0
+vx0 = 0
+vy0 = velocity_initial
+vz0 = 0
+# vy0 = np.sqrt(velocity_initial**2/2)
+# vz0 = np.sqrt(velocity_initial**2/2)
+initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
-    # Time span
-    t_span = (0, 50000)
-    t_eval = np.linspace(t_span[0], t_span[1], 1000)  # Points for evaluation
+# Time span
+t_span = (0, 50000)
+t_eval = np.linspace(t_span[0], t_span[1], 1000)  # Points for evaluation
 
-    # Solve differential equations using RK45
-    solution = system_solver(t_span, initial_conditions, t_evals=1000)
-    print(f"Solution shape: {solution.y.shape}")
-    print(solution.t[-1])
-    x_vals = solution.y[0]
-    y_vals = solution.y[1]
-    z_vals = solution.y[2]
-    altitudes = np.sqrt(x_vals**2 + y_vals**2 + z_vals**2) - R_EARTH
+# Solve differential equations using RK45
+solution = system_solver(t_span, initial_conditions, t_evals=1000)
 
-    # Plot results
-    plt.figure(figsize=(10, 6))
-    plt.plot(solution.t, altitudes / 1e3)  # Altitude vs. time
-    plt.axhline(ATMOSPHERE_HEIGHT / 1e3, color='r', linestyle='--', label='Atmosphere Boundary')
-    plt.title('Satellite Altitude During Re-entry (3D)')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Altitude (km)')
-    plt.legend()
-    plt.grid()
-    plt.show()
+x_vals = solution.y[0]
+y_vals = solution.y[1]
+z_vals = solution.y[2]
+vx_vals, vy_vals, vz_vals = solution.y[3], solution.y[4], solution.y[5]
+t_vals = solution.t
+print(t_vals)
 
-    # 3D plot
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot(x_vals / 1e3, y_vals / 1e3, z_vals / 1e3)
-    ax.set_title('Satellite Trajectory in 3D')
-    ax.set_xlabel('X Position (km)')
-    ax.set_ylabel('Y Position (km)')
-    ax.set_zlabel('Z Position (km)')
-    plt.show()
+altitudes = np.sqrt(x_vals**2 + y_vals**2 + z_vals**2) - R_EARTH
+
+# Plot results
+plt.figure(figsize=(10, 6))
+plt.plot(solution.t, altitudes / 1e3)  # Altitude vs. time
+plt.axhline(ATMOSPHERE_HEIGHT / 1e3, color='r', linestyle='--', label='Atmosphere Boundary')
+plt.title('Satellite Altitude During Re-entry (3D)')
+plt.xlabel('Time (s)')
+plt.ylabel('Altitude (km)')
+plt.legend()
+plt.grid()
+plt.show()
+
+# 3D plot
+fig = plt.figure(figsize=(10, 6))
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(x_vals / 1e3, y_vals / 1e3, z_vals / 1e3)
+ax.set_title('Satellite Trajectory in 3D')
+ax.set_xlabel('X Position (km)')
+ax.set_ylabel('Y Position (km)')
+ax.set_zlabel('Z Position (km)')
+plt.show()
+
+# Get the script directory
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sat_file = os.path.join(script_dir, "sat_traj.dat")
+
+# Write satellite data to a file
+with open(sat_file, "w") as fp:
+    for i in range(solution.y[0].shape[0]):
+        fp.write(f"{x_vals[i]:.6f}\t{y_vals[i]:.6f}\t{z_vals[i]:.6f}\t{vx_vals[i]:.6f}\t{vy_vals[i]:.6f}\t{vz_vals[i]:.6f}\t{t_vals[i]:.3f}\n")

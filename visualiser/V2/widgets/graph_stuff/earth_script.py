@@ -16,7 +16,7 @@ class Earth(pg.GraphicsLayoutWidget):
     def __init__(self, full_sim_data):
         super().__init__()
 
-        self.lat, self.lon = full_sim_data
+        self.lat, self.lon, self.t = full_sim_data
 
         self.plot_widget = pg.PlotWidget()
 
@@ -25,23 +25,21 @@ class Earth(pg.GraphicsLayoutWidget):
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)
 
-        # Simulation Overlay
-        self.lat = (180/np.pi) * self.lat
-        self.lon = (180/np.pi) * self.lon
-        full_sim_pixels = latlon2pixel(self.lat, self.lon)
-        x_axis = np.linspace(0, 5400, self.lat.shape[0])
+        ## Account for earth's rotation
+        EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.t
+        self.lon -= EARTH_ROTATION_ANGLE
+        ## Convert to Miller Coordinates
+        self.x = self.lon
+        self.y = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
 
-        self.sim_plot = pg.ScatterPlotItem(x=x_axis[:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('blue'))
-        self.crash_site = pg.ScatterPlotItem(x=[x_axis[-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
-        self.satellite_start_position = pg.ScatterPlotItem(x=[x_axis[0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
+        # Simulation Overlay
+        full_sim_pixels = latlon2pixel(self.x, self.y)
+        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('blue'))
+        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
+        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
         self.satellite_start_position.setOpacity(0.9)
-
-        self.sim_plot = pg.ScatterPlotItem(x=x_axis[:-2], y=full_sim_pixels[0][:-2], size=5, brush=pg.mkBrush('blue'))
-        plt.plot(self.lat, self.lon)
-        plt.show()
-
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
         x, y = latlon2pixel(np.array([51.509865]), np.array([-0.118092]))
@@ -102,9 +100,10 @@ class Earth(pg.GraphicsLayoutWidget):
 
     @QtCore.pyqtSlot(str, tuple)
     def update_satellite_position(self, name, update):
-        x, lat, lon = update
-        _, y = latlon2pixel(lat, lon)
-        self.satellite_start_position.setData(x, y)
+        print(f"EARTH UPDATE: {update}")
+        # lat, lon = update
+        # x, y = latlon2pixel(lat, lon)
+        # self.satellite_start_position.setData(x, y)
 
     def sim_overlay_switch(self):
         if self.simulation_checkbox.isChecked():

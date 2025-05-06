@@ -118,11 +118,13 @@ class SimulationMenu(QWidget):
 
         stable_condition = [300e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7800/np.sqrt(2), 7800/np.sqrt(2)]
 
+        radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
+
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
             self.sim_stacked_widget = QStackedWidget() # Create new simulation
             self.sim_stacked_widget.addWidget(SimulationMenu(self.stacked_widget))
-            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition))
+            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)
             self.stacked_widget.setCurrentIndex(4)
@@ -130,7 +132,7 @@ class SimulationMenu(QWidget):
             # Create stacked widget (load in sim window)
             self.sim_stacked_widget = QStackedWidget()
             self.sim_stacked_widget.addWidget(SimulationMenu(self.stacked_widget))
-            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition))
+            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)
             self.stacked_widget.setCurrentIndex(4)
