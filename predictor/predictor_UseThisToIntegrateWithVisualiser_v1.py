@@ -171,8 +171,8 @@ def satellite_UKF(state0,  fx, hx, dt=1.0):
     # ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
 
     range_std = 10 # meters.
-    azim_std = 0.1 # radians. (theta)
-    elev_std = 0.1  # radians. (phi)
+    azim_std = 0.002 # radians. (theta)
+    elev_std = 0.002  # radians. (phi)
     ukf.R = np.diag([range_std**2, azim_std**2, elev_std**2])
 
     # ukf.save_x_prior = True
