@@ -154,9 +154,9 @@ def satellite_UKF(state0,  fx, hx, dt=1.0):
                     5**2, 5**2, 5**2])    # experiment this
     ### uncertainty in the process model
     ukf.Q = np.zeros((6,6))
-    ukf.Q[np.ix_([0,3], [0,3])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for x and vx
-    ukf.Q[np.ix_([1,4], [1,4])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for y and vy
-    ukf.Q[np.ix_([2,5], [2,5])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for z and vz
+    ukf.Q[np.ix_([0,3], [0,3])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect x and vx
+    ukf.Q[np.ix_([1,4], [1,4])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect y and vy
+    ukf.Q[np.ix_([2,5], [2,5])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect z and vz
 
 
     # range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
