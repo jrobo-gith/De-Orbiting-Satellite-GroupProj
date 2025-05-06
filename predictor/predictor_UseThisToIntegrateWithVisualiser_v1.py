@@ -154,9 +154,9 @@ def satellite_UKF(state0,  fx, hx, dt=1.0):
                     5**2, 5**2, 5**2])    # experiment this
     ### uncertainty in the process model
     ukf.Q = np.zeros((6,6))
-    ukf.Q[np.ix_([0,3], [0,3])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for x and vx
-    ukf.Q[np.ix_([1,4], [1,4])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for y and vy
-    ukf.Q[np.ix_([2,5], [2,5])] = Q_discrete_white_noise(dim=2, dt=dt, var=1)  # Q matrix for z and vz
+    ukf.Q[np.ix_([0,3], [0,3])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect x and vx
+    ukf.Q[np.ix_([1,4], [1,4])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect y and vy
+    ukf.Q[np.ix_([2,5], [2,5])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect z and vz
 
 
     # range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
@@ -165,10 +165,15 @@ def satellite_UKF(state0,  fx, hx, dt=1.0):
     # ukf.R = np.diag([range_std**2, elev_std**2, azim_std**2])
 
     """### radar measurement noise (for the simple UKF only! change this!!!!!!!!!!!!!!!!!!!!!!)"""
-    x_std = 500  # meters. 
-    y_std = 500  # meters.
-    z_std = 10  # meters. 
-    ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
+    # x_std = 500  # meters. 
+    # y_std = 500  # meters.
+    # z_std = 10  # meters. 
+    # ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
+
+    range_std = 10 # meters.
+    azim_std = 0.1 # radians. (theta)
+    elev_std = 0.1  # radians. (phi)
+    ukf.R = np.diag([range_std**2, azim_std**2, elev_std**2])
 
     # ukf.save_x_prior = True
     return ukf
@@ -265,7 +270,7 @@ for iter in tqdm(range(num_iterations)):
                     # print(landing.y_events[0][0][:3])
                     landing_time = landing.t_events[0][0]
                     landing_position = landing.y_events[0][0][:3]
-                    landing_position_latlon = some_conversion_function_ECI_to_latlon(landing_position)
+                    landing_position_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])
                     predicted_landing_ECI.append(landing_position)
                     predicted_landing_latlon.append(landing_position_latlon)
                     predicted_landing_time.append(landing_time)
