@@ -130,6 +130,9 @@ def atmospheric_density_true(lat, long, altitude, time = None):
     
     return true_density[0, 0]  # Total mass density is the [0,0]th index of the pymsis.calculate() outputs
 
+# ------------------------------------------------------------------------------------------------------------------
+# ------------------------- FUNCTIONS FOR SIMULATING SATELLITE DYNAMICS---------------------------------------------
+
 # Diff. eqns for satellite motion
 def satellite_dynamics(t, y):
     x, y_pos, z, vx, vy, vz = y
@@ -170,8 +173,9 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
     solution = solve_ivp(satellite_dynamics, t_span, initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition)
     return solution
 
-# ----------------------------- TESTING -----------------------------
-# Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
+# --------------------------------------------------------------------------------------------------------------------
+# ----------------------------------- TESTING THE SATELLITE DYNAMICS -------------------------------------------------
+# # Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
 
 # Initial conditions
 altitude_initial = 300e3
