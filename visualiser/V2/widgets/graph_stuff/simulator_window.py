@@ -3,7 +3,7 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
-from visualiser.V2.simulator_files import Py_Simulation_Jai_Testing
+from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import system_solver, lat_long_height_plot
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from visualiser.V2.widgets.graph_stuff.earth_script import Earth
@@ -54,13 +54,18 @@ class SimWidget(QWidget):
         self.initial_conditions = initial_conditions
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        self.solution = Py_Simulation_Jai_Testing.system_solver(t_span, self.initial_conditions, t_evals=1000)
+        self.solution = system_solver(t_span, self.initial_conditions, t_evals=1000)
 
         ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
         self.x_sim, self.y_sim, self.z_sim = self.solution.y[0], self.solution.y[1], self.solution.y[2]
 
         ## Convert x, y, z to lat lon
-        # self.lat, self.lon, self.height = Py_Simulation_Jai_Testing.lat_long_height(self.x_sim, self.y_sim, self.z_sim)
+        self.lat, self.lon, self.height = lat_long_height_plot(self.x_sim, self.y_sim, self.z_sim)
+
+        plt.plot(self.lat)
+        plt.show()
+        plt.plot(self.lon)
+        plt.show()
 
         ## graph-earth stacked widget
         self.graph_earth_container = QStackedWidget()
@@ -107,7 +112,7 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
 
         ## Earth window
-        earth = Earth(full_sim_data=(self.x_sim, self.y_sim))
+        earth = Earth(full_sim_data=(self.lat, self.lon))
         ## graph_script
         graph = Grapher(init_x=init_x, init_y=init_y)
 
@@ -128,7 +133,7 @@ class SimWidget(QWidget):
 
         earth_helper = Helper()
         earth_helper.changedSignal.connect(earth.update_satellite_position, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=radar, args=(earth_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
+        threading.Thread(target=radar, args=(earth_helper, "redundant_name", (self.lat, self.lon)), daemon=True).start() # Target will be RADAR
 
 
         # RADAR

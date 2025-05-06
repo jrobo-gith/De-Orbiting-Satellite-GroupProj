@@ -7,6 +7,7 @@ from PyQt5 import QtCore, QtGui
 from PIL import Image
 import json
 import numpy as np
+import matplotlib.pyplot as plt
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
@@ -25,16 +26,25 @@ class Earth(pg.GraphicsLayoutWidget):
         world_img = pg.ImageItem(world_map)
 
         # Simulation Overlay
+        self.lat = (180/np.pi) * self.lat
+        self.lon = (180/np.pi) * self.lon
         full_sim_pixels = latlon2pixel(self.lat, self.lon)
-        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('red'))
-        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('blue'))
-        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=10, brush=pg.mkBrush('Black'))
+        x_axis = np.linspace(0, 5400, self.lat.shape[0])
+
+        self.sim_plot = pg.ScatterPlotItem(x=x_axis[:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('blue'))
+        self.crash_site = pg.ScatterPlotItem(x=[x_axis[-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
+        self.satellite_start_position = pg.ScatterPlotItem(x=[x_axis[0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
         self.satellite_start_position.setOpacity(0.9)
 
+        self.sim_plot = pg.ScatterPlotItem(x=x_axis[:-2], y=full_sim_pixels[0][:-2], size=5, brush=pg.mkBrush('blue'))
+        plt.plot(self.lat, self.lon)
+        plt.show()
+
+
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
-        x, y = latlon2pixel([51.509865], [-0.118092])
+        x, y = latlon2pixel(np.array([51.509865]), np.array([-0.118092]))
         self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('green'), pen=pg.mkPen('green'))
         self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
         self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
@@ -92,8 +102,8 @@ class Earth(pg.GraphicsLayoutWidget):
 
     @QtCore.pyqtSlot(str, tuple)
     def update_satellite_position(self, name, update):
-        lat, lon = update
-        x, y = latlon2pixel(lat, lon)
+        x, lat, lon = update
+        _, y = latlon2pixel(lat, lon)
         self.satellite_start_position.setData(x, y)
 
     def sim_overlay_switch(self):
@@ -122,7 +132,7 @@ class Earth(pg.GraphicsLayoutWidget):
             self.prediction_crash_1std.hide()
             self.prediction_crash_2std.hide()
 
-def latlon2pixel(lat:list, lon:list, screen_w:int=5400, screen_h:int=2700) -> tuple:
+def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """Returns pixel values for lat and lon. Returns tuple (x, y)"""
     x = []
     y = []
