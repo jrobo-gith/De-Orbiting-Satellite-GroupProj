@@ -33,3 +33,8 @@ PlayModeTestResults/
 [Bb]uilds/
 [Dd]ebug/
 [Rr]elease/
+
+# Ignore predictor and visualiser
+predictor/
+visualiser/
+day_tracking/
