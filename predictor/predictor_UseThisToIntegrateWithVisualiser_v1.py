@@ -73,8 +73,6 @@ def atmospheric_density(altitude):
 """ Landing stopping condition"""
 def stop_condition(t, y):
     # Stop when altitude <= 0
-    if t == 0:
-        return 1.0  # Don't trigger at initial step
     r = np.linalg.norm(y[:3])
     _, _, altitude = lat_long_height(y[0], y[1], y[2])
     return altitude
