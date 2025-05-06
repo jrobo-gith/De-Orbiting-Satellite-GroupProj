@@ -20,7 +20,7 @@ with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
 
 class Helper(QtCore.QObject):
-    changedSignal = QtCore.pyqtSignal(str, tuple)
+    changedSignal = QtCore.pyqtSignal(dict, tuple)
 
 def create_data(helper, name):
     """MUST OUTPUT Matrix of size P X L where:
@@ -32,7 +32,7 @@ def create_data(helper, name):
     for i in range(len(additional_x)):
         outgoing_x = [[additional_x[i]], [additional_x[i]], [additional_x[i]], [additional_x[i]]]
         outgoing_y = [data_gen.sinusoid(outgoing_x[0]), data_gen.tangent(outgoing_x[1]), data_gen.cosine(outgoing_x[2]), data_gen.cosine(outgoing_x[2])]
-        helper.changedSignal.emit(name, (outgoing_x, outgoing_y))
+        helper.changedSignal.emit({'name': name}, (outgoing_x, outgoing_y))
         time.sleep(.1)
 
 init_x = [list(np.linspace(-3.0, 3.0, 100))]
@@ -113,7 +113,7 @@ class SimWidget(QWidget):
         self.graph = Grapher(init_x=init_x, init_y=init_y)
 
         ## Predictor TESTING
-        self.predictor = Predictor()
+        self.predictor = Predictor(state0=[6378137.0  + 400e3, 1, -1, 1, 7700, 1] )
 
         self.radars = initialise_radars(radar_list)
 
@@ -134,7 +134,7 @@ class SimWidget(QWidget):
 
         # Predictor
         pred_helper = Helper()
-        pred_helper.changedSignal.connect(self.predictor.print_pred, QtCore.Qt.QueuedConnection)
+        pred_helper.changedSignal.connect(self.predictor.predictor_loop, QtCore.Qt.QueuedConnection)
 
         # Earth
         earth_helper = Helper()

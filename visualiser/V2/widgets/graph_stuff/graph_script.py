@@ -104,7 +104,7 @@ class Grapher(QWidget):
         self.plot_list.append(self.pred_2)
 
 
-    @QtCore.pyqtSlot(str, tuple)
+    @QtCore.pyqtSlot(dict, tuple)
     def update_plots(self, name, update):
         """MUST take in matrix of P X L, then MUST update each plot with a vector of 1 X L where:
         L is the number of lines needing updates.
