@@ -35,6 +35,5 @@ PlayModeTestResults/
 [Rr]elease/
 
 # Ignore predictor and visualiser
-predictor/
 visualiser/
 day_tracking/
