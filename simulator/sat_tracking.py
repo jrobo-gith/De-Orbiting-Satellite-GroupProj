@@ -106,9 +106,9 @@ for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
 # Radar class - contains radar specifications and functions
 class Radar:
     # Contains radar specific information
-    __range_uncertainty = 100
-    __theta_uncertainty = 0.01
-    __phi_uncertainty = 0.01
+    __range_uncertainty = 10
+    __theta_uncertainty = 0.002
+    __phi_uncertainty = 0.002
 
     def __init__(self, longlat, azfov=360, elfov=180):
         # Inputs - An array containing lat-long-alt of radar
