@@ -29,8 +29,8 @@ class Grapher(QWidget):
         ## Create two graphics layout widgets
         self.simulator_graphs = pg.GraphicsLayoutWidget()
         self.predictor_graphs = pg.GraphicsLayoutWidget()
+        self.combined_graphs = pg.GraphicsLayoutWidget()
 
-        self.simulator_graphs.setStyleSheet("border-radius: 10px")
 
         # Add graphics scenes
         sim_scene = self.simulator_graphs.scene()
@@ -47,11 +47,19 @@ class Grapher(QWidget):
         pred_rect.setZValue(-1)
         pred_scene.addItem(pred_rect)
 
+        combined_scene = self.combined_graphs.scene()
+        combined_rect = QGraphicsRectItem(0, 0, 1000, 1000)
+        combined_brush = QBrush(QColor(0, 255, 255, 35))
+        combined_rect.setBrush(combined_brush)
+        combined_rect.setZValue(-1)
+        combined_scene.addItem(combined_rect)
+
 
         # Create layout and add layout widgets
         self.layout = QGridLayout()
         self.layout.addWidget(self.simulator_graphs, 0, 0)
-        self.layout.addWidget(self.predictor_graphs, 0, 1)
+        self.layout.addWidget(self.combined_graphs, 0, 1)
+        self.layout.addWidget(self.predictor_graphs, 0, 2)
         self.setLayout(self.layout)
 
         self.plot_list = []
@@ -71,6 +79,10 @@ class Grapher(QWidget):
                           args=position,
                           data_func=data_gen.tangent)
         self.plot_list.append(self.sim_2)
+
+        # Add combined plots
+        self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
+        self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
 
         # Add predictor plots
         self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)

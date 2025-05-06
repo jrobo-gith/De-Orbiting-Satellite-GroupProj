@@ -3,7 +3,7 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
-from visualiser.V2.simulator_files import python_simulation
+from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import system_solver, lat_long_height_plot
 from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from visualiser.V2.widgets.graph_stuff.earth_script import Earth
@@ -44,16 +44,6 @@ init_y.append(data_gen.tangent(init_x[1]))
 init_x.append(list(np.linspace(-3.0, 3.0, 100)))
 init_y.append(data_gen.cosine(init_x[2]))
 
-# altitude_initial = 300e3
-# x0 = python_simulation.R_EARTH + altitude_initial
-# velocity_initial = np.sqrt(python_simulation.MU_EARTH / x0)
-# y0 = 0
-# z0 = 0
-# vx0 = 0
-# vy0 = velocity_initial
-# vz0 = 0
-# initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
-
 # Time span
 t_span = (0, 50000)
 
@@ -64,14 +54,22 @@ class SimWidget(QWidget):
         self.initial_conditions = initial_conditions
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        self.solution = python_simulation.system_solver(t_span, self.initial_conditions, t_evals=1000)
+        self.solution = system_solver(t_span, self.initial_conditions, t_evals=1000)
 
-        ## Use self.solution to compute XYZ coordinates to lat lon INCLUDING rotation of earth
-        self.lat = self.solution.y # WRONG (just to make earth sim happy)
-        self.lon = self.solution.y # WRONG (just to make earth sim happy)
+        ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
+        self.x_sim, self.y_sim, self.z_sim = self.solution.y[0], self.solution.y[1], self.solution.y[2]
+
+        ## Convert x, y, z to lat lon
+        self.lat, self.lon, self.height = lat_long_height_plot(self.x_sim, self.y_sim, self.z_sim)
+
+        plt.plot(self.lat)
+        plt.show()
+        plt.plot(self.lon)
+        plt.show()
 
         ## graph-earth stacked widget
         self.graph_earth_container = QStackedWidget()
+
         ## NAVBAR
         sim_window_navbar = QGridLayout()
         title = QLabel("Simulation")
@@ -135,7 +133,15 @@ class SimWidget(QWidget):
 
         earth_helper = Helper()
         earth_helper.changedSignal.connect(earth.update_satellite_position, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=radar, args=(earth_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
+        threading.Thread(target=radar, args=(earth_helper, "redundant_name", (self.lat, self.lon)), daemon=True).start() # Target will be RADAR
+
+
+        # RADAR
+        # GIVE DATA
+        #   take data,
+
+
+
 
     def click_graph_button(self):
         self.graph_earth_container.setCurrentIndex(0)
