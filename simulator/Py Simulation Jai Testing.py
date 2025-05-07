@@ -171,7 +171,7 @@ def system_solver(t_span_, initial_conditions):
     stop_condition.direction = -1
     
     # Solve the system of equations using RK45
-    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0 = initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step = 50)
+    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0 = initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step = 200)
     return solution
 
 # --------------------------------------------------------------------------------------------------------------------
