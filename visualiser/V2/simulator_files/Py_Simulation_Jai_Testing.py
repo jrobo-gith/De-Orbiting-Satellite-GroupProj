@@ -87,7 +87,7 @@ def latitude_iterator_and_height(x, y, z):
 # Latitude is calculated as an approximation for a non-spherical Earth
 def lat_long_height_plot(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height_plot(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth
@@ -95,7 +95,7 @@ def lat_long_height_plot(x, y, z):
 
 def lat_long_height(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth

@@ -231,7 +231,6 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
     sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
     sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
 
-
     # Check every t seconds
     for i in range(t_vals.shape[0]):
         curr_sat_pos = sat_pos_ecef[i]
@@ -253,7 +252,10 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
                 predictor_helper.changedSignal.emit(info, tuple(radM))
             else:
                 measurements[rname].append(np.zeros_like(radM))
-        earth_helper.changedSignal.emit(info, tuple(radM_no_noise))
+        radM_enu = radobj.radM2enu(radM_no_noise)
+        radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
+        lat, lon, _ = ecef2lla(radM_ecef)
+        earth_helper.changedSignal.emit(info, (lat, lon))
 
         time.sleep(1)
     for key, vals in measurements.items():

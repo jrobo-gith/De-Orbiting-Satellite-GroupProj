@@ -4,3 +4,4 @@ pymsis==0.10.0
 filterpy==1.4.5
 pyproj
 PyQt5
+tqdm

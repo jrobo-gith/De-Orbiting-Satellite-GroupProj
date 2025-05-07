@@ -27,7 +27,7 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.plot_widget = pg.PlotWidget()
 
-        world_map = json_file = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
+        world_map = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)
@@ -36,12 +36,16 @@ class Earth(pg.GraphicsLayoutWidget):
         EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.t
         self.lon -= EARTH_ROTATION_ANGLE
         ## Convert to Miller Coordinates
-        self.x = self.lon
-        self.y = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
+        self.y = self.lon
+        # self.y = self.lat
+        self.x = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
+
+        self.x *= (180 / np.pi)
+        self.y *= (180 / np.pi)
 
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
-        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-2], y=full_sim_pixels[1][:-2], size=5, brush=pg.mkBrush('blue'))
+        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-1], y=full_sim_pixels[1][:-1], size=5, brush=pg.mkBrush('yellow'))
         self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
         self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
         self.sim_plot.setOpacity(0.9)
@@ -107,11 +111,9 @@ class Earth(pg.GraphicsLayoutWidget):
 
     @QtCore.pyqtSlot(dict, tuple)
     def update_satellite_position(self, name, update):
-        pass
-        # print(f"EARTH UPDATE: {update}")
-        # lat, lon = update
-        # x, y = latlon2pixel(lat, lon)
-        # self.satellite_start_position.setData(x, y)
+        lat, lon = update
+        x, y = latlon2pixel([lat], [lon])
+        self.satellite_start_position.setData(x, y)
 
     def sim_overlay_switch(self):
         if self.simulation_checkbox.isChecked():
