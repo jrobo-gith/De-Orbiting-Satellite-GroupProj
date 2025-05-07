@@ -25,6 +25,11 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.lat, self.lon, self.t = full_sim_data
 
+        if len(self.lat) > 10_000:
+            self.lat = self.lat[0:len(self.lat):10]
+            self.lon = self.lon[0:len(self.lon):10]
+            self.adjusted_t = self.t[0:len(self.t):10]
+
         self.plot_widget = pg.PlotWidget()
 
         world_map = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
@@ -33,7 +38,7 @@ class Earth(pg.GraphicsLayoutWidget):
         world_img = pg.ImageItem(world_map)
 
         ## Account for earth's rotation
-        EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.t
+        EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.adjusted_t
         self.lon -= EARTH_ROTATION_ANGLE
         ## Convert to Miller Coordinates
         self.y = self.lon

@@ -63,6 +63,10 @@ class SimWidget(QWidget):
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
         self.solution = system_solver(t_span, self.initial_conditions)
+        ## TEMPORARY GRAB EXISTING FILE
+        # temp_file = os.path.join(root_dir, "visualiser/V2/simulator_files/sat_traj.dat")
+        # with open(temp_file) as f:
+        #     solution = json.load(f)
 
         ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
         self.x_sim, self.y_sim, self.z_sim = self.solution.y[0], self.solution.y[1], self.solution.y[2]
