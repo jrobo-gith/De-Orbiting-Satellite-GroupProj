@@ -14,8 +14,8 @@ FLATTENING = 1/298.257223563                # Flattening of Earth (dimensionless
 E_SQUARED = FLATTENING * (2 - FLATTENING)   # Eccentricity squared (dimensionless)
 ATMOSPHERE_HEIGHT = 120e3                   # Approximate height of the atmosphere (m)
 CD = 2.2                                    # Drag coefficient (dimensionless)
-A = 1.0                                     # Cross-sectional area of the satellite (m^2)
-M_SAT = 500                                 # Mass of the satellite (kg)
+A = 1.3                                     # Cross-sectional area of the satellite (m^2)
+M_SAT = 1050                                # Mass of the satellite (kg)
 RHO_0 = 1.225                               # Air density at sea level (kg/m^3)
 H_SCALE = 8500                              # Scale height of the atmosphere (m)
 
@@ -85,7 +85,7 @@ def latitude_iterator_and_height(x, y, z):
 # Latitude is calculated as an approximation for a non-spherical Earth
 def lat_long_height_plot(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height_plot(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth
@@ -93,7 +93,7 @@ def lat_long_height_plot(x, y, z):
 
 def lat_long_height(x, y, z):
     r = np.sqrt(x**2 + y**2 + z**2)
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth
@@ -143,7 +143,7 @@ def satellite_dynamics(t, y):
     F_gravity = -G * M_EARTH / r**2
 
     # Drag
-    rho = atmospheric_density_true(lat, long, altitude)
+    rho = atmospheric_density_true(lat, long, altitude/1000)
     v = np.sqrt(vx**2 + vy**2 + vz**2)
     F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
     F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
@@ -178,14 +178,14 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
 # # Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
 
 # Initial conditions
-altitude_initial = 300e3
-velocity_initial = 8100
+altitude_initial = 250e3
+velocity_initial = 8000#(M_EARTH * G / (EARTH_SEMIMAJOR + altitude_initial))**0.5
 x0 = EARTH_SEMIMAJOR + altitude_initial
 y0 = 0
 z0 = 0
 vx0 = 0
-vy0 = velocity_initial/np.sqrt(2)
-vz0 = velocity_initial/np.sqrt(2)
+vy0 = velocity_initial+0.01 * velocity_initial  # Adding a small perturbation to the initial velocity
+vz0 = 0
 initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
 # Time span
