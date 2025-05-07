@@ -44,8 +44,10 @@ def get_sat_data():
     sat_pos_z = []
     t_vals = []
 
+    sat_file = os.path.join(script_dir, 'sat_traj.dat')
+
     try:
-        with open('simulator_files/sat_traj.dat', 'r') as file:
+        with open(sat_file, 'r') as file:
             for line_num, line in enumerate(file, 1):
                 values = line.strip().split()
                 sat_pos_x.append(float(values[0]))
@@ -248,11 +250,9 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM)):
                 # IN FOV
-                # predictor_helper.changedSignal.emit(info, tuple(radM))
-                data = radM
+                predictor_helper.changedSignal.emit(info, tuple(radM))
             else:
                 measurements[rname].append(np.zeros_like(radM))
-        predictor_helper.changedSignal.emit(info, tuple(data))
         earth_helper.changedSignal.emit(info, tuple(radM_no_noise))
 
         time.sleep(1)
@@ -276,6 +276,9 @@ def do_conversions(eci_coords, stime, radar):
     #         - A datetime object corresponding to the satellite position
     #         - Name of the radar
     # Outputs - An array containing range, azimuth and elevation
+
+    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+
 
     # radar = radars[radar_name]
     # print(radar)

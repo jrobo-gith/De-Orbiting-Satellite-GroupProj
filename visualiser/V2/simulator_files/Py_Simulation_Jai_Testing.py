@@ -3,6 +3,8 @@ from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import pymsis
 import datetime
+import os
+import sys
 
 np.random.seed(0)
 
@@ -179,7 +181,8 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
 
     t_vals = solution.t
 
-    sat_file = 'simulator_files/sat_traj.dat'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    sat_file = os.path.join(script_dir, "sat_traj.dat")
     # Write satellite data to a file
     with open(sat_file, "w") as fp:
         for i in range(solution.y[0].shape[0]):

@@ -1,3 +1,9 @@
+import os
+import sys
+
+root_dir = os.getcwd()
+sys.path.insert(0, root_dir)
+
 import json
 
 import pyqtgraph as pg
@@ -19,11 +25,14 @@ class Grapher(QWidget):
         self.init_y = init_y
 
         # Import profiles
-        with open('profiles/example.json') as f:
+        example_file = os.path.join(root_dir, "visualiser/V2/profiles/example.json")
+        with open(example_file) as f:
             example = json.load(f)
-        with open('profiles/velocity.json') as f:
+        velocity_file = os.path.join(root_dir, "visualiser/V2/profiles/velocity.json")
+        with open(velocity_file) as f:
             velocity = json.load(f)
-        with open('profiles/position.json') as f:
+        position_file = os.path.join(root_dir, "visualiser/V2/profiles/position.json")
+        with open(position_file) as f:
             position = json.load(f)
 
         ## Create two graphics layout widgets

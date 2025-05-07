@@ -1,3 +1,9 @@
+import os
+import sys
+
+root_dir = os.getcwd()
+sys.path.insert(0, root_dir)
+
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout)
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
@@ -9,7 +15,8 @@ from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import EARTH_SEMIMA
 
 from visualiser.V2.partials.navbar import Navbar
 import json
-with open('partials/global_settings.json') as f:
+json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+with open(json_file) as f:
     glob_setting = json.load(f)
 
 

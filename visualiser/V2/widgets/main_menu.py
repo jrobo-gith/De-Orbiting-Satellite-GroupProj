@@ -1,12 +1,17 @@
+import sys
+import os
+
+root_dir = os.getcwd()
+
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
     QLabel, QStackedWidget, QMainWindow, QStackedLayout)
 from PyQt5.QtCore import Qt
 import json
-import sys
 
-with open('partials/global_settings.json') as f:
+json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+with open(json_file) as f:
     glob_setting = json.load(f)
 
 
