@@ -162,14 +162,15 @@ def stop_condition(t, y):
     return altitude
 
 # Solves diff. eqn system between measurements radar(n) and radar(n+1)
-def system_solver(t_span, initial_conditions, t_evals=1000):
-    t_eval = np.linspace(t_span[0], t_span[1], t_evals)
+def system_solver(t_span_, initial_conditions):
+    t_evals = int(np.rint(t_span_/10))
+    t_eval = np.linspace(0, t_span_, t_evals)
     
     stop_condition.terminal = True
     stop_condition.direction = -1
     
     # Solve the system of equations using RK45
-    solution = solve_ivp(satellite_dynamics, t_span, initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition)
+    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0=initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step=100)
 
     x_vals = solution.y[0]
     y_vals = solution.y[1]

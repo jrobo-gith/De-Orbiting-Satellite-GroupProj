@@ -244,20 +244,26 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
 
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, noise=False)  # NO NOISE
 
+            radM_enu = radobj.radM2enu(radM)
+            radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
+            gmst_angle = get_gmst(sim_times[i])
+            Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
+            pos_x, pos_y, pos_z = Rot_eci2ecef.dot(radM_ecef)
 
             info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj}
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM)):
                 # IN FOV
-                predictor_helper.changedSignal.emit(info, tuple(radM))
+                predictor_helper.changedSignal.emit(info, (pos_x, pos_y, pos_z))
             else:
+                predictor_helper.changedSignal.emit(info, (0, 0, 0))
                 measurements[rname].append(np.zeros_like(radM))
         radM_enu = radobj.radM2enu(radM_no_noise)
         radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
         lat, lon, _ = ecef2lla(radM_ecef)
         earth_helper.changedSignal.emit(info, (lat, lon))
 
-        time.sleep(1)
+        time.sleep(5)
     for key, vals in measurements.items():
         measurements[key] = np.array(vals)
     return measurements

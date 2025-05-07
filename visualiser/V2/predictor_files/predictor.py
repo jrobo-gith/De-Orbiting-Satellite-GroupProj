@@ -6,8 +6,8 @@ from filterpy.kalman import UnscentedKalmanFilter as UKF
 from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
 
-from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import lat_long_height
-from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar
+from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import lat_long_height, EARTH_SEMIMAJOR
+from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar, ukf_Q
 
 from visualiser.V2.simulator_files. sat_tracking import do_conversions
 
@@ -36,13 +36,14 @@ class Predictor(QWidget):
         self.ukf.P = np.diag([50 ** 2, 50 ** 2, 50 ** 2,
                          5 ** 2, 5 ** 2, 5 ** 2])  # experiment this
         ### uncertainty in the process model
-        self.ukf.Q = np.zeros((6, 6))
-        self.ukf.Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect x and vx
-        self.ukf.Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect y and vy
-        self.ukf.Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect z and vz
+        self.ukf.Q = ukf_Q(6, dt=dt, var_=0.01)
+        # self.ukf.Q = np.zeros((6, 6))
+        # self.ukf.Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,
+        #                                                        var=0.01)  # Q matrix for how other noise affect x and vx
+        # self.ukf.Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,
+        #                                                        var=0.01)  # Q matrix for how other noise affect y and vy
+        # self.ukf.Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,
+        #                                                        var=0.01)  # Q matrix for how other noise affect z and vz
 
         # range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
         # elev_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
@@ -50,15 +51,15 @@ class Predictor(QWidget):
         # self.ukf.R = np.diag([range_std**2, elev_std**2, azim_std**2])
 
         """### radar measurement noise (for the simple self.ukf only! change this!!!!!!!!!!!!!!!!!!!!!!)"""
-        # x_std = 500  # meters. 
-        # y_std = 500  # meters.
-        # z_std = 10  # meters. 
-        # self.ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
+        x_std = 500  # meters.
+        y_std = 500  # meters.
+        z_std = 10  # meters.
+        self.ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
 
-        range_std = 10  # meters.
-        azim_std = 0.002  # radians. (theta)
-        elev_std = 0.002  # radians. (phi)
-        self.ukf.R = np.diag([range_std ** 2, azim_std ** 2, elev_std ** 2])
+        # range_std = 10  # meters.
+        # azim_std = 0.002  # radians. (theta)
+        # elev_std = 0.002  # radians. (phi)
+        # self.ukf.R = np.diag([range_std ** 2, azim_std ** 2, elev_std ** 2])
 
         self.xs_prior = []
         self.zs = []
@@ -70,7 +71,7 @@ class Predictor(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
-        print(f"{info['name']} observed: {update}")
+        # print(f"{info['name']} observed: {update}")
 
         ## PROBABLY TEMPORARY DT
         dt = 50.
@@ -79,19 +80,23 @@ class Predictor(QWidget):
 
         stime, radobj = info['stime'], info['radobj']
 
+        self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
         self.ukf.predict(dt=dt)
-        # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
+        # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
         self.xs_prior.append(self.ukf.x_prior)
-        self.ukf.update(list(update))
+        if update != (0, 0, 0):
+            self.ukf.update(list(update))
         x_post = self.ukf.x
         self.xs.append(x_post)
-        x_cov = self.ukf.P
-        self.Ps.append(x_cov)
+        print(f'x_post is: {x_post}')
+        # x_cov = self.ukf.P
+        # self.Ps.append(x_cov)
 
         # """Predict landing ====================================================================="""
-        # altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
-        #
-        # print("altitude=", altitude_val)
+        altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
+
+        print("radar height: ", np.abs(np.linalg.norm(list(update)))-EARTH_SEMIMAJOR)
+        print("altitude=", altitude_val, "\n")
         #
         # if altitude_val < 0:
         #     sys.exit()

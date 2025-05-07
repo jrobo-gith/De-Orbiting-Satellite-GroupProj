@@ -52,7 +52,7 @@ init_x.append(list(np.linspace(-3.0, 3.0, 100)))
 init_y.append(data_gen.cosine(init_x[2]))
 
 # Time span
-t_span = (0, 50000)
+t_span = 10_000_000
 
 class SimWidget(QWidget):
     def __init__(self, stacked_widget, initial_conditions, radar_list):
@@ -62,7 +62,11 @@ class SimWidget(QWidget):
         self.radar_list = radar_list
 
         ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        self.solution = system_solver(t_span, self.initial_conditions, t_evals=1000)
+        self.solution = system_solver(t_span, self.initial_conditions)
+        ## TEMPORARY GRAB EXISTING FILE
+        # temp_file = os.path.join(root_dir, "visualiser/V2/simulator_files/sat_traj.dat")
+        # with open(temp_file) as f:
+        #     solution = json.load(f)
 
         ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
         self.x_sim, self.y_sim, self.z_sim = self.solution.y[0], self.solution.y[1], self.solution.y[2]

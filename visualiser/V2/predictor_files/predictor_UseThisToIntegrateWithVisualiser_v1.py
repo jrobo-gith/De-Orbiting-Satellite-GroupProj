@@ -210,7 +210,12 @@ def h_radar(x):
     this H function assumes ra`rdar sends positions in global coordinate system"""
     return x[:3] # return x,y,z position if state order is (x,y,z,vx,vy,vz)
 
-
+def ukf_Q(dim, dt, var_):
+    Q = np.zeros((dim, dim))
+    Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect x and vx
+    Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect y and vy
+    Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect z and vz
+    return Q
 
 """ Define Unscented Kalman Filter ==================================================="""
 def satellite_UKF(state0,  fx, hx, dt=1.0):
