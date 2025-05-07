@@ -1,16 +1,18 @@
+import sys
+import subprocess
+
+# Install required files
+cmd = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+subprocess.run(cmd, check=True)
+
+
 from widgets.main_menu import MainMenu
 from widgets.instructions import Instructions
 from widgets.simulation_menu import SimulationMenu
 from widgets.credits import Credits
 
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow, QLabel, QWidget, QStackedLayout
-import sys
 import json
-import subprocess
-
-# Install required files
-cmd = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
-subprocess.run(cmd, check=True)
 
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)

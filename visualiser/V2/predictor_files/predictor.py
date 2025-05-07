@@ -70,11 +70,11 @@ class Predictor(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
-        print(f"We're putting in: {update}")
+        print(f"{info['name']} observed: {update}")
 
         ## PROBABLY TEMPORARY DT
         dt = 50.
-        print(info['obs-time'])
+        # print(info['obs-time'])
         self.ts.append(info['obs-time'])
 
         stime, radobj = info['stime'], info['radobj']
@@ -88,48 +88,47 @@ class Predictor(QWidget):
         x_cov = self.ukf.P
         self.Ps.append(x_cov)
 
-        """Predict landing ====================================================================="""
-        altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
-
-
+        # """Predict landing ====================================================================="""
+        # altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
+        #
         # print("altitude=", altitude_val)
-
-        if altitude_val < 0:
-            sys.exit()
-
-
-        if altitude_val <= 200e3:
-            # print("============== predict landing ================")
-            ### sample from the updated state distribution and predict landing position
-            state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5)
-
-            ### record the landing position (inertia coord), and landing time
-            predicted_landing_ECI = []
-            predicted_landing_latlon = []
-            predicted_landing_time = []
-
-            for state0 in state_samples:
-                # t_eval_arr = np.linspace(ts[-1], ts[-1]+100000, 1000)
-                stop_condition.terminal = True
-                stop_condition.direction = -1
-                start = self.ts[-1]
-                end = start + 1000000
-                landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end],
-                                    events=stop_condition)
-                while (landing.success and len(landing.y) > 0):
-                    end += 1000000
-                    landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end],
-                                        events=stop_condition)
-                if landing.success and len(landing.y) == 0:
-                    # print(landing.y_events, np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH)
-                    # print(landing.y_events[0][0][:3])
-                    landing_time = landing.t_events[0][0]
-                    landing_position = landing.y_events[0][0][:3]
-                    landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
-                                                              landing_position[2])
-                    predicted_landing_ECI.append(landing_position)
-                    predicted_landing_latlon.append(landing_position_latlon)
-                    predicted_landing_time.append(landing_time)
+        #
+        # if altitude_val < 0:
+        #     sys.exit()
+        #
+        #
+        # if altitude_val <= 200e3:
+        #     # print("============== predict landing ================")
+        #     ### sample from the updated state distribution and predict landing position
+        #     state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5)
+        #
+        #     ### record the landing position (inertia coord), and landing time
+        #     predicted_landing_ECI = []
+        #     predicted_landing_latlon = []
+        #     predicted_landing_time = []
+        #
+        #     for state0 in state_samples:
+        #         # t_eval_arr = np.linspace(ts[-1], ts[-1]+100000, 1000)
+        #         stop_condition.terminal = True
+        #         stop_condition.direction = -1
+        #         start = self.ts[-1]
+        #         end = start + 1000000
+        #         landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end],
+        #                             events=stop_condition)
+        #         while (landing.success and len(landing.y) > 0):
+        #             end += 1000000
+        #             landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end],
+        #                                 events=stop_condition)
+        #         if landing.success and len(landing.y) == 0:
+        #             # print(landing.y_events, np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH)
+        #             # print(landing.y_events[0][0][:3])
+        #             landing_time = landing.t_events[0][0]
+        #             landing_position = landing.y_events[0][0][:3]
+        #             landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
+        #                                                       landing_position[2])
+        #             predicted_landing_ECI.append(landing_position)
+        #             predicted_landing_latlon.append(landing_position_latlon)
+        #             predicted_landing_time.append(landing_time)
 
             # print(f"We are getting out: {x_post}")
             # print(self.ts, self.xs)
