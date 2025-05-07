@@ -1,3 +1,9 @@
+import os
+import sys
+
+root_dir = os.getcwd()
+sys.path.insert(0, root_dir)
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QCheckBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
@@ -9,7 +15,8 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('partials/global_settings.json') as f:
+json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+with open(json_file) as f:
     glob_setting = json.load(f)
 
 class Earth(pg.GraphicsLayoutWidget):
@@ -20,7 +27,7 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.plot_widget = pg.PlotWidget()
 
-        world_map = "widgets/graph_stuff/images/world_map.jpg"
+        world_map = json_file = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)
