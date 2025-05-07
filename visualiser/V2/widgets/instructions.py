@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from visualiser.V2.partials.navbar import Navbar
 import json
+
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
 

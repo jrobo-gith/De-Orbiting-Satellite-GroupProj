@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import json
+
+
 with open('partials/global_settings.json') as f:
     glob_setting = json.load(f)
 
