@@ -1,0 +1,80 @@
+import pyqtgraph as pg
+from PyQt5 import QtGui
+from pyqtgraph.Qt import QtWidgets, QtCore
+import numpy as np
+
+class Plot(pg.PlotWidget):
+    """Class to plot and update plots at a time"""
+    def __init__(self, plot_allocation, init_x, init_y, args, data_func):
+        super().__init__()
+        """
+        Initialise the plot
+
+        plot_allocation:    The subplot we're plotting to
+        init_x:             Initial x values
+        init_y:             Initial y values
+        interval:           How long between each update (ms)
+        args:               Cosmetic details about the graph
+        data_func:          (TEMPORARY) Simulating data
+        """
+
+        assert type(init_x) == list, print("Initial x must be a list")
+        assert type(init_y) == list, print("Initial y must be a list")
+        assert type(args) == dict, print("Arguments must be a dictionary")
+
+        self.plot_allocation = plot_allocation
+        self.args = args
+        self.init_x = init_x
+        self.init_y = init_y
+
+        self.num_lines = len(init_x)
+        self.data_gen = data_func
+
+        if args["legend"]:
+            self.plot_allocation.addLegend()
+        if args["grid"]:
+            self.plot_allocation.showGrid(x=True, y=True)
+
+
+        self.plot_allocation.setTitle(args["title"])
+        self.plot_allocation.setLabel("bottom", args["label_title_x"])
+        self.plot_allocation.setLabel("left", args["label_title_y"])
+
+        if args['x-lim'] != "None":
+            self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
+        if args['y-lim'] != "None":
+            self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
+
+        # Plot initial values
+        self.lines = []
+        for i in range(self.num_lines):
+            self.line = self.plot_line(x=init_x[i],
+                           y=init_y[i],
+                           line_name=args["line_names"][i],
+                           symbol=args["symbols"][i],
+                           pen=pg.mkPen(color=args["pens"][i]['color'], width=args["pens"][i]['width']),)
+            self.lines.append(self.line)
+
+    def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
+        line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
+        return line
+
+    def update_plot(self, new_data_X:list, new_data_Y:list):
+        """
+        MUST take in list vectors of size 1 X L.
+        """
+        assert type(new_data_X) == list, print("New X must be a list")
+        assert type(new_data_Y) == list, print("New Y must be a list")
+
+        for i, self.line in enumerate(self.lines):
+            if len(self.init_x[i]) > 100: # If the length is larger than 100
+                # Remove oldest datapoint
+                self.init_x[i] = self.init_x[i][1:]
+                self.init_y[i] = self.init_y[i][1:]
+
+            # Add new data point
+            self.init_x[i].append(new_data_X[i])
+            self.init_y[i].append(new_data_Y[i])
+
+            # Update Line
+            self.line.setData(self.init_x[i], self.init_y[i])
