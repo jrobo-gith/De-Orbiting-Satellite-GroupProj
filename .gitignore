@@ -2,3 +2,4 @@ simulator/
 visuliser/
 venv/
 __pycache__/
+sat_traj.dat
