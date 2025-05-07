@@ -29,6 +29,47 @@ H_SCALE = 8500
 
 
 
+# def curvature_in_prime_vertical(phi):
+#             return EARTH_SEMIMAJOR / np.sqrt(1 - E_SQUARED * np.sin(phi)**2)
+        
+# def latitude_iterator_and_height(x, y, z):
+#     r = np.sqrt(x**2 + y**2)
+#     phi = np.arctan(z / (r * (1 - E_SQUARED)))
+#     phi_new = phi + 100
+    
+#     while np.abs(phi_new - phi) > 1e-9:
+#         phi = phi_new
+#         N = curvature_in_prime_vertical(phi)
+#         phi_new = np.arctan2(z + (N * E_SQUARED) * np.sin(phi), r - (N * E_SQUARED) * np.cos(phi))
+    
+#     height = (r / np.cos(phi)) - N
+#     if height < 0:
+#         height = 0
+    
+#     return phi_new, height
+
+
+# def earth_radius_WGS84(latitude):
+#     numerator = (EARTH_SEMIMAJOR**2 * np.cos(latitude))**2 + (EARTH_SEMIMINOR**2 * np.sin(latitude))**2
+#     denominator = (EARTH_SEMIMAJOR * np.cos(latitude))**2 + (EARTH_SEMIMINOR * np.sin(latitude))**2
+#     return np.sqrt(numerator / denominator)
+
+# def lat_long_height(x, y, z):
+#     r = np.linalg.norm([x,y,z])
+#     longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+#     latitude, height = latitude_iterator_and_height(x, y, z)
+#     R_earth = earth_radius_WGS84(latitude)
+#     height = r - R_earth
+#     return latitude, longitude, height
+
+# def atmospheric_density(altitude):
+#     # White noise as random perturbations of magnitude 0.1*RHO_0
+#     density = RHO_0 * np.exp(-altitude / H_SCALE)
+#     if altitude > 0:
+#         return density
+#     else:
+#         return 0
+
 def curvature_in_prime_vertical(phi):
             return EARTH_SEMIMAJOR / np.sqrt(1 - E_SQUARED * np.sin(phi)**2)
         
@@ -45,7 +86,7 @@ def latitude_iterator_and_height(x, y, z):
     height = (r / np.cos(phi)) - N
     if height < 0:
         height = 0
-    
+            
     return phi_new, height
 
 
@@ -56,8 +97,44 @@ def earth_radius_WGS84(latitude):
 
 def lat_long_height(x, y, z):
     r = np.linalg.norm([x,y,z])
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height(x, y, z)
+    R_earth = earth_radius_WGS84(latitude)
+    height = r - R_earth
+    return latitude, longitude, height
+
+def latitude_iterator_and_height_plot(x, y, z):
+    x = np.asarray(x)
+    y = np.asarray(y)
+    z = np.asarray(z)
+
+    r = np.sqrt(x**2 + y**2)
+    phi = np.arctan(z / (r * (1 - E_SQUARED)))
+    phi_new = phi + 100  # ensures entry into the loop
+
+    converged = np.zeros_like(phi, dtype=bool)
+    max_iter = 100
+    iter_count = 0
+
+    while not np.all(converged) and iter_count < max_iter:
+        phi[~converged] = phi_new[~converged]
+        N = curvature_in_prime_vertical(phi)
+        phi_new[~converged] = np.arctan2(z[~converged] + (N[~converged] * E_SQUARED) * np.sin(phi[~converged]),
+                                         r[~converged] - (N[~converged] * E_SQUARED) * np.cos(phi[~converged]))
+        converged[~converged] = np.abs(phi_new[~converged] - phi[~converged]) <= 1e-9
+        iter_count += 1
+
+    phi_final = phi_new
+    N_final = curvature_in_prime_vertical(phi_final)
+    height = (r / np.cos(phi_final)) - N_final
+    height = np.maximum(height, 0)  # ensure non-negative height
+
+    return phi_final, height
+
+def lat_long_height_plot(x, y, z):
+    r = np.sqrt(x**2 + y**2 + z**2)
+    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
+    latitude, height = latitude_iterator_and_height_plot(x, y, z)
     R_earth = earth_radius_WGS84(latitude)
     height = r - R_earth
     return latitude, longitude, height
@@ -65,10 +142,7 @@ def lat_long_height(x, y, z):
 def atmospheric_density(altitude):
     # White noise as random perturbations of magnitude 0.1*RHO_0
     density = RHO_0 * np.exp(-altitude / H_SCALE)
-    if altitude > 0:
-        return density
-    else:
-        return 0
+    return density
     
 """ Landing stopping condition"""
 def stop_condition(t, y):
@@ -79,9 +153,10 @@ def stop_condition(t, y):
 
 """ Define the ODE of the orbit dynamics ================================="""
 def ode(t, state_x):
-        x, y, z, vx, vy, vz= state_x
+        x, y, z, vx, vy, vz= state_x        
         
         r = np.linalg.norm(state_x[:3])
+
         altitude = lat_long_height(x, y, z)[2]
 
         # Gravity
@@ -95,6 +170,7 @@ def ode(t, state_x):
         F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
         F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
         F_drag_z = -0.5 * rho * CD * A * v * vz / M_SAT
+        # print("drag:", [F_drag_x, F_drag_y, F_drag_z])
         
         # Acceleration
         ax = F_gravity * (x / r) + F_drag_x
@@ -109,22 +185,24 @@ def f(state_x, dt):
 
     """state vector = state_x = [x,y,z,vx, vy, vz]"""
 
-    if dt <= 10.:
-        x, y, z, vx, vy, vz= state_x
-        _, _, _, ax, ay, az = ode(0, state_x)
-        # Use Euler's method for small dt
-        x_new = x + vx * dt
-        y_new = y + vy * dt
-        z_new = z + vz * dt
-        vx_new = vx + ax * dt
-        vy_new = vy + ay * dt
-        vz_new = vz + az * dt
-        return np.array([x_new, y_new, z_new, vx_new, vy_new, vz_new])
-    else:
-        # Use RK4 for larger dt
-        solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt])
-        # print(solution.y)
-        return solution.y.flatten()
+    # if dt <= 10.:
+    #     x, y, z, vx, vy, vz= state_x
+    #     _, _, _, ax, ay, az = ode(0, state_x)
+    #     # Use Euler's method for small dt
+    #     x_new = x + vx * dt
+    #     y_new = y + vy * dt
+    #     z_new = z + vz * dt
+    #     vx_new = vx + ax * dt
+    #     vy_new = vy + ay * dt
+    #     vz_new = vz + az * dt
+    #     return np.array([x_new, y_new, z_new, vx_new, vy_new, vz_new])
+    # else:
+    #     # Use RK4 for larger dt
+    #     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt])
+    #     # print(solution.y)
+    #     return solution.y.flatten()
+    solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
+    return solution.y.flatten()
 
 """ Define measurement function h(x) ================================================="""
 def h_radar(x):
