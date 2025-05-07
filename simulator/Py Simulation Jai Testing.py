@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import solve_ivp
+from scipy.integrate import solve_ivp, RK45
 import matplotlib.pyplot as plt
 import pymsis
 import datetime
@@ -14,8 +14,8 @@ FLATTENING = 1/298.257223563                # Flattening of Earth (dimensionless
 E_SQUARED = FLATTENING * (2 - FLATTENING)   # Eccentricity squared (dimensionless)
 ATMOSPHERE_HEIGHT = 120e3                   # Approximate height of the atmosphere (m)
 CD = 2.2                                    # Drag coefficient (dimensionless)
-A = 1.3                                     # Cross-sectional area of the satellite (m^2)
-M_SAT = 1050                                # Mass of the satellite (kg)
+A = 1.0                                     # Cross-sectional area of the satellite (m^2)
+M_SAT = 500                                # Mass of the satellite (kg)
 RHO_0 = 1.225                               # Air density at sea level (kg/m^3)
 H_SCALE = 8500                              # Scale height of the atmosphere (m)
 
@@ -143,7 +143,7 @@ def satellite_dynamics(t, y):
     F_gravity = -G * M_EARTH / r**2
 
     # Drag
-    rho = atmospheric_density_true(lat, long, altitude/1000)
+    rho = atmospheric_density(altitude)#_true(lat, long, altitude/1000)
     v = np.sqrt(vx**2 + vy**2 + vz**2)
     F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
     F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
@@ -163,14 +163,15 @@ def stop_condition(t, y):
     return altitude
 
 # Solves diff. eqn system between measurements radar(n) and radar(n+1)
-def system_solver(t_span, initial_conditions, t_evals=1000):
-    t_eval = np.linspace(t_span[0], t_span[1], t_evals)
+def system_solver(t_span_, initial_conditions):
+    t_evals = int(np.rint(t_span_/10))
+    t_eval = np.linspace(0, t_span_, t_evals)
     
     stop_condition.terminal = True
     stop_condition.direction = -1
     
     # Solve the system of equations using RK45
-    solution = solve_ivp(satellite_dynamics, t_span, initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition)
+    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0 = initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step = 50)
     return solution
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -178,22 +179,24 @@ def system_solver(t_span, initial_conditions, t_evals=1000):
 # # Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
 
 # Initial conditions
-altitude_initial = 250e3
-velocity_initial = 8000#(M_EARTH * G / (EARTH_SEMIMAJOR + altitude_initial))**0.5
+altitude_initial = 180e3
+velocity_initial = 7800#(M_EARTH * G / (EARTH_SEMIMAJOR + altitude_initial))**0.5
 x0 = EARTH_SEMIMAJOR + altitude_initial
 y0 = 0
 z0 = 0
 vx0 = 0
-vy0 = velocity_initial+0.01 * velocity_initial  # Adding a small perturbation to the initial velocity
+vy0 = velocity_initial #+0.01 * velocity_initial  # Adding a small perturbation to the initial velocity
 vz0 = 0
 initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
 # Time span
-t_span = (0, 50000)
-t_eval = np.linspace(t_span[0], t_span[1], 1000)  # Points for evaluation
+t_span_ = 10000000
 
 # Solve differential equations using RK45
-solution = system_solver(t_span, initial_conditions, t_evals=1000)
+solution = system_solver(t_span_, initial_conditions)
+
+t_eval = np.linspace(0, t_span_, 1000)  # Points for evaluation
+
 
 x_vals = solution.y[0]
 y_vals = solution.y[1]
