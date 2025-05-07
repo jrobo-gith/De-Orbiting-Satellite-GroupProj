@@ -7,7 +7,7 @@ from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
 
 from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import lat_long_height
-from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar
+from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar, ukf_Q
 
 from visualiser.V2.simulator_files. sat_tracking import do_conversions
 
@@ -36,13 +36,11 @@ class Predictor(QWidget):
         self.ukf.P = np.diag([50 ** 2, 50 ** 2, 50 ** 2,
                          5 ** 2, 5 ** 2, 5 ** 2])  # experiment this
         ### uncertainty in the process model
-        self.ukf.Q = np.zeros((6, 6))
-        self.ukf.Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect x and vx
-        self.ukf.Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect y and vy
-        self.ukf.Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,
-                                                               var=0.01)  # Q matrix for how other noise affect z and vz
+        self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
+        # self.ukf.Q = np.zeros((6, 6))
+        # self.ukf.Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,var=0.01)  # Q matrix for how other noise affect x and vx
+        # self.ukf.Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,var=0.01)  # Q matrix for how other noise affect y and vy
+        # self.ukf.Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,var=0.01)  # Q matrix for how other noise affect z and vz
 
         # range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
         # elev_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
