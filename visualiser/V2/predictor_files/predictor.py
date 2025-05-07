@@ -7,7 +7,7 @@ from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
 
 from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import lat_long_height
-from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f
+from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar
 
 from visualiser.V2.simulator_files. sat_tracking import do_conversions
 
@@ -26,7 +26,7 @@ class Predictor(QWidget):
         """ =============== Generate sigma points """
         ### initialise self.ukf
         sigmas_generator = MerweScaledSigmaPoints(n=6, alpha=0.1, beta=2., kappa=-3.)  # kappa = -3.
-        self.ukf = UKF(dim_x=6, dim_z=3, fx=f, hx=do_conversions, dt=dt, points=sigmas_generator)  # take f, h from Jai and Vijay
+        self.ukf = UKF(dim_x=6, dim_z=3, fx=f, hx=h_radar, dt=dt, points=sigmas_generator)  # take f, h from Jai and Vijay
         # print(self.ukf.Q)
 
         """ ============== Define items in self.ukf """
@@ -80,7 +80,7 @@ class Predictor(QWidget):
         stime, radobj = info['stime'], info['radobj']
 
         self.ukf.predict(dt=dt)
-        self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
+        # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
         self.xs_prior.append(self.ukf.x_prior)
         self.ukf.update(list(update))
         x_post = self.ukf.x
