@@ -129,7 +129,11 @@ def f(state_x, dt):
 """ Define measurement function h(x) ================================================="""
 def h_radar(x):
     """x is the state vector,
+<<<<<<< HEAD
     this H function assumes radar sends positions in global coordinate system"""
+=======
+    this H function assumes ra`rdar sends positions in global coordinate system"""
+>>>>>>> 3caa5981b64a87066b57aafd1195424773735772
     return x[:3] # return x,y,z position if state order is (x,y,z,vx,vy,vz)
 
 

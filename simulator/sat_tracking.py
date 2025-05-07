@@ -1,15 +1,8 @@
-import threading
-
 import numpy as np
 import matplotlib.pyplot as plt
-from PyQt5 import QtCore
 from pyproj import CRS, Transformer, Proj
 from datetime import datetime, timedelta
 import os
-import time
-
-class Helper(QtCore.QObject):
-    changedSignal = QtCore.pyqtSignal(str, tuple)
 
 # Constants
 G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
@@ -17,7 +10,48 @@ M_EARTH = 5.972e24  # Mass of Earth (kg)
 R_EARTH_EQUATOR = 6378e3  # Radius of Earth near equator (m)
 R_EARTH_POLES = 6357e3 # Radius of Earth near poles (m)
 
+sat_pos_x = []
+sat_pos_y = []
+sat_pos_z = []
+t_vals = []
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
+sat_file = os.path.join(script_dir, "sat_traj.dat")
+
+try:
+    with open(sat_file, 'r') as file:
+        for line_num, line in enumerate(file, 1): 
+            values = line.strip().split()
+            sat_pos_x.append(float(values[0]))
+            sat_pos_y.append(float(values[1]))
+            sat_pos_z.append(float(values[2]))
+            t_vals.append(float(values[-1]))
+except FileNotFoundError:
+    print("Error: File 'sat_traj.dat' not found.")
+except ValueError as e:
+    print(f"Error: Could not convert value to float on line {line_num}: {e}")
+
+sat_pos_x = np.array(sat_pos_x)
+sat_pos_y = np.array(sat_pos_y)
+sat_pos_z = np.array(sat_pos_z)
+t_vals = np.array(t_vals)
+sat_pos_eci = np.column_stack((sat_pos_x, sat_pos_y, sat_pos_z))
+
+# 3D plot
+fig = plt.figure(figsize=(10, 6))
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(sat_pos_x / 1e3, sat_pos_y / 1e3, sat_pos_z / 1e3)
+ax.set_title('Satellite Trajectory in 3D')
+ax.set_xlabel('X Position (km)')
+ax.set_ylabel('Y Position (km)')
+ax.set_zlabel('Z Position (km)')
+plt.show()
+
+sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+nt = t_vals.shape[0]
+dt = t_vals[1] - t_vals[0]
+
+sim_times = np.array([sim_start_time + timedelta(seconds=i*dt) for i in range(nt)])
 
 # Compute Greenwich Mean Sidereal Time for the given time
 def get_gmst(t):
@@ -29,6 +63,9 @@ def get_gmst(t):
     gmst %= 360
     return np.radians(gmst)
 
+# Compute GMST angles for simulation times
+gmst_angles = np.array([get_gmst(t) for t in sim_times])
+
 # ECI to ECEF rotation matrix
 def eci2ecef_matrix(theta):
     # Inputs  - GMST angle in radians
@@ -37,61 +74,41 @@ def eci2ecef_matrix(theta):
                      [-np.sin(theta), np.cos(theta), 0],
                      [0,0,1]])
 
+# Convert ECI to ECEF
+sat_pos_ecef = np.zeros_like(sat_pos_eci)
+for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
+    Rot_eci2ecef = eci2ecef_matrix(theta)
+    sat_pos_ecef[i] = Rot_eci2ecef.dot(pos)
 
-def get_sat_data():
-    sat_pos_x = []
-    sat_pos_y = []
-    sat_pos_z = []
-    t_vals = []
+# 3D plot
+#fig = plt.figure(figsize=(10, 6))
+#ax = fig.add_subplot(111, projection='3d')
+#ax.plot(sat_pos_ecef[0] / 1e3, sat_pos_ecef[1] / 1e3, sat_pos_ecef[2] / 1e3)
+#ax.set_title('Satellite Trajectory in 3D')
+#ax.set_xlabel('X Position (km)')
+#ax.set_ylabel('Y Position (km)')
+#ax.set_zlabel('Z Position (km)')
+#plt.show()
 
-<<<<<<< HEAD
-    sat_file = os.path.join(script_dir, 'simulator_files/sat_traj.dat')
-
-    try:
-        with open(sat_file, 'r') as file:
-=======
-    try:
-        with open('simulator_files/sat_traj.dat', 'r') as file:
->>>>>>> 3caa5981b64a87066b57aafd1195424773735772
-            for line_num, line in enumerate(file, 1):
-                values = line.strip().split()
-                sat_pos_x.append(float(values[0]))
-                sat_pos_y.append(float(values[1]))
-                sat_pos_z.append(float(values[2]))
-                t_vals.append(float(values[-1]))
-    except FileNotFoundError:
-        print("Error: File 'sat_traj.dat' not found.")
-    except ValueError as e:
-        print(f"Error: Could not convert value to float on line {line_num}: {e}")
-
-    sat_pos_x = np.array(sat_pos_x)
-    sat_pos_y = np.array(sat_pos_y)
-    sat_pos_z = np.array(sat_pos_z)
-    t_vals = np.array(t_vals)
-    sat_pos_eci = np.column_stack((sat_pos_x, sat_pos_y, sat_pos_z))
-
-    nt = t_vals.shape[0]
-    dt = t_vals[1] - t_vals[0]
-
-    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
-    sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
-
-    # Compute GMST angles for simulation times
-    gmst_angles = np.array([get_gmst(t) for t in sim_times])
-
-    # Convert ECI to ECEF
-    sat_pos_ecef = np.zeros_like(sat_pos_eci)
-    for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
-        Rot_eci2ecef = eci2ecef_matrix(theta)
-        sat_pos_ecef[i] = Rot_eci2ecef.dot(pos)
-    return sat_pos_ecef, t_vals
+#sat_alt_eci = (np.linalg.norm(sat_pos_eci, axis=1) - R_EARTH_EQUATOR) / 1e3
+#sat_alt_ecef = (np.linalg.norm(sat_pos_ecef, axis=1) - R_EARTH_EQUATOR) / 1e3
+#fig, axes = plt.subplots(1,2)
+#xvals = np.arange(nt) 
+#axes[0].plot(xvals, sat_alt_eci)
+#axes[0].set_xlabel('Time (s)')
+#axes[0].set_ylabel('Altitude (km)')
+#axes[1].plot(xvals, sat_alt_ecef)
+#axes[1].set_xlabel('Time (s)')
+#axes[1].set_ylabel('Altitude (km)')
+#plt.tight_layout()
+#plt.show()
 
 # Radar class - contains radar specifications and functions
 class Radar:
     # Contains radar specific information
-    __range_uncertainty = 100
-    __theta_uncertainty = 0.01
-    __phi_uncertainty = 0.01
+    __range_uncertainty = 10
+    __theta_uncertainty = 0.002
+    __phi_uncertainty = 0.002
 
     def __init__(self, longlat, azfov=360, elfov=180):
         # Inputs - An array containing lat-long-alt of radar
@@ -222,56 +239,48 @@ def enu2lla(enu_coords, ref_lla_coords):
     lla_coords = ecef2lla(ecef_coords)
     return lla_coords
 
+# Initialise radars
+# Radar instance inputs: Coordinates - [lon, lat, alt]
+#                      Azimuth field of view in degrees
+#                      Elevation field of view in degrees
+radars = {
+    "radar1": Radar([-50, -1.5, 15], azfov=120, elfov=60),
+    "radar2": Radar([37, -1.3, 1650], azfov=120, elfov=60),
+    "radar3": Radar([100, 0.8, 25], azfov=120, elfov=60),
+    "radar4": Radar([0.55, 50, 70], azfov=120, elfov=60),
+    "radar5": Radar([0, 90, 1000], azfov=120, elfov=60),
+}
+
 # Simulate radar measurements
-def get_radar_measurements(radars, earth_helper, predictor_helper):
+def get_radar_measurements(sat_pos_ecef, radars):
     # Inputs  - An array of satellite positions in ECEF coordinates
     #         - A dictionary of radar objects
     # Outputs - A dictionary of measurements taken by each radar
-    sat_pos_ecef, t_vals = get_sat_data()
     measurements = {key: [] for key in radars.keys()}
-
-    nt = t_vals.shape[0]
-    dt = t_vals[1] - t_vals[0]
-
-    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
-    sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
-
-
-    # Check every t seconds
-    for i in range(t_vals.shape[0]):
-        curr_sat_pos = sat_pos_ecef[i]
-        for rname,radobj in radars.items():
-            # Compute relative position of satellite from radar and range
-            rel_pos = curr_sat_pos - radobj.pos_ecef
-
-            # Convert to ENU coordinates to compute azimuth and elevation
-            rel_pos_enu = ecef2enu(rel_pos, radobj.pos_lla)
-            radM = radobj.radar_measurements(rel_pos_enu)
-
-            radM_no_noise = radobj.radar_measurements(rel_pos_enu, noise=False)  # NO NOISE
-
-
-            info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj}
-            # Check if the satellite is in field of view of the radar
-            if (radobj.check_fov(radM)):
-                # IN FOV
-<<<<<<< HEAD
-                predictor_helper.changedSignal.emit(info, tuple(radM))
-            else:
-                measurements[rname].append(np.zeros_like(radM))
-=======
-                # predictor_helper.changedSignal.emit(info, tuple(radM))
-                data = radM
-            else:
-                measurements[rname].append(np.zeros_like(radM))
-        predictor_helper.changedSignal.emit(info, tuple(data))
->>>>>>> 3caa5981b64a87066b57aafd1195424773735772
-        earth_helper.changedSignal.emit(info, tuple(radM_no_noise))
-
-        time.sleep(1)
+    radM_file = os.path.join(script_dir, "radar_measurements.dat")
+    with open(radM_file, "w") as fp:
+        # Check every t seconds
+        for i in range(t_vals.shape[0]):
+            curr_sat_pos = sat_pos_ecef[i]
+            for rname,radobj in radars.items():
+                # Compute relative position of satellite from radar and range
+                rel_pos = curr_sat_pos - radobj.pos_ecef
+        
+                # Convert to ENU coordinates to compute azimuth and elevation
+                rel_pos_enu = ecef2enu(rel_pos, radobj.pos_lla)
+                radM = radobj.radar_measurements(rel_pos_enu)
+        
+                # Check if the satellite is in field of view of the radar
+                if (radobj.check_fov(radM)):
+                    measurements[rname].append(radM)
+                    fp.write(f"{i} {radobj.lon} {radobj.lat} {radobj.alt} {radM[0]} {radM[1]} {radM[2]}\n")
+                else:
+                    measurements[rname].append(np.zeros_like(radM))
     for key, vals in measurements.items():
         measurements[key] = np.array(vals)
     return measurements
+
+radar_measurements = get_radar_measurements(sat_pos_ecef, radars)
 
 # Convert satellite's position to lat-long given its ECEF coordinates
 def sat_ecef2lla(sat_pos_ecef):
@@ -283,21 +292,34 @@ def sat_ecef2lla(sat_pos_ecef):
     sat_pos_lla = np.array(sat_pos_lla)
     return sat_pos_lla
 
+# Write the satellite trajectory in lat-long to a file
+def write_sat_lla(sat_pos_ecef):
+    # Inputs  - An array of satellite positions in ECEF coordinates
+    # Outputs - An array of satellite positions in LLA coordinates 
+    sat_pos_lla = sat_ecef2lla(sat_pos_ecef)
+
+    # Write satellite positions to file
+    try:
+        sat_traj_file = os.path.join(script_dir, "sat_traj_longlat.dat")
+        with open(sat_traj_file, 'w') as file:
+            for i in range(sat_pos_lla.shape[0]):
+                file.write(f"{sat_pos_lla[i,0]} {sat_pos_lla[i,1]} {sat_pos_lla[i,2]}\n")
+    except ValueError as e:
+        print(f"Error: Writing failed with error {e}")
+    
+    return sat_pos_lla
+
+sat_pos_lla = write_sat_lla(sat_pos_ecef)
+
 # Function to convert satellite position in ECI to radar's local spherical coordinates
-def do_conversions(eci_coords, stime, radar):
+def do_conversions(eci_coords, stime, radar_name):
     # Inputs  - ECI coordinates of the satellite
     #         - A datetime object corresponding to the satellite position
     #         - Name of the radar
     # Outputs - An array containing range, azimuth and elevation
 
-<<<<<<< HEAD
-    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
-
-
-=======
->>>>>>> 3caa5981b64a87066b57aafd1195424773735772
-    # radar = radars[radar_name]
-    # print(radar)
+    radar = radars[radar_name]
+    print(radar)
     # Convert satellite position from ECI to ECEF
     gmst_angle = get_gmst(stime)
     Rot_eci2ecef = eci2ecef_matrix(gmst_angle)
@@ -311,10 +333,4 @@ def do_conversions(eci_coords, stime, radar):
 
     return radM
 
-radars = {}
 
-def initialise_radars(latlon:list):
-    for i, pos in enumerate(latlon):
-        radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=60)
-
-    return radars
