@@ -79,14 +79,14 @@ class Predictor(QWidget):
 
         stime, radobj = info['stime'], info['radobj']
 
-        self.ukf.predict(dt=dt)
-        # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
-        self.xs_prior.append(self.ukf.x_prior)
-        self.ukf.update(list(update))
-        x_post = self.ukf.x
-        self.xs.append(x_post)
-        x_cov = self.ukf.P
-        self.Ps.append(x_cov)
+        # self.ukf.predict(dt=dt)
+        # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
+        # self.xs_prior.append(self.ukf.x_prior)
+        # self.ukf.update(list(update))
+        # x_post = self.ukf.x
+        # self.xs.append(x_post)
+        # x_cov = self.ukf.P
+        # self.Ps.append(x_cov)
 
         # """Predict landing ====================================================================="""
         # altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
