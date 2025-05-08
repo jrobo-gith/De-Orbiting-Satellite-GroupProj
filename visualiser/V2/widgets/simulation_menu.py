@@ -59,7 +59,6 @@ class SimulationMenu(QWidget):
         positions.addWidget(self.input_Z_pos)
 
         # Add input velocity ability
-
         self.input_X_vel = QLineEdit()
         self.input_X_vel.setFont(QFont(glob_setting['font-family'], 22))
         self.input_X_vel.setText("X-vel")
@@ -123,7 +122,7 @@ class SimulationMenu(QWidget):
         #
         # initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
 
-        stable_condition = [100e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7800/np.sqrt(2), 7800/np.sqrt(2)]
+        stable_condition = [120e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7800/np.sqrt(2), 7800/np.sqrt(2)]
 
         radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
 
