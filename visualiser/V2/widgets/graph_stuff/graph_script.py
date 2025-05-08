@@ -17,12 +17,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Grapher(QWidget):
-    def __init__(self, init_x, init_y):
+    def __init__(self, ):
         super().__init__()
         pg.setConfigOption('foreground', 'white')
-
-        self.init_x = init_x
-        self.init_y = init_y
 
         # Import profiles
         example_file = os.path.join(root_dir, "visualiser/V2/profiles/example.json")
@@ -71,46 +68,47 @@ class Grapher(QWidget):
         self.layout.addWidget(self.predictor_graphs, 0, 2)
         self.setLayout(self.layout)
 
+
         self.plot_list = []
         # Add simulator plots
         self.sim_1 = self.simulator_graphs.addPlot(row=0, col=0)
         self.sim_1 = Plot(self.sim_1,
-                          [self.init_x[0]],
-                          [self.init_y[0]],
-                          args=example,
-                          data_func=data_gen.sinusoid)
+                          [[0], [0]],
+                          [[0], [0]],
+                          args=example)
+
         self.plot_list.append(self.sim_1)
 
-        self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
-        self.sim_2 = Plot(self.sim_2,
-                          [self.init_x[1]],
-                          [self.init_y[1]],
-                          args=position,
-                          data_func=data_gen.tangent)
-        self.plot_list.append(self.sim_2)
-
-        # Add combined plots
-        self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
-        self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
-
-        # Add predictor plots
-        self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
-        self.pred_1 = Plot(self.pred_1,
-                          [self.init_x[2]],
-                          [self.init_y[2]],
-                          args=velocity,
-                          data_func=data_gen.cosine)
-
-        self.plot_list.append(self.pred_1)
-
-        self.pred_2 = self.predictor_graphs.addPlot(row=1, col=0)
-        self.pred_2 = Plot(self.pred_2,
-                           [self.init_x[2]],
-                           [self.init_y[2]],
-                           args=velocity,
-                           data_func=data_gen.cosine)
-
-        self.plot_list.append(self.pred_2)
+        # self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
+        # self.sim_2 = Plot(self.sim_2,
+        #                   [self.init_x[1]],
+        #                   [self.init_y[1]],
+        #                   args=position,
+        #                   data_func=data_gen.tangent)
+        # self.plot_list.append(self.sim_2)
+        #
+        # # Add combined plots
+        # self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
+        # self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
+        #
+        # # Add predictor plots
+        # self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
+        # self.pred_1 = Plot(self.pred_1,
+        #                   [self.init_x[2]],
+        #                   [self.init_y[2]],
+        #                   args=velocity,
+        #                   data_func=data_gen.cosine)
+        #
+        # self.plot_list.append(self.pred_1)
+        #
+        # self.pred_2 = self.predictor_graphs.addPlot(row=1, col=0)
+        # self.pred_2 = Plot(self.pred_2,
+        #                    [self.init_x[2]],
+        #                    [self.init_y[2]],
+        #                    args=velocity,
+        #                    data_func=data_gen.cosine)
+        #
+        # self.plot_list.append(self.pred_2)
 
 
     @QtCore.pyqtSlot(dict, tuple)
@@ -119,5 +117,6 @@ class Grapher(QWidget):
         L is the number of lines needing updates.
         """
         x, y = update
+
         for i, plot in enumerate(self.plot_list):
             plot.update_plot(x[i], y[i])

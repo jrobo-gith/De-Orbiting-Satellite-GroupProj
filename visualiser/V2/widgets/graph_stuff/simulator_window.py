@@ -42,15 +42,6 @@ def create_data(helper, name):
         helper.changedSignal.emit({'name': name}, (outgoing_x, outgoing_y))
         time.sleep(.1)
 
-init_x = [list(np.linspace(-3.0, 3.0, 100))]
-init_y = [data_gen.sinusoid(init_x[0])]
-
-init_x.append(list(np.linspace(-3.0, 3.0, 100)))
-init_y.append(data_gen.tangent(init_x[1]))
-
-init_x.append(list(np.linspace(-3.0, 3.0, 100)))
-init_y.append(data_gen.cosine(init_x[2]))
-
 # Time span
 t_span = 10_000_000
 
@@ -138,10 +129,10 @@ class SimWidget(QWidget):
         ## Earth window
         self.earth = Earth(full_sim_data=(self.lat, self.lon, self.t))
         ## graph_script
-        self.graph = Grapher(init_x=init_x, init_y=init_y)
+        self.graph = Grapher()
 
         ## Predictor TESTING
-        self.predictor = Predictor(state0=initial_conditions)
+        self.predictor = Predictor(grapher=self.graph, state0=initial_conditions)
 
         self.radars = initialise_radars(radar_list)
 
@@ -156,9 +147,9 @@ class SimWidget(QWidget):
         self.setLayout(container)
 
         # Set threads up to feed data into graph and earth to
-        graph_helper = Helper()
-        graph_helper.changedSignal.connect(self.graph.update_plots, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=create_data, args=(graph_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
+        # graph_helper = Helper()
+        # graph_helper.changedSignal.connect(self.graph.update_plots, QtCore.Qt.QueuedConnection)
+        # threading.Thread(target=create_data, args=(graph_helper, "redundant_name"), daemon=True).start() # Target will be RADAR
 
         # Predictor
         pred_helper = Helper()
@@ -184,7 +175,6 @@ class SimWidget(QWidget):
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
         self.key_sim.setStyleSheet(f"color: rgba(0, 0, 255, 0);")
         self.key_pred.setStyleSheet(f"color: rgba(0, 255, 0, 0);")
-
 
 
 

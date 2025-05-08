@@ -5,7 +5,7 @@ import numpy as np
 
 class Plot(pg.PlotWidget):
     """Class to plot and update plots at a time"""
-    def __init__(self, plot_allocation, init_x, init_y, args, data_func):
+    def __init__(self, plot_allocation, init_x, init_y, args):
         super().__init__()
         """
         Initialise the plot
@@ -28,7 +28,7 @@ class Plot(pg.PlotWidget):
         self.init_y = init_y
 
         self.num_lines = len(init_x)
-        self.data_gen = data_func
+        print("NUMLINES: ", self.num_lines)
 
         if args["legend"]:
             self.plot_allocation.addLegend()
@@ -66,11 +66,13 @@ class Plot(pg.PlotWidget):
         assert type(new_data_X) == list, print("New X must be a list")
         assert type(new_data_Y) == list, print("New Y must be a list")
 
+        print(len(new_data_X))
+
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > 100: # If the length is larger than 100
-                # Remove oldest datapoint
-                self.init_x[i] = self.init_x[i][1:]
-                self.init_y[i] = self.init_y[i][1:]
+            # if len(self.init_x[i]) > 100: # If the length is larger than 100
+            #     # Remove oldest datapoint
+            #     self.init_x[i] = self.init_x[i][1:]
+            #     self.init_y[i] = self.init_y[i][1:]
 
             # Add new data point
             self.init_x[i].append(new_data_X[i])
