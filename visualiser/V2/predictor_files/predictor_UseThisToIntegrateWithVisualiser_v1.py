@@ -139,6 +139,29 @@ def lat_long_height_plot(x, y, z):
     height = r - R_earth
     return latitude, longitude, height
 
+def ECI2latlon_earth_rotate(x,y,z, time_duration):
+    """turns fixed ECI coordinates to lat long in degrees, 
+    accounting for rotating earth
+    """
+    rotation_per_s_rad = ((2*np.pi)/(23*3600 + 56*60 + 4))
+    rotation_over_time_rad = rotation_per_s_rad * time_duration
+    angle_current = np.arctan2(y,x)
+    ### rotate (x,y,z)
+    # norm = np.linalg.norm([x,y])
+    # x_rot = norm*np.cos(angle_current-rotation_over_time_rad)
+    # y_rot = norm*np.sin(angle_current-rotation_over_time_rad)
+    # z_rot = z
+    # lat, lon, _ = lat_long_height(x_rot, y_rot, z_rot)
+    cos_theta = np.cos(rotation_over_time_rad)
+    sin_theta = np.sin(rotation_over_time_rad)
+    x_rot =  x * cos_theta + y * sin_theta
+    y_rot = -x * sin_theta + y * cos_theta
+    z_rot = z
+    lat, lon, _ = lat_long_height(x_rot, y_rot, z_rot)
+    lat = np.degrees(lat)
+    lon = np.degrees(lon)
+    return lat, lon
+
 def atmospheric_density(altitude):
     # White noise as random perturbations of magnitude 0.1*RHO_0
     density = RHO_0 * np.exp(-altitude / H_SCALE)
