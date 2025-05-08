@@ -74,7 +74,7 @@ class Predictor(QWidget):
         ## Setup thread to send to graphs
         self.grapher_helper = Helper()
         self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'beginner-name': 'bname'}, ([[0]], [[0]])),
+        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3,3)}, (np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]]))),
                          daemon=True).start()  # Target will be GRAPHS
 
         self.time = np.linspace(0, 10_000, 10_000)
@@ -83,41 +83,40 @@ class Predictor(QWidget):
 
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
-        print(info['name'], " had distance ", info['rdist'], " from sat at ", info['obs-time'], 's.' '\n')
+        # print(info['name'], " had distance ", info['rdist'], " from sat at ", info['obs-time'], 's.' '\n')
 
-        # # print(f"{info['name']} observed: {update}")
-        #
         # ## PROBABLY TEMPORARY DT
-        # dt = 50.
-        # # print(info['obs-time'])
-        # self.ts.append(info['obs-time'])
-        #
-        # stime, radobj = info['stime'], info['radobj']
-        #
-        # self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
-        # self.ukf.predict(dt=dt)
-        # # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
-        # self.xs_prior.append(self.ukf.x_prior)
-        # if update != (0, 0, 0):
-        #     self.ukf.update(list(update))
-        # x_post = self.ukf.x
-        # self.xs.append(x_post)
-        # # print(f'x_post is: {x_post}')
-        # # x_cov = self.ukf.P
-        # # self.Ps.append(x_cov)
-        #
-        # radial_dist = np.linalg.norm(x_post[:3])
-        #
-        # update = ([[self.ts[-1]]], [[radial_dist]])
-        # rand_n = np.random.randint(0, 6.0e6)
+        dt = 50.
+        time, stime, radobj = info['obs-time'], info['stime'], info['radobj']
+        current_time = info['obs-time']
+
+        self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
+        self.ukf.predict(dt=dt)
+        # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
+        xs_prior = self.ukf.x_prior
+        if update != (0, 0, 0):
+            self.ukf.update(list(update))
+        x_post = self.ukf.x
+        x_cov = self.ukf.P
+
+        plot1_x = np.array([[current_time, current_time, current_time],
+                            [current_time, current_time, current_time],
+                            [current_time, current_time, current_time]])
+
+        plot1_y = np.array([update, xs_prior[:3], x_post[:3]])
 
         if info['rdist'] != 'none':
-            inf = [info['rdist'], np.linalg.norm(list(update))]
-            time = [self.time[self.count], self.time[self.count]]
-            pred_update = ([time], [inf])
-            # SEND DATA TO GRAPHER
-            send_to_graph(self.grapher_helper, {'name': 'redundant-name'}, pred_update)
+            pred_update = (plot1_x, plot1_y)
+            send_to_graph(self.grapher_helper, {'shape': (3, 3)}, pred_update)
         self.count += 1
+
+
+        # if info['rdist'] != 'none':
+        #     inf = [info['rdist'], np.linalg.norm(list(update))]
+        #     time = [self.time[self.count], self.time[self.count]]
+        #     pred_update = ([time], [inf])
+        #     # SEND DATA TO GRAPHER
+        #     send_to_graph(self.grapher_helper, {'name': 'redundant-name'}, pred_update)
 
         # """Predict landing ====================================================================="""
         # altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
@@ -162,8 +161,6 @@ class Predictor(QWidget):
         #             predicted_landing_latlon.append(landing_position_latlon)
         #             predicted_landing_time.append(landing_time)
 
-            # print(f"We are getting out: {x_post}")
-            # print(self.ts, self.xs)
 
 def send_to_graph(helper, name:dict, update:tuple):
     helper.changedSignal.emit(name, update)

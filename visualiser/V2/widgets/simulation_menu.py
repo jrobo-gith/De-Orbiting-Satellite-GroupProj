@@ -4,11 +4,13 @@ import sys
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout,
+                             QProgressBar)
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 import numpy as np
+from PyQt5 import QtGui
 
 from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
 from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import EARTH_SEMIMAJOR
@@ -105,7 +107,6 @@ class SimulationMenu(QWidget):
         page_layout.addLayout(velocities)
         page_layout.addLayout(start_sim_layout)
 
-
         page_container.addWidget(navbar, stretch=1)
         page_container.addLayout(page_layout, stretch=19)
         self.setLayout(page_container)
@@ -124,7 +125,7 @@ class SimulationMenu(QWidget):
 
         stable_condition = [110e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 9000/np.sqrt(2), 7800/np.sqrt(2)]
 
-        radar_list = [[-50, -1.5, 15]]#, [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
+        radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
 
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance

@@ -20,10 +20,11 @@ with open(json_file) as f:
     glob_setting = json.load(f)
 
 class Earth(pg.GraphicsLayoutWidget):
-    def __init__(self, full_sim_data):
+    def __init__(self, full_sim_data, radar_list):
         super().__init__()
 
         self.lat, self.lon, self.t = full_sim_data
+        self.radar_list = radar_list
 
         if len(self.lat) > 10_000:
             self.lat = self.lat[0:len(self.lat):10]
@@ -37,25 +38,18 @@ class Earth(pg.GraphicsLayoutWidget):
         world_map = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
-        print(world_map.shape)
         world_img = pg.ImageItem(world_map)
 
         ## Account for earth's rotation
         EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.adjusted_t
         self.lon -= EARTH_ROTATION_ANGLE
         ## Convert to Miller Coordinates
-        # self.y = self.lat
         self.lat = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
 
         self.lon *= (180 / np.pi)
         self.lat *= (180 / np.pi)
 
         self.lon = (self.lon + 180) % 360 - 180  # wrap to [-180, 180]
-
-        # plt.plot(self.x[:-1], self.y[:-1])
-        # plt.xlim(-180, 180)
-        # plt.ylim(-90, 90)
-        # plt.show()
 
         ## Switch x and y (lat and lon) to account for inverting world axis
         self.x = self.lat
@@ -79,6 +73,13 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_1std.setOpacity(0.5)
         self.prediction_crash_2std.setOpacity(0.25)
 
+        # Add Radars locations
+        self.radar_plots = []
+        for radar in self.radar_list:
+            x, y = latlon2pixel(np.array([radar[1]]), np.array([radar[0]]))
+            radar_plot = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('blue'))
+            self.radar_plots.append(radar_plot)
+
         # Add world image
         self.plot_widget.addItem(world_img)
         # Add simulation data
@@ -89,6 +90,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.plot_widget.addItem(self.prediction_crash_point)
         self.plot_widget.addItem(self.prediction_crash_1std)
         self.plot_widget.addItem(self.prediction_crash_2std)
+        [self.plot_widget.addItem(radar_plot) for radar_plot in self.radar_plots]
 
         # Plotting details
         self.plot_widget.setAspectLocked(True)

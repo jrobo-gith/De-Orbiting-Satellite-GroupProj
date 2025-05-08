@@ -35,7 +35,6 @@ class Plot(pg.PlotWidget):
         if args["grid"]:
             self.plot_allocation.showGrid(x=True, y=True)
 
-
         self.plot_allocation.setTitle(args["title"])
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
@@ -48,31 +47,43 @@ class Plot(pg.PlotWidget):
         # Plot initial values
         self.lines = []
         for i in range(self.num_lines):
-            self.line = self.plot_line(x=init_x[i],
-                           y=init_y[i],
-                           line_name=args["line_names"][i],
-                           symbol=args["symbols"][i],
-                           pen=pg.mkPen(color=args["pens"][i]['color'], width=args["pens"][i]['width']),)
+            if args['plot-type'][i] == 'line':
+                self.line = self.plot_line(x=init_x[i], y=init_y[i], line_name=args["line_names"][i],
+                                           symbol=args["symbols"][i], pen=pg.mkPen(color=args["pens"][i]['color'],
+                                                                                   width=args["pens"][i]['width']))
+            elif args['plot-type'][i] == 'scatter':
+                self.line = self.plot_scatter(x=init_x[i], y=init_y[i], line_name=args["line_names"][i],
+                                              symbol=args["symbols"][i],pen=pg.mkPen(color=args["pens"][i]['color'],
+                                                                                   width=args["pens"][i]['width']),
+                                              brush=pg.mkBrush(args["brushes"][i]['color']))
             self.lines.append(self.line)
 
     def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
         line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
         return line
+    def plot_scatter(self, x:list, y:list, line_name:str, symbol:list, pen, brush):
+        scatter = pg.ScatterPlotItem(x=[x], y=[y], name=line_name, symbol=symbol[0], symbolSize=symbol[1],
+                                     pen=pen, brush=brush)
+        self.plot_allocation.addItem(scatter)
+        return scatter
 
-    def update_plot(self, new_data_X:list, new_data_Y:list):
+    def update_plot(self, new_data_X:np.array, new_data_Y:np.array):
         """
         MUST take in list vectors of size 1 X L.
         """
-        assert type(new_data_X) == list, print("New X must be a list")
-        assert type(new_data_Y) == list, print("New Y must be a list")
+        assert type(new_data_X) == np.ndarray, print(f"New X must be a numpy array. {type(new_data_X)}")
+        assert type(new_data_Y) == np.ndarray, print(f"New Y must be a numpy array. {type(new_data_Y)}")
 
-        print(len(new_data_X))
+        assert new_data_X.shape == new_data_Y.shape, print(f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
+
+        # assert new_data_X.shape == np.array(self.init_x[0]).shape, print(f"New X must be same size as initial X. {new_data_X.shape} != {np.array(self.init_x[0]).shape}")
+        # assert new_data_Y.shape == np.array(self.init_y[0]).shape, print("New Y must be same size as initial Y.")
 
         for i, self.line in enumerate(self.lines):
-            # if len(self.init_x[i]) > 100: # If the length is larger than 100
-            #     # Remove oldest datapoint
-            #     self.init_x[i] = self.init_x[i][1:]
-            #     self.init_y[i] = self.init_y[i][1:]
+            if len(self.init_x[i]) > 100: # If the length is larger than 100
+                # Remove oldest datapoint
+                self.init_x[i] = self.init_x[i][1:]
+                self.init_y[i] = self.init_y[i][1:]
 
             # Add new data point
             self.init_x[i].append(new_data_X[i])

@@ -6,6 +6,7 @@ sys.path.insert(0, root_dir)
 
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QGridLayout, QLabel, QPushButton)
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -127,7 +128,7 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
 
         ## Earth window
-        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.t))
+        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.t), radar_list=self.radar_list)
         ## graph_script
         self.graph = Grapher()
 

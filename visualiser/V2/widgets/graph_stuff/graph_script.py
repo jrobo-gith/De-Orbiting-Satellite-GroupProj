@@ -5,6 +5,7 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 import json
+import numpy as np
 
 import pyqtgraph as pg
 from PyQt5.QtGui import QColor, QBrush
@@ -22,9 +23,9 @@ class Grapher(QWidget):
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
-        example_file = os.path.join(root_dir, "visualiser/V2/profiles/example.json")
+        example_file = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
         with open(example_file) as f:
-            example = json.load(f)
+            prior_post = json.load(f)
         velocity_file = os.path.join(root_dir, "visualiser/V2/profiles/velocity.json")
         with open(velocity_file) as f:
             velocity = json.load(f)
@@ -73,9 +74,9 @@ class Grapher(QWidget):
         # Add simulator plots
         self.sim_1 = self.simulator_graphs.addPlot(row=0, col=0)
         self.sim_1 = Plot(self.sim_1,
-                          [[0], [0]],
-                          [[0], [0]],
-                          args=example)
+                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+                          args=prior_post)
 
         self.plot_list.append(self.sim_1)
 
@@ -116,7 +117,16 @@ class Grapher(QWidget):
         """MUST take in matrix of P X L, then MUST update each plot with a vector of 1 X L where:
         L is the number of lines needing updates.
         """
+        assert type(name) == dict, print("Name must be a dictionary")
+        assert type(update) == tuple, print("Update must be a tuple")
+        assert type(update[0]) == type(update[1]) == np.ndarray, print(f"""All of update must be a numpy array, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
+
         x, y = update
 
+        assert x.shape == name['shape'], print(f"Shape of x must be the same as specified in 'name'. {x.shape} != {name['shape']}")
+        assert y.shape == x.shape, print(f"Shape of y must be the same as shape of x. {x.shape} != {y.shape}")
+
         for i, plot in enumerate(self.plot_list):
-            plot.update_plot(x[i], y[i])
+            x_vals = np.array(x[i])
+            y_vals = np.array(y[i])
+            plot.update_plot(x_vals, y_vals)
