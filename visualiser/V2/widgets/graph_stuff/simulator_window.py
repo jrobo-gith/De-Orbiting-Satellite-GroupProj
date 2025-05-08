@@ -61,15 +61,32 @@ class SimWidget(QWidget):
         self.initial_conditions = initial_conditions
         self.radar_list = radar_list
 
-        ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
-        self.solution = system_solver(t_span, self.initial_conditions)
-        ## TEMPORARY GRAB EXISTING FILE
-        # temp_file = os.path.join(root_dir, "visualiser/V2/simulator_files/sat_traj.dat")
-        # with open(temp_file) as f:
-        #     solution = json.load(f)
+        dev_mode = True
 
-        ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
-        self.x_sim, self.y_sim, self.z_sim = self.solution.y[0], self.solution.y[1], self.solution.y[2]
+        if dev_mode:
+            ## TEMPORARY GRAB EXISTING FILE
+            self.x_sim = []
+            self.y_sim = []
+            self.z_sim = []
+            self.t = []
+            temp_file = os.path.join(root_dir, "visualiser/V2/simulator_files/sat_traj.dat")
+            with open(temp_file, 'r') as file:
+                for line in file:
+                    x, y, z, vx, vy, vz, t = line.split()
+                    self.x_sim.append(float(x))
+                    self.y_sim.append(float(y))
+                    self.z_sim.append(float(z))
+                    self.t.append(float(t))
+
+            self.x_sim = np.array(self.x_sim)
+            self.y_sim = np.array(self.y_sim)
+            self.z_sim = np.array(self.z_sim)
+            self.t = np.array(self.t)
+        else:
+            ## RUN SIMULATOR TO GET ENTIRE SIMULATION LAT LON DATA
+            self.solution = system_solver(t_span, self.initial_conditions)
+            ## Use self.solution to compute XYZ coordinates to lat lon NOT INCLUDING rotation of earth
+            self.x_sim, self.y_sim, self.z_sim, self.t = self.solution.y[0], self.solution.y[1], self.solution.y[2], self.solution.t
 
         ## Convert x, y, z to lat lon
         self.lat, self.lon, self.height = lat_long_height_plot(self.x_sim, self.y_sim, self.z_sim)
@@ -119,12 +136,12 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
 
         ## Earth window
-        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.solution.t))
+        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.t))
         ## graph_script
         self.graph = Grapher(init_x=init_x, init_y=init_y)
 
         ## Predictor TESTING
-        self.predictor = Predictor(state0=[6378137.0  + 400e3, 1, -1, 1, 7700, 1] )
+        self.predictor = Predictor(state0=initial_conditions)
 
         self.radars = initialise_radars(radar_list)
 
