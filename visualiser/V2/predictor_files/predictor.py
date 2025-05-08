@@ -32,6 +32,7 @@ class Predictor(QWidget):
         """ ============== Define items in self.ukf """
         ### initial state values of (x,y,z,vx,vy,vz)
         self.ukf.x = np.array(state0)  # initial state
+        print(f'initial state of UKF: {self.ukf.x}')
         ### initial uncertainty of the state
         self.ukf.P = np.diag([50 ** 2, 50 ** 2, 50 ** 2,
                          5 ** 2, 5 ** 2, 5 ** 2])  # experiment this
@@ -80,15 +81,25 @@ class Predictor(QWidget):
 
         stime, radobj = info['stime'], info['radobj']
 
-        self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
+        ### Start predicting ====================================================
+        self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)     # update process noise Q
         self.ukf.predict(dt=dt)
+        x_prior = self.ukf.x_prior.copy()
+        self.xs_prior.append(x_prior)
+        print(f'x_prior is: {x_prior}')
         # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
-        self.xs_prior.append(self.ukf.x_prior)
-        if update != (0, 0, 0):
+
+        ### Decide whether to update ============================================
+        if update == (0, 0, 0):
+            print('no radar z')
+            x_post = self.ukf.x_post.copy()
+            print(f'x_post is: {x_post}')
+        else:
+            print(f'has radar z: {list(update)}')
             self.ukf.update(list(update))
-        x_post = self.ukf.x
-        self.xs.append(x_post)
-        print(f'x_post is: {x_post}')
+            x_post = self.ukf.x_post
+            self.xs.append(x_post)
+            print(f'x_post is: {x_post}')
         # x_cov = self.ukf.P
         # self.Ps.append(x_cov)
 

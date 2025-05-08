@@ -29,6 +29,8 @@ class Earth(pg.GraphicsLayoutWidget):
             self.lat = self.lat[0:len(self.lat):10]
             self.lon = self.lon[0:len(self.lon):10]
             self.adjusted_t = self.t[0:len(self.t):10]
+        else:
+            self.adjusted_t = self.t
 
         self.plot_widget = pg.PlotWidget()
 
