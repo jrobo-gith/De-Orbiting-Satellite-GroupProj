@@ -29,6 +29,8 @@ class Earth(pg.GraphicsLayoutWidget):
             self.lat = self.lat[0:len(self.lat):10]
             self.lon = self.lon[0:len(self.lon):10]
             self.adjusted_t = self.t[0:len(self.t):10]
+        else:
+            self.adjusted_t = self.t
 
         self.plot_widget = pg.PlotWidget()
 
@@ -41,21 +43,24 @@ class Earth(pg.GraphicsLayoutWidget):
         EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.adjusted_t
         self.lon -= EARTH_ROTATION_ANGLE
         ## Convert to Miller Coordinates
-        self.y = self.lon
+        self.x = self.lon
         # self.y = self.lat
-        self.x = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
+        self.y = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
 
         self.x *= (180 / np.pi)
         self.y *= (180 / np.pi)
 
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
-        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-1], y=full_sim_pixels[1][:-1], size=5, brush=pg.mkBrush('yellow'))
-        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
-        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
+        # plt.plot(full_sim_pixels[1][:-1], full_sim_pixels[0][:-1])
+        # plt.show()
+        self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[1][:-1], y=full_sim_pixels[0][:-1], size=5, brush=pg.mkBrush('yellow'))
+        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[1][-1]], y=[full_sim_pixels[0][-1]], size=10, brush=pg.mkBrush('red'))
+        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[1][0]], y=[full_sim_pixels[0][0]], size=20, brush=pg.mkBrush('black'))
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
         self.satellite_start_position.setOpacity(0.9)
+
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
         x, y = latlon2pixel(np.array([51.509865]), np.array([-0.118092]))
