@@ -1,0 +1,54 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{bm}
+
+\begin{document}
+
+\title{Visualiser - De-Orbiting Satellite Predictor}
+\author{Jack Roberts}
+\maketitle
+
+\section{Data visualisation}
+Data visualisation is the art of representing data such that it maximises the quality to quantity ratio. In other words, display the smallest quantity of data that explains as close to 100 percent of our results as possible. The project proposal, handed in during term 1 outlined the visualiser as a visual representation of the predictor (Extended Kalman Filter) and will display temporal as well as spatial data regarding the trajectory of the satellite. There are many data visualisation tools to accomplish this, such as Unity (C$\#$), matplotlib (Python), pyQtGraph (Python) or Tableau.
+\section{Methods}
+\subsection{A change in software}
+Unity and C$\#$ was the software planned for use for the visualiser. It had a built in Graphical User Interface (GUI) and was able to convert large amounts of data into highly customisable graphs. Upon reflection, and some guidance from the academics, it became apparent that using as many as three languages to complete this project was too much. Moreover, the transfer of data was proving to be difficult as running a python venv inside of C$\#$ and converting its output to C$\#$ arrays was a significant bottleneck. Instead a Pythonic approach became the apparent option. \\
+The visualiser now runs inside python, running the \textit{pyQtGraph} module. This module builds on its parent module \textit{pyQt} for creating python GUIs by adding graphical support such as plotting, adding legends, multiple subplots and dynamic plotting, where the figure could update as it receives updates from the predictor in real time. This was an excellent choice as this module allowed the project to be kept in python, a language everybody in the group understood, without sacrificing dynamic updates from our predictor in real time which is what was needed. 
+\subsection{Requirements}
+The following python packages are required for the visualiser and are NOT standard packages such as numpy:
+\begin{itemize}
+\item PyQt5
+\item pyqtgraph
+\end{itemize}
+The file \textit{requirements.txt} contains all required packages which can be run in the terminal using:
+\begin{equation}
+\text{python3 -m pip install -r requirements.txt}
+\end{equation}
+
+\subsection{GUI Layout}
+The main window is the class \textbf{MasterWindow}. This window collates the other windows into one and provides the ability to navigate through them. To initialise the GUI, this class is run and loads the window \textbf{MainMenu} containing a welcome message and links to each of the other windows. The links are to the actual simulation, instructions on how to use the GUI, credits, and an exit button. Each subsequent page contains a \textbf{Navbar} class that sits at the top of the window, allowing for safe return to the main menu. The simulation, a class named \textbf{Graphs} is an umbrella window for the entire project. Within the \textbf{Graphs} class sits a script which displays the initial input data $(x \text{ and } y)$, and contains an update function which removes the oldest datapoint and replaces it with the incoming new datapoint, maintaining the initial input list length. Each plot in the window is allocated a space and passed into another class called \textbf{Plot}. Each instance of \textbf{Plot} is responsible for a given subplot in the window, controlling its initial plot and subsequent updates.
+
+\subsection{Customisation}
+Under the \textit{partials} directory lies the file \textit{global$\_$settings.json}, containing universal information regarding the GUI such as font style, background and font colour and window size. By placing all universal variables in a single json file, changing a variable that is widely used becomes easy. Moreover, within the profiles directory sits the individual profiles for each plot which can be passed into each instance of \textbf{Plot}, containing details such as plot and label titles and styles, line details and booleans for legends and grids. This separation of interests de-clutters the complex code and improves readability.
+
+\section{Plots}
+There will be IDK plots, each displaying vital information representing the current state of both the satellite and the Kalman Filter's prediction of its predicted landing site. 
+
+\section{Results}
+
+%\section{GAIT Use}
+%The generative AI ChatGPT was used in the making of the visualiser. Most of the prompts were to find documentation / API calls in the PyQt module as the documentation was quite poor and its use saved time searching for the correct function. 
+
+
+
+
+\end{document}

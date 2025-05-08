@@ -225,6 +225,13 @@ def run_kf (x0, P, Q, R, dt=0.1, zs = None, trajectory_actual = None, do_plot = 
 ##############################################################################
 ##############################################################################
 
+"""============= Packages ============================"""
+from filterpy.kalman import UnscentedKalmanFilter as UKF
+from filterpy.kalman import MerweScaledSigmaPoints
+from filterpy.common import Q_discrete_white_noise
+import numpy as np
+import math
+
 """============= Take first one (or 2? need to get the initial velocity) measurement as the starting state ============="""
 
 def measurement_to_state_space(radar_pos, range, elev, azimuth):
@@ -250,7 +257,64 @@ radar_pos2, range2, elev2, azimuth2, time2 = radar2
 
 x1, y1, z1 = measurement_to_state_space(radar_pos1, range1, elev1, azimuth1)
 x2, y2, z2 = measurement_to_state_space(radar_pos2, range2, elev2, azimuth2)
+
 dt = time2-time1
+
+### define initial values
+x_init = x2
+y_init = y2
+z_init = z2
+
 vx_init = (x2-x1)/dt
 vy_init = (y2-y1)/dt
 vz_init = (z2-z1)/dt
+
+""" =============== Generate sigma points ================="""
+### initialise UKF
+sigmas_generator = MerweScaledSigmaPoints(n=6, alpha=0.1, beta = 2., kappa= 3-6)
+### generate sigma points
+# sigmas_generator.sigma_points(x = [x_init, vx_init, 
+#                                    y_init, vy_init, 
+#                                    z_init, vz_init],
+#                               P = np.diag([500**2, 50**2,
+#                                             500**2, 50**2,
+#                                             500**2, 50**2]))
+ukf = UKF(dim_x=6, dim_z=3, fx = f, hx =h, dt = dt, points=sigmas_generator)  # take f, h from Jai and Vijay
+
+### Define items in UKF
+ukf.x = np.array([x_init, vx_init, 
+                  y_init, vy_init, 
+                  z_init, vz_init])
+
+ukf.P = np.diag([500**2, 50**2,
+                 500**2, 50**2,
+                 500**2, 50**2])    # experiment this
+
+ukf.Q[0:2, 0:2] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
+ukf.Q[2:4, 2:4] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
+ukf.Q[4:6, 4:6] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
+
+
+range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!!
+elev_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!!
+azim_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!1
+ukf.R = np.diag([range_std**2, elev_std**2, azim_std**2])
+
+
+"""=================== Run UKF ========================="""
+dt = 30
+time_duration = np.arange(0, 50000+dt, dt)
+xs = []
+for t in time_duration:
+    satellite.update(dt)    # want satellite to be a class. 
+    # want radar to be a class
+    radar_reading = radar.noisy_reading(satellite.position) # this is an array of [range, elev, azim]
+    
+    if radar_reading[0] is None:
+        dt += dt
+        skip
+    else:
+        ukf.predict()
+        ukf.update(radar_reading)
+        # ukf.update([radar_reading[0], radar_reading[1], radar_reading[2]] )
+        xs.append(ukf.x)
