@@ -25,15 +25,23 @@ class Grapher(QWidget):
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
-        example_file = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
-        with open(example_file) as f:
-            prior_post = json.load(f)
+        position = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
+        with open(position) as f:
+            position = json.load(f)
+
+        velocity = os.path.join(root_dir, "visualiser/V2/profiles/velocities.json")
+        with open(velocity) as f:
+            velocity = json.load(f)
+
+        alt = os.path.join(root_dir, "visualiser/V2/profiles/altitude.json")
+        with open(alt) as f:
+            altitude = json.load(f)
 
 
         ## Create two graphics layout widgets
         self.simulator_graphs = pg.GraphicsLayoutWidget()
         self.predictor_graphs = pg.GraphicsLayoutWidget()
-        self.combined_graphs = pg.GraphicsLayoutWidget()
+        # self.combined_graphs = pg.GraphicsLayoutWidget()
 
 
         # Add graphics scenes
@@ -51,18 +59,18 @@ class Grapher(QWidget):
         pred_rect.setZValue(-1)
         pred_scene.addItem(pred_rect)
 
-        combined_scene = self.combined_graphs.scene()
-        combined_rect = QGraphicsRectItem(0, 0, 1000, 1000)
-        combined_brush = QBrush(QColor(0, 255, 255, 35))
-        combined_rect.setBrush(combined_brush)
-        combined_rect.setZValue(-1)
-        combined_scene.addItem(combined_rect)
+        # combined_scene = self.combined_graphs.scene()
+        # combined_rect = QGraphicsRectItem(0, 0, 1000, 1000)
+        # combined_brush = QBrush(QColor(0, 255, 255, 35))
+        # combined_rect.setBrush(combined_brush)
+        # combined_rect.setZValue(-1)
+        # combined_scene.addItem(combined_rect)
 
 
         # Create layout and add layout widgets
         self.layout = QGridLayout()
         self.layout.addWidget(self.simulator_graphs, 0, 0)
-        self.layout.addWidget(self.combined_graphs, 0, 1)
+        # self.layout.addWidget(self.combined_graphs, 0, 1)
         self.layout.addWidget(self.predictor_graphs, 0, 2)
         self.setLayout(self.layout)
 
@@ -71,11 +79,19 @@ class Grapher(QWidget):
         # Add simulator plots
         self.sim_1 = self.simulator_graphs.addPlot(row=0, col=0)
         self.sim_1 = Plot(self.sim_1,
-                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-                          args=prior_post)
+                          [[0], [0], [0]],
+                          [[0], [0], [0]],
+                          args=position)
 
         self.plot_list.append(self.sim_1)
+
+        self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
+        self.sim_2 = Plot(self.sim_2,
+                          [[0], [0]],
+                          [[0], [0]],
+                          args=velocity)
+
+        self.plot_list.append(self.sim_2)
 
         # self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
         # self.sim_2 = Plot(self.sim_2,
@@ -89,15 +105,14 @@ class Grapher(QWidget):
         # self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
         # self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
         #
-        # # Add predictor plots
-        # self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
-        # self.pred_1 = Plot(self.pred_1,
-        #                   [self.init_x[2]],
-        #                   [self.init_y[2]],
-        #                   args=velocity,
-        #                   data_func=data_gen.cosine)
-        #
-        # self.plot_list.append(self.pred_1)
+        # Add predictor plots
+        self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
+        self.pred_1 = Plot(self.pred_1,
+                          [[0], [0], [0]],
+                          [[0], [0], [0]],
+                          args=altitude)
+
+        self.plot_list.append(self.pred_1)
         #
         # self.pred_2 = self.predictor_graphs.addPlot(row=1, col=0)
         # self.pred_2 = Plot(self.pred_2,
@@ -116,12 +131,9 @@ class Grapher(QWidget):
         """
         assert type(name) == dict, print("Name must be a dictionary")
         assert type(update) == tuple, print("Update must be a tuple")
-        assert type(update[0]) == type(update[1]) == np.ndarray, print(f"""All of update must be a numpy array, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
+        assert type(update[0]) == type(update[1]) == list, print(f"""All of update must be a list, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
 
         x, y = update
-
-        assert x.shape == name['shape'], print(f"Shape of x must be the same as specified in 'name'. {x.shape} != {name['shape']}")
-        assert y.shape == x.shape, print(f"Shape of y must be the same as shape of x. {x.shape} != {y.shape}")
 
         for i, plot in enumerate(self.plot_list):
             x_vals = np.array(x[i])

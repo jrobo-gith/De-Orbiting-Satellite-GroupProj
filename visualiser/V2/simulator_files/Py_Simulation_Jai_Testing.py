@@ -142,7 +142,9 @@ def satellite_dynamics(t, y):
     F_gravity = -G * M_EARTH / r**2
 
     # Drag
-    rho = atmospheric_density_true(lat, long, altitude)
+    # rho = atmospheric_density_true(lat, long, altitude)
+    ## SIMPLER ATMOSPHERIC DENSITY FUNCTION:
+    rho = atmospheric_density(altitude)
     v = np.sqrt(vx**2 + vy**2 + vz**2)
     F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
     F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
@@ -163,14 +165,14 @@ def stop_condition(t, y):
 
 # Solves diff. eqn system between measurements radar(n) and radar(n+1)
 def system_solver(t_span_, initial_conditions):
-    t_evals = int(np.rint(t_span_/10))
+    t_evals = int(np.rint(t_span_/50))
     t_eval = np.linspace(0, t_span_, t_evals)
     
     stop_condition.terminal = True
     stop_condition.direction = -1
     
     # Solve the system of equations using RK45
-    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0=initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step=100)
+    solution = solve_ivp(satellite_dynamics, t_span=[0, t_span_], y0=initial_conditions, method='RK45', t_eval=t_eval, events=stop_condition, max_step=50)
 
     x_vals = solution.y[0]
     y_vals = solution.y[1]

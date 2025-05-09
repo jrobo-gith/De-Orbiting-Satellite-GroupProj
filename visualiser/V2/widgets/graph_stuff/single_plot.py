@@ -61,7 +61,7 @@ class Plot(pg.PlotWidget):
         line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
         return line
     def plot_scatter(self, x:list, y:list, line_name:str, symbol:list, pen, brush):
-        scatter = pg.ScatterPlotItem(x=[x], y=[y], name=line_name, symbol=symbol[0], symbolSize=symbol[1],
+        scatter = pg.ScatterPlotItem(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1],
                                      pen=pen, brush=brush)
         self.plot_allocation.addItem(scatter)
         return scatter
@@ -79,7 +79,7 @@ class Plot(pg.PlotWidget):
         # assert new_data_Y.shape == np.array(self.init_y[0]).shape, print("New Y must be same size as initial Y.")
 
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > 100: # If the length is larger than 100
+            if len(self.init_x[i]) > 50: # If the length is larger than 100
                 # Remove oldest datapoint
                 self.init_x[i] = self.init_x[i][1:]
                 self.init_y[i] = self.init_y[i][1:]

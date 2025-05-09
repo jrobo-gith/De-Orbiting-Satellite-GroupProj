@@ -53,7 +53,7 @@ class SimWidget(QWidget):
         self.initial_conditions = initial_conditions
         self.radar_list = radar_list
 
-        dev_mode = True
+        dev_mode = False
 
         if dev_mode:
             ## TEMPORARY GRAB EXISTING FILE
