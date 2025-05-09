@@ -279,7 +279,6 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
         measurements[key] = np.array(vals)
     return measurements
 
-
 # Convert satellite's position to lat-long given its ECEF coordinates
 def sat_ecef2lla(sat_pos_ecef):
     # Inputs  - An array of satellite positions in ECEF coordinates

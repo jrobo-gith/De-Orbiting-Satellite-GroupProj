@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QGraphicsScene, QGraphicsRectI
 from PyQt5.QtCore import Qt
 
 from visualiser.V2.widgets.graph_stuff.single_plot import Plot
+from visualiser.V2.widgets.graph_stuff.single_3D_plot import ThreeDPlot
+
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -26,12 +28,7 @@ class Grapher(QWidget):
         example_file = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
         with open(example_file) as f:
             prior_post = json.load(f)
-        velocity_file = os.path.join(root_dir, "visualiser/V2/profiles/velocity.json")
-        with open(velocity_file) as f:
-            velocity = json.load(f)
-        position_file = os.path.join(root_dir, "visualiser/V2/profiles/position.json")
-        with open(position_file) as f:
-            position = json.load(f)
+
 
         ## Create two graphics layout widgets
         self.simulator_graphs = pg.GraphicsLayoutWidget()
