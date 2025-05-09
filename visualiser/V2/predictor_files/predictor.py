@@ -13,16 +13,12 @@ from visualiser.V2.simulator_files. sat_tracking import do_conversions
 
 from datetime import datetime, timedelta
 import sys
-import threading
 import matplotlib.pyplot as plt
 
-class Helper(QtCore.QObject):
-    changedSignal = QtCore.pyqtSignal(dict, tuple)
 
 class Predictor(QWidget):
-    def __init__(self, grapher, state0, dt=1.0):
+    def __init__(self, state0, dt=1.0):
         super().__init__()
-        self.grapher = grapher
 
         """state0 :list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1] 
             """
@@ -71,58 +67,36 @@ class Predictor(QWidget):
         self.Ps = []
         self.ts = [0.0]
 
-        ## Setup thread to send to graphs
-        self.grapher_helper = Helper()
-        self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3,3)}, (np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]]))),
-                         daemon=True).start()  # Target will be GRAPHS
-
-        self.time = np.linspace(0, 10_000, 10_000)
-        self.count = 0
-
 
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
-        # print(info['name'], " had distance ", info['rdist'], " from sat at ", info['obs-time'], 's.' '\n')
 
-        # ## PROBABLY TEMPORARY DT
+        # print(f"{info['name']} observed: {update}")
+
+        ## PROBABLY TEMPORARY DT
         dt = 50.
-        time, stime, radobj = info['obs-time'], info['stime'], info['radobj']
-        current_time = info['obs-time']
+        # print(info['obs-time'])
+        self.ts.append(info['obs-time'])
+
+        stime, radobj = info['stime'], info['radobj']
 
         self.ukf.Q = ukf_Q(dim=6, dt=dt, var_=0.01)
         self.ukf.predict(dt=dt)
         # # self.ukf.hx = lambda x: do_conversions(x[:3], stime, radobj)
-        xs_prior = self.ukf.x_prior
+        self.xs_prior.append(self.ukf.x_prior)
         if update != (0, 0, 0):
             self.ukf.update(list(update))
         x_post = self.ukf.x
-        x_cov = self.ukf.P
-
-        plot1_x = np.array([[current_time, current_time, current_time],
-                            [current_time, current_time, current_time],
-                            [current_time, current_time, current_time]])
-
-        plot1_y = np.array([update, xs_prior[:3], x_post[:3]])
-
-        if info['rdist'] != 'none':
-            pred_update = (plot1_x, plot1_y)
-            send_to_graph(self.grapher_helper, {'shape': (3, 3)}, pred_update)
-        self.count += 1
-
-
-        # if info['rdist'] != 'none':
-        #     inf = [info['rdist'], np.linalg.norm(list(update))]
-        #     time = [self.time[self.count], self.time[self.count]]
-        #     pred_update = ([time], [inf])
-        #     # SEND DATA TO GRAPHER
-        #     send_to_graph(self.grapher_helper, {'name': 'redundant-name'}, pred_update)
+        self.xs.append(x_post)
+        print(f'x_post is: {x_post}')
+        # x_cov = self.ukf.P
+        # self.Ps.append(x_cov)
 
         # """Predict landing ====================================================================="""
-        # altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
+        altitude_val = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
 
-        # print("radar height: ", np.abs(np.linalg.norm(list(update)))-EARTH_SEMIMAJOR)
-        # print("altitude=", altitude_val, "\n")
+        print("radar height: ", np.abs(np.linalg.norm(list(update)))-EARTH_SEMIMAJOR)
+        print("altitude=", altitude_val, "\n")
         #
         # if altitude_val < 0:
         #     sys.exit()
@@ -161,6 +135,6 @@ class Predictor(QWidget):
         #             predicted_landing_latlon.append(landing_position_latlon)
         #             predicted_landing_time.append(landing_time)
 
+            # print(f"We are getting out: {x_post}")
+            # print(self.ts, self.xs)
 
-def send_to_graph(helper, name:dict, update:tuple):
-    helper.changedSignal.emit(name, update)
