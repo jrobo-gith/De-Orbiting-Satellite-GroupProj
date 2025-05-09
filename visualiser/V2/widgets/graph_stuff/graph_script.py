@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QGraphicsScene, QGraphicsRectI
 from PyQt5.QtCore import Qt
 
 from visualiser.V2.widgets.graph_stuff.single_plot import Plot
+from visualiser.V2.widgets.graph_stuff.single_3D_plot import ThreeDPlot
+
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
