@@ -1,21 +1,20 @@
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore
+from PyQt5.QtWidgets import QWidget
 import numpy as np
 import sys
 from plot import Plot
 import data_gen
-import matplotlib.pyplot as plt
 import json
-
-
-x1 = list(np.linspace(0, 50, 50))
-y1 = list(data_gen.sinusoid(x1))
-y2 = list(data_gen.tangent(x1))
+import time
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, init_x, init_y):
         super().__init__()
+        self.init_x = init_x
+        self.init_y = init_y
 
+        # Import profiles
         with open('profiles/example.json') as f:
             example = json.load(f)
         with open('profiles/velocity.json') as f:
@@ -26,31 +25,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win = pg.GraphicsLayoutWidget(show=True, title="Visualiser")
         self.win.resize(1080, 720)
 
+        self.plot_list = []
+
         self.plot1 = self.win.addPlot(row=0, col=0, colspan=2)
-        self.plo1 = Plot(self.plot1,
-                            [x1],
-                            [y1],
-                            interval=300,
+        self.plot1 = Plot(self.plot1,
+                            [self.init_x[0]],
+                            [self.init_y[0]],
                             args=example,
                             data_func=data_gen.sinusoid)
+        self.plot_list.append(self.plot1)
 
         self.plot2 = self.win.addPlot(row=1, col=0)
         self.plot2 = Plot(self.plot2,
-                            [x1],
-                            [y2],
-                            interval=100,
+                          [self.init_x[1]],
+                          [self.init_y[1]],
                             args=position,
                             data_func=data_gen.tangent)
+        self.plot_list.append(self.plot2)
 
         self.plot3 = self.win.addPlot(row=1, col=1)
         self.plot3 = Plot(self.plot3,
-                          [x1],
-                          [y2],
-                          interval=100,
+                          [self.init_x[2]],
+                          [self.init_y[2]],
                           args=velocity,
-                          data_func=data_gen.tangent)
+                          data_func=data_gen.cosine)
 
+        self.plot_list.append(self.plot3)
 
-app = QtWidgets.QApplication(sys.argv)
-main = MainWindow()
-app.exec_()
+    @QtCore.pyqtSlot(str, tuple)
+    def update_plots(self, name, update):
+        """MUST take in matrix of P X L, then MUST update each plot with a vector of 1 X L where:
+        L is the number of lines needing updates.
+        """
+        x, y = update
+        for i, plot in enumerate(self.plot_list):
+            plot.update_plot(x[i], y[i])

@@ -117,6 +117,7 @@ plt.show()
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sat_file = os.path.join(script_dir, "sat_traj.dat")
 
+# Write satellite data to a file
 with open(sat_file, "w") as fp:
     for i in range(solution.y[0].shape[0]):
         fp.write(f"{x_vals[i]:.6f}\t{y_vals[i]:.6f}\t{z_vals[i]:.6f}\t{vx_vals[i]:.6f}\t{vy_vals[i]:.6f}\t{vz_vals[i]:.6f}\t{t_vals[i]:.3f}\n")

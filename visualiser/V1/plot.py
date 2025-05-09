@@ -1,9 +1,10 @@
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore
+import numpy as np
 
 class Plot:
     """Class to plot and update plots at a time"""
-    def __init__(self, plot_allocation, init_x, init_y, interval, args, data_func):
+    def __init__(self, plot_allocation, init_x, init_y, args, data_func):
         """
         Initialise the plot
 
@@ -23,7 +24,6 @@ class Plot:
         self.args = args
         self.init_x = init_x
         self.init_y = init_y
-        self.interval = interval
 
         self.num_lines = len(init_x)
         print(f"Number of lines: {self.num_lines}")
@@ -38,7 +38,7 @@ class Plot:
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
-        ## Plot initial values
+        # Plot initial values
         self.lines = []
         for i in range(self.num_lines):
             self.line = self.plot_line(x=init_x[i],
@@ -48,21 +48,25 @@ class Plot:
                            pen=pg.mkPen(color=args["pens"][i]['color'], width=args["pens"][i]['width']),)
             self.lines.append(self.line)
 
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(self.interval)
-        self.timer.timeout.connect(self.update_plot)
-        self.timer.start()
-
     def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
         line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
         return line
 
-    def update_plot(self):
-        """Update plot"""
+    def update_plot(self, new_data_X:list, new_data_Y:list):
+        """
+        MUST take in list vectors of size 1 X L.
+        """
+        assert type(new_data_X) == list, print("New X must be a list")
+        assert type(new_data_Y) == list, print("New Y must be a list")
+
         for i, self.line in enumerate(self.lines):
+            # Remove oldest datapoint
             self.init_x[i] = self.init_x[i][1:]
             self.init_y[i] = self.init_y[i][1:]
 
-            self.init_x[i].append(self.init_x[i][-1] + 1)
-            self.init_y[i].append(self.data_gen(self.init_x[i][-1]))
+            # Add new data point
+            self.init_x[i].append(new_data_X[i])
+            self.init_y[i].append(new_data_Y[i])
+
+            # Update Line
             self.line.setData(self.init_x[i], self.init_y[i])
