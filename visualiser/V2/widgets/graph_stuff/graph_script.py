@@ -28,12 +28,7 @@ class Grapher(QWidget):
         example_file = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
         with open(example_file) as f:
             prior_post = json.load(f)
-        velocity_file = os.path.join(root_dir, "visualiser/V2/profiles/velocity.json")
-        with open(velocity_file) as f:
-            velocity = json.load(f)
-        position_file = os.path.join(root_dir, "visualiser/V2/profiles/position.json")
-        with open(position_file) as f:
-            position = json.load(f)
+
 
         ## Create two graphics layout widgets
         self.simulator_graphs = pg.GraphicsLayoutWidget()
