@@ -1,11 +1,13 @@
 import pyqtgraph as pg
 from PyQt5 import QtGui
-from pyqtgraph.Qt import QtWidgets, QtCore
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 import numpy as np
+from pyqtgraph.opengl import GLViewWidget
 
-class Plot(pg.PlotWidget):
+
+class ThreeDPlot(QWidget):
     """Class to plot and update plots at a time"""
-    def __init__(self, plot_allocation, init_x, init_y, args):
+    def __init__(self, init_x, init_y, init_z, args):
         super().__init__()
         """
         Initialise the plot
@@ -21,13 +23,21 @@ class Plot(pg.PlotWidget):
         assert type(init_y) == list, print("Initial y must be a list")
         assert type(args) == dict, print("Arguments must be a dictionary")
 
-        self.plot_allocation = plot_allocation
         self.args = args
         self.init_x = init_x
         self.init_y = init_y
 
         self.num_lines = len(init_x)
         print("NUMLINES: ", self.num_lines)
+
+        self.plot_allocation = GLViewWidget()
+        self.plot_allocation.setCameraPosition(distance=args.get("distance", 40))
+        self.plot_allocation.opts['center'] = args.get("center", (0, 0, 0))
+
+        # Add layout to hold the 3D view
+        layout = QVBoxLayout()
+        layout.addWidget(self.plot_allocation)
+        self.setLayout(layout)
 
         if args["legend"]:
             self.plot_allocation.addLegend()

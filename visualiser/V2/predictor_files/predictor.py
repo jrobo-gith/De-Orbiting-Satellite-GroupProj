@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 class Predictor(QWidget):
-    def __init__(self, state0, dt=1.0):
+    def __init__(self, grapher, state0, dt=1.0):
         super().__init__()
 
         """state0 :list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1] 

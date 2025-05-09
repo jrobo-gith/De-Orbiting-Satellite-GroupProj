@@ -234,6 +234,8 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
     # Check every t seconds
     for i in range(t_vals.shape[0]):
         curr_sat_pos = sat_pos_ecef[i]
+        closest_radar_distance = np.inf
+        seen_satellite = False
         for rname,radobj in radars.items():
             # Compute relative position of satellite from radar and range
             rel_pos = curr_sat_pos - radobj.pos_ecef
@@ -250,20 +252,29 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
             Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
             pos_x, pos_y, pos_z = Rot_eci2ecef.dot(radM_ecef)
 
-            info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj}
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM)):
+                seen_satellite = True
                 # IN FOV
-                predictor_helper.changedSignal.emit(info, (pos_x, pos_y, pos_z))
-            else:
-                predictor_helper.changedSignal.emit(info, (0, 0, 0))
-                measurements[rname].append(np.zeros_like(radM))
-        radM_enu = radobj.radM2enu(radM_no_noise)
-        radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
-        lat, lon, _ = ecef2lla(radM_ecef)
+                radar_dist = radM[0]
+                if radar_dist < closest_radar_distance:
+                    closest_radar_distance = radar_dist
+                    measurement = (pos_x, pos_y, pos_z)
+                    info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj, 'rdist': radM[0]}
+
+        if seen_satellite:
+            predictor_helper.changedSignal.emit(info, measurement)
+        else:
+            info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj, 'rdist': "none"}
+            predictor_helper.changedSignal.emit(info, (0, 0, 0))
+
+        radM_enu_nn = radobj.radM2enu(radM_no_noise)
+        radM_ecef_nn = enu2ecef(radM_enu_nn, radobj.pos_lla)
+        lat, lon, _ = ecef2lla(radM_ecef_nn)
+
         earth_helper.changedSignal.emit(info, (lat, lon))
 
-        time.sleep(5)
+        time.sleep(0.1)
     for key, vals in measurements.items():
         measurements[key] = np.array(vals)
     return measurements
@@ -307,6 +318,6 @@ radars = {}
 
 def initialise_radars(latlon:list):
     for i, pos in enumerate(latlon):
-        radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=60)
+        radars[f"radar{i}"] = Radar(pos, azfov=60, elfov=60)
 
     return radars

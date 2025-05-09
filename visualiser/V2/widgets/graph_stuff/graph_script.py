@@ -5,6 +5,7 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 import json
+import numpy as np
 
 import pyqtgraph as pg
 from PyQt5.QtGui import QColor, QBrush
@@ -12,28 +13,22 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QGraphicsScene, QGraphicsRectI
 from PyQt5.QtCore import Qt
 
 from visualiser.V2.widgets.graph_stuff.single_plot import Plot
+from visualiser.V2.widgets.graph_stuff.single_3D_plot import ThreeDPlot
+
 from visualiser.V2.widgets.graph_stuff.partials import data_gen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Grapher(QWidget):
-    def __init__(self, init_x, init_y):
+    def __init__(self, ):
         super().__init__()
         pg.setConfigOption('foreground', 'white')
 
-        self.init_x = init_x
-        self.init_y = init_y
-
         # Import profiles
-        example_file = os.path.join(root_dir, "visualiser/V2/profiles/example.json")
+        example_file = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
         with open(example_file) as f:
-            example = json.load(f)
-        velocity_file = os.path.join(root_dir, "visualiser/V2/profiles/velocity.json")
-        with open(velocity_file) as f:
-            velocity = json.load(f)
-        position_file = os.path.join(root_dir, "visualiser/V2/profiles/position.json")
-        with open(position_file) as f:
-            position = json.load(f)
+            prior_post = json.load(f)
+
 
         ## Create two graphics layout widgets
         self.simulator_graphs = pg.GraphicsLayoutWidget()
@@ -71,46 +66,47 @@ class Grapher(QWidget):
         self.layout.addWidget(self.predictor_graphs, 0, 2)
         self.setLayout(self.layout)
 
+
         self.plot_list = []
         # Add simulator plots
         self.sim_1 = self.simulator_graphs.addPlot(row=0, col=0)
         self.sim_1 = Plot(self.sim_1,
-                          [self.init_x[0]],
-                          [self.init_y[0]],
-                          args=example,
-                          data_func=data_gen.sinusoid)
+                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+                          [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+                          args=prior_post)
+
         self.plot_list.append(self.sim_1)
 
-        self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
-        self.sim_2 = Plot(self.sim_2,
-                          [self.init_x[1]],
-                          [self.init_y[1]],
-                          args=position,
-                          data_func=data_gen.tangent)
-        self.plot_list.append(self.sim_2)
-
-        # Add combined plots
-        self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
-        self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
-
-        # Add predictor plots
-        self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
-        self.pred_1 = Plot(self.pred_1,
-                          [self.init_x[2]],
-                          [self.init_y[2]],
-                          args=velocity,
-                          data_func=data_gen.cosine)
-
-        self.plot_list.append(self.pred_1)
-
-        self.pred_2 = self.predictor_graphs.addPlot(row=1, col=0)
-        self.pred_2 = Plot(self.pred_2,
-                           [self.init_x[2]],
-                           [self.init_y[2]],
-                           args=velocity,
-                           data_func=data_gen.cosine)
-
-        self.plot_list.append(self.pred_2)
+        # self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
+        # self.sim_2 = Plot(self.sim_2,
+        #                   [self.init_x[1]],
+        #                   [self.init_y[1]],
+        #                   args=position,
+        #                   data_func=data_gen.tangent)
+        # self.plot_list.append(self.sim_2)
+        #
+        # # Add combined plots
+        # self.comb_1 = self.combined_graphs.addPlot(row=0, col=0)
+        # self.comb_2 = self.combined_graphs.addPlot(row=1, col=0)
+        #
+        # # Add predictor plots
+        # self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
+        # self.pred_1 = Plot(self.pred_1,
+        #                   [self.init_x[2]],
+        #                   [self.init_y[2]],
+        #                   args=velocity,
+        #                   data_func=data_gen.cosine)
+        #
+        # self.plot_list.append(self.pred_1)
+        #
+        # self.pred_2 = self.predictor_graphs.addPlot(row=1, col=0)
+        # self.pred_2 = Plot(self.pred_2,
+        #                    [self.init_x[2]],
+        #                    [self.init_y[2]],
+        #                    args=velocity,
+        #                    data_func=data_gen.cosine)
+        #
+        # self.plot_list.append(self.pred_2)
 
 
     @QtCore.pyqtSlot(dict, tuple)
@@ -118,6 +114,16 @@ class Grapher(QWidget):
         """MUST take in matrix of P X L, then MUST update each plot with a vector of 1 X L where:
         L is the number of lines needing updates.
         """
+        assert type(name) == dict, print("Name must be a dictionary")
+        assert type(update) == tuple, print("Update must be a tuple")
+        assert type(update[0]) == type(update[1]) == np.ndarray, print(f"""All of update must be a numpy array, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
+
         x, y = update
+
+        assert x.shape == name['shape'], print(f"Shape of x must be the same as specified in 'name'. {x.shape} != {name['shape']}")
+        assert y.shape == x.shape, print(f"Shape of y must be the same as shape of x. {x.shape} != {y.shape}")
+
         for i, plot in enumerate(self.plot_list):
-            plot.update_plot(x[i], y[i])
+            x_vals = np.array(x[i])
+            y_vals = np.array(y[i])
+            plot.update_plot(x_vals, y_vals)

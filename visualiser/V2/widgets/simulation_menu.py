@@ -4,11 +4,13 @@ import sys
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout,
+                             QProgressBar)
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 import numpy as np
+from PyQt5 import QtGui
 
 from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
 from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import EARTH_SEMIMAJOR
@@ -104,7 +106,6 @@ class SimulationMenu(QWidget):
         page_layout.addLayout(positions)
         page_layout.addLayout(velocities)
         page_layout.addLayout(start_sim_layout)
-
 
         page_container.addWidget(navbar, stretch=1)
         page_container.addLayout(page_layout, stretch=19)
