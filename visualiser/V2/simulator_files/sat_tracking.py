@@ -143,12 +143,15 @@ class Radar:
         #           Boolean False otherwise
         rho, theta, phi = radM
         
-        theta_deg = np.degrees(theta)
+        theta_deg = np.degrees(theta) % 360
         phi_deg = np.degrees(phi)
 
+        az_centre = 0
+        diff = ((theta_deg - az_centre) + 180) % 360 - 180 # wrap to [-180, 180]
+
         if ((rho < 10) 
-            or (theta_deg > self.azfov) 
-            or (phi < 0) or (phi_deg > self.elfov)):
+            or (abs(diff) >= self.azfov/2)
+            or (phi_deg <= 10) or (phi_deg >= 80)):
             return False
         return True
 
@@ -182,6 +185,8 @@ def enu2ecef(enu_coords, ref_lla_coords):
     # Outputs - ECEF coordinates of the object
     ecef_coords = lla2ecef(ref_lla_coords) # ECEF coordinates of the reference point
     lon, lat, alt = ref_lla_coords
+    lon = np.radians(lon)
+    lat = np.radians(lat)
     Xform_matrix = np.array([[-np.sin(lon), -np.sin(lat)*np.cos(lon), np.cos(lat)*np.cos(lon)],
                              [np.cos(lon), -np.sin(lat)*np.sin(lon), np.cos(lat)*np.sin(lon)],
                              [0, np.cos(lat), np.sin(lat)]])
@@ -193,6 +198,8 @@ def ecef2enu(ecef_coords, ref_lla_coords):
     #           Reference coordinates in lat-long
     # Outputs - ENU coordinates of the object
     lon, lat, alt = ref_lla_coords
+    lon = np.radians(lon)
+    lat = np.radians(lat)
     Xform_matrix = np.array([[-np.sin(lon), np.cos(lon), 0],
                              [-np.sin(lat)*np.cos(lon), -np.sin(lat)*np.sin(lon), np.cos(lat)],
                              [np.cos(lat)*np.cos(lon), np.cos(lat)*np.sin(lon), np.sin(lat)]])
@@ -318,6 +325,6 @@ radars = {}
 
 def initialise_radars(latlon:list):
     for i, pos in enumerate(latlon):
-        radars[f"radar{i}"] = Radar(pos, azfov=60, elfov=60)
+        radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=60)
 
     return radars
