@@ -1,22 +1,39 @@
 import pyqtgraph as pg
-from PyQt5 import QtGui
-from pyqtgraph.Qt import QtWidgets, QtCore
 import numpy as np
 
 class Plot(pg.PlotWidget):
-    """Class to plot and update plots at a time"""
+    """
+    Instance of a single plot. Inside this class is a single plot, responsible for the styling of the plot and also the
+    contents of the plot, the initial conditions and the styling.
+
+    This window's parent is the graph_script.py, where each instance of this class is instantiated there.
+
+    Functions:
+    - __init__(self, plot_allocation, init_x, init_y, args)
+    - plot_line(self, x, y, line_name, pen, symbol)
+    - plot_scatter(self, x, y, line_name, symbol, pen, brush)
+    - update_plot(self, new_data_X, new_data_Y)
+
+    References:
+    Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+
+    Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
+    """
     def __init__(self, plot_allocation, init_x, init_y, args):
+        """
+        Initialises the plot. Mostly specifies the styling of the plot, which relies heavily on the 'args' parameter.
+        Args is a json file specified as a profile, more on profiles can be found in profiles/profile_READ_ME and the
+        example.json. This also plots the initial conditions of the graph, which are likely 0's and then will be updated
+        later.
+
+        :param plot_allocation: Provides access to the plot instance in pyqtgraph for styling and plotting.
+        :param init_x: Initial x values
+        :param init_y: Initial y values
+        :param args: Profile of the plot, used for styling.
+        """
         super().__init__()
-        """
-        Initialise the plot
 
-        plot_allocation:    The subplot we're plotting to
-        init_x:             Initial x values
-        init_y:             Initial y values
-        interval:           How long between each update (ms)
-        args:               Cosmetic details about the graph
-        """
-
+        # Check basic things
         assert type(init_x) == list, print("Initial x must be a list")
         assert type(init_y) == list, print("Initial y must be a list")
         assert type(args) == dict, print("Arguments must be a dictionary")
@@ -25,25 +42,26 @@ class Plot(pg.PlotWidget):
         self.args = args
         self.init_x = init_x
         self.init_y = init_y
-
         self.num_lines = len(init_x)
-        print("NUMLINES: ", self.num_lines)
 
+        # Plotting legend and grid
         if args["legend"]:
             self.plot_allocation.addLegend()
         if args["grid"]:
             self.plot_allocation.showGrid(x=True, y=True)
 
+        # Specifying title and label titles
         self.plot_allocation.setTitle(args["title"])
         self.plot_allocation.setLabel("bottom", args["label_title_x"])
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
+        # If there is an x-lim or y-lim, add it to the plot.
         if args['x-lim'] != "None":
             self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
         if args['y-lim'] != "None":
             self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
 
-        # Plot initial values
+        # Plot initial values for each line
         self.lines = []
         for i in range(self.num_lines):
             if args['plot-type'][i] == 'line':
@@ -58,17 +76,43 @@ class Plot(pg.PlotWidget):
             self.lines.append(self.line)
 
     def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
+        """
+        Plots a line using pyqtgraph.
+
+        :param x: X value
+        :param y: Y value
+        :param line_name: name for legend
+        :param pen: line styling
+        :param symbol: datapoint styling
+        """
         line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
         return line
     def plot_scatter(self, x:list, y:list, line_name:str, symbol:list, pen, brush):
-        scatter = pg.ScatterPlotItem(x=[x], y=[y], name=line_name, symbol=symbol[0], symbolSize=symbol[1],
+        """
+        Plots a scatter plot using pyqtgraph.
+
+        :param x: X value
+        :param y: Y value
+        :param line_name: name for legend
+        :param symbol: datapoint styling
+        :param pen: line styling
+        :param brush: scatter point styling
+        """
+        scatter = pg.ScatterPlotItem(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1],
                                      pen=pen, brush=brush)
         self.plot_allocation.addItem(scatter)
         return scatter
 
     def update_plot(self, new_data_X:np.array, new_data_Y:np.array):
         """
-        MUST take in list vectors of size 1 X L.
+        Function called in graph_script.py in the update_plots function, inputs a 1xL vector where L is the number of
+        lines needing to be plotted.
+
+        Setup so that the length of the initial values self.init_x/y grow until a specified length, then, once reached,
+        begins removing the oldest value then adds the new one, keeping the length of the list constant.
+
+        :param new_data_X: New x values
+        :param new_data_Y: New y values
         """
         assert type(new_data_X) == np.ndarray, print(f"New X must be a numpy array. {type(new_data_X)}")
         assert type(new_data_Y) == np.ndarray, print(f"New Y must be a numpy array. {type(new_data_Y)}")
@@ -79,7 +123,7 @@ class Plot(pg.PlotWidget):
         # assert new_data_Y.shape == np.array(self.init_y[0]).shape, print("New Y must be same size as initial Y.")
 
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > 100: # If the length is larger than 100
+            if len(self.init_x[i]) > 50: # If the length is larger than 100
                 # Remove oldest datapoint
                 self.init_x[i] = self.init_x[i][1:]
                 self.init_y[i] = self.init_y[i][1:]

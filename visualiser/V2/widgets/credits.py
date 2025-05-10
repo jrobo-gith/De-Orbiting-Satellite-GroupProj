@@ -1,24 +1,40 @@
 import os
 import sys
+import json
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLabel, QStackedWidget, QMainWindow
-)
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from visualiser.V2.partials.navbar import Navbar
 
-import json
+# Import global settings
 json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
 class Credits(QWidget):
+    """
+    Window displaying the credits to attribute credit to the primary contributors of each section. By the end, everyone
+    worked on each part but the main contributors are noted in this window.
+    This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'credits' button.
+
+    Functions:
+    - __init__(self, stacked_widget)
+    References:
+        Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+
+    Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
+    """
     def __init__(self, stacked_widget):
+        """
+        Initialises the credits window, contains an instance of the 'navbar' class, also contains 'QLabels' that are
+        stacked on top of each other in a Vertical Box Layout (QVBoxLayout) to produce the credits window.
+
+        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        """
         super().__init__()
         self.stacked_widget = stacked_widget
 
@@ -69,10 +85,12 @@ class Credits(QWidget):
         credits_titles_list.append(vis_title)
 
         for credit in credits_list:
+            # For loop to set style sheets of each QLabel
             credit.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: rgba(0, 0, 0, 0.7); border-radius: 30px;")
             credit.setAlignment(Qt.AlignHCenter)
             credit.setFont(QFont(glob_setting['font-family'], 15))
         for title in credits_titles_list:
+            # Loop to increase each title's font.
             title.setFont(QFont(glob_setting['font-family'], 20, QFont.Bold))
 
         container = QVBoxLayout()
