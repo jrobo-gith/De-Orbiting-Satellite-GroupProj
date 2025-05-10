@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 import numpy as np
 from pyqtgraph.opengl import GLViewWidget
 
-
 class ThreeDPlot(QWidget):
     """Class to plot and update plots at a time"""
     def __init__(self, init_x, init_y, init_z, args):

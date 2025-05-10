@@ -114,7 +114,6 @@ class SimulationMenu(QWidget):
         velocities.addWidget(self.input_Y_vel)
         velocities.addWidget(self.input_Z_vel)
 
-
         start_sim_btn = QPushButton("Start Simulation")
         start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
         start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
