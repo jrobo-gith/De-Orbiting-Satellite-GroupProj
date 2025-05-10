@@ -19,9 +19,10 @@ class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(dict, tuple)
 
 class Predictor(QWidget):
-    def __init__(self, grapher, state0, dt=1.0):
+    def __init__(self, grapher, earth, state0, dt=1.0):
         super().__init__()
         self.grapher = grapher
+        self.earth = earth
 
         """state0 :list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1] 
             """
@@ -87,8 +88,11 @@ class Predictor(QWidget):
 
         self.grapher_helper = Helper()
         self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3, 3)}, first_update),
-                         daemon=True).start()  # Target will be GRAPHS
+        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3, 3)}, first_update), daemon=True).start()  # Target will be GRAPHS
+
+        self.earth_helper = Helper()
+        self.earth_helper.changedSignal.connect(self.earth.update_prediction, QtCore.Qt.QueuedConnection)
+        threading.Thread(target=send_to_graph, args=(self.earth_helper, {'predicting-landing': False, "time": 0.}, (0, 0)), daemon=True).start()
 
         self.dt = 50
         self.dt_adjust = 50
@@ -155,7 +159,14 @@ class Predictor(QWidget):
             stop_condition.direction = -1
             landing = solve_ivp(fun=ode, t_span=[start, end], y0=x_post, method='RK45', t_eval=[end],
                                 max_step=50, events=stop_condition)
-            print(f'landing!!!!!!!!!!!!!: {landing.y_events[0][0]}')
+            landing_position = landing.y_events[0][0][:3]
+            landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
+                                                      landing_position[2])[:2]
+
+
+
+            earth_update = (landing_position_latlon[0], landing_position_latlon[1])
+            send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.latest_measurement_time}, earth_update)
             # for sample_state0 in state_samples:
             #     stop_condition.terminal = True
             #     stop_condition.direction = -1
@@ -220,7 +231,7 @@ class Predictor(QWidget):
         velocity_y = [x_prior[4], x_post[4]]
 
         alt_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
-        alt_y = [altitude_post, 50e3, 100e3]
+        alt_y = [altitude_post, 50e3, 140e3]
 
         plot_x = [position_x, velocity_x, alt_x]
         plot_y = [position_y, velocity_y, alt_y]

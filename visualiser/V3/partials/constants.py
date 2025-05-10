@@ -1,3 +1,5 @@
+import numpy as np
+
 G = 6.67430e-11                             # Gravitational constant (m^3 kg^-1 s^-2)
 M_EARTH = 5.972e24                          # Mass of Earth (kg)
 EARTH_SEMIMAJOR = 6378137.0                 # Radius of Earth (m)
@@ -12,3 +14,4 @@ RHO_0 = 1.225                               # Air density at sea level (kg/m^3)
 H_SCALE = 8500
 R_EARTH_EQUATOR = 6378e3  # Radius of Earth near equator (m)
 R_EARTH_POLES = 6357e3 # Radius of Earth near poles (m)
+EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) # Accounting for earth's rotation without time t

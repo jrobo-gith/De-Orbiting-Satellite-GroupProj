@@ -70,8 +70,8 @@ def get_sat_data():
 class Radar:
     # Contains radar specific information
     __range_uncertainty = 100
-    __theta_uncertainty = 0.01
-    __phi_uncertainty = 0.01
+    __theta_uncertainty = 0.0001
+    __phi_uncertainty = 0.0001
 
     def __init__(self, longlat, azfov=360, elfov=180):
         # Inputs - An array containing lat-long-alt of radar
@@ -166,7 +166,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
 
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, noise=False)  # NO NOISE
 
-            radM_enu = radobj.radM2enu(radM_no_noise) #CHANGE TO RADM
+            radM_enu = radobj.radM2enu(radM) #CHANGE TO RADM
             radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
             gmst_angle = get_gmst(sim_times[i])
             Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T

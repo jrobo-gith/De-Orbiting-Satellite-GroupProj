@@ -4,6 +4,7 @@ from PIL import Image
 import json
 import numpy as np
 from visualiser.V3.debug import debug_print
+from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -70,8 +71,8 @@ class Earth(pg.GraphicsLayoutWidget):
         world_img = pg.ImageItem(world_map)
 
         ## Account for earth's rotation
-        EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) * self.adjusted_t
-        self.lon -= EARTH_ROTATION_ANGLE
+        EARTH_ROTATION =  EARTH_ROTATION_ANGLE * self.adjusted_t
+        self.lon -= EARTH_ROTATION
         ## Convert to Miller Coordinates
         self.lat = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
 
@@ -94,7 +95,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.satellite_start_position.setOpacity(0.9)
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
-        x, y = latlon2pixel(np.array([51.509865]), np.array([-0.118092]))
+        x, y = latlon2pixel(np.array([0]), np.array([0]))
         self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('green'), pen=pg.mkPen('green'))
         self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
         self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
@@ -163,10 +164,9 @@ class Earth(pg.GraphicsLayoutWidget):
     def update_satellite_position(self, name, update):
         """
         Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
-        from simulator_files/sat_tracking via multi-threading and a 'helper' function, which emits the satellite's
-        location at a given time interval.
-        We receive the data as (dict, tuple), we do not use the dict (name) in this instance, and it is redundant, and
-        the update is a tuple containing the latitude and longitude of the satellite.
+        from simulator/radar via multi-threading and a 'helper' function, which emits the satellite's location at a
+        given time interval. We receive the data as (dict, tuple), we do not use the dict (name) in this instance, and
+        it is redundant, and the update is a tuple containing the latitude and longitude of the satellite.
 
         We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
 
@@ -176,6 +176,37 @@ class Earth(pg.GraphicsLayoutWidget):
         lat, lon = update
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
+
+    @QtCore.pyqtSlot(dict, tuple)
+    def update_prediction(self, info, update):
+        """
+        Function to update the prediction of the crash site as it travels around the earth. Gets information from
+        predictor/predictor.py via multi-threading and a 'helper' function, which emits the latitude and longitude of
+        a point at which the satellite crashes onto earth.
+
+        :param info: contains info such as whether we are predicting landing or not
+        :param update: contains the latitude and longitude of the predicted crash site
+        """
+        lat, lon = update
+
+        # Account for earth's rotation
+        earth_rotation = EARTH_ROTATION_ANGLE * info['time']
+        lon -= earth_rotation
+
+        # Convert to miller coordinates
+        lat = (5/4) * np.arcsinh(np.tan((4*lat)/5))
+
+        # Convert to degrees
+        lon *= (180 / np.pi)
+        lat *= (180 / np.pi)
+
+        # Keep between -180 and 180 degrees
+        lon = (lon + 180) % 360 - 180
+
+        x, y = latlon2pixel([lat], [lon])
+        self.prediction_crash_point.setData(x, y)
+        self.prediction_crash_1std.setData(x, y)
+        self.prediction_crash_2std.setData(x, y)
 
     def sim_overlay_switch(self):
         """

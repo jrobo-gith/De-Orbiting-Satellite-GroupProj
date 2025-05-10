@@ -153,7 +153,7 @@ class SimWidget(QWidget):
         self.graph = Grapher()
 
         ## Predictor TESTING
-        self.predictor = Predictor(grapher=self.graph, state0=initial_conditions)
+        self.predictor = Predictor(grapher=self.graph, earth=self.earth,state0=initial_conditions)
 
         self.radars = initialise_radars(radar_list)
 
