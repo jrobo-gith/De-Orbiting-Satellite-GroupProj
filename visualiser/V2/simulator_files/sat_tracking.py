@@ -7,7 +7,7 @@ from pyproj import CRS, Transformer, Proj
 from datetime import datetime, timedelta
 import os
 import time
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)

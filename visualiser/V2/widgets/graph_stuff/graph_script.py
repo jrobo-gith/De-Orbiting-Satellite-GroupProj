@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import numpy as np
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)

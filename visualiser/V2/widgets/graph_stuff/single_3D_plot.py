@@ -3,7 +3,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 import numpy as np
 from pyqtgraph.opengl import GLViewWidget
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 class ThreeDPlot(QWidget):
     """Class to plot and update plots at a time"""

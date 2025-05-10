@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import sys
 import threading
 import matplotlib.pyplot as plt
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 np.random.seed(0)
 
