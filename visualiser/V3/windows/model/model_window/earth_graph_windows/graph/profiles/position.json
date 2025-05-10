@@ -9,8 +9,8 @@
   "pens": [{"color": [255, 0, 0], "width": 5}, {"color": [0, 255, 0], "width":1}, {"color": [0, 0, 255], "width": 1}],
   "brushes": [{"color":  [255, 0, 0]}, {"color":  [0, 255, 0]}, {"color":  [0, 0, 255]}],
   "symbols": [["+", 2], ["o", 2], ["o", 4]],
-  "x-lim": [-1e7, 1e7],
-  "y-lim": [-1e7, 1e7],
+  "x-lim": "None",
+  "y-lim": "None",
   "label_style": {"color": "black", "font-size": "15px"},
   "title_style": {"color": "black", "font-size": "20px"},
   "array-limit": 50

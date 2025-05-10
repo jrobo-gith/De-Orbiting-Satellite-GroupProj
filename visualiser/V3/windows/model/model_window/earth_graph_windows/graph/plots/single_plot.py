@@ -125,11 +125,8 @@ class Plot(pg.PlotWidget):
 
         assert new_data_X.shape == new_data_Y.shape, debug_print("visualiser", f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
 
-        # assert new_data_X.shape == np.array(self.init_x[0]).shape, debug_print("visualiser", f"New X must be same size as initial X. {new_data_X.shape} != {np.array(self.init_x[0]).shape}")
-        # assert new_data_Y.shape == np.array(self.init_y[0]).shape, debug_print("visualiser", "New Y must be same size as initial Y.")
-
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > self.args['array-limit']: # If the length is larger than 100
+            if len(self.init_x[i]) > self.args['array-limit']: # If the length is larger than the array limit in args
                 # Remove oldest datapoint
                 self.init_x[i] = self.init_x[i][1:]
                 self.init_y[i] = self.init_y[i][1:]

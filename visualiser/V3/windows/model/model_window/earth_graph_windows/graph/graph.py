@@ -162,3 +162,7 @@ class Grapher(QWidget):
             x_vals = np.array(x[i])
             y_vals = np.array(y[i])
             plot.update_plot(x_vals, y_vals)
+            if name['name'] == 'no radar':
+                plot.line.setPen(color=[255, 0, 0], width=5)
+            else:
+                plot.line.setPen(color=[0, 255, 0], width=5)
