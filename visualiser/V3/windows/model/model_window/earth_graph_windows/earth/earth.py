@@ -3,7 +3,7 @@ import sys
 from PIL import Image
 import json
 import numpy as np
-from visualiser.V2.debug import debug_print
+from visualiser.V3.debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -15,7 +15,7 @@ import pyqtgraph as pg
 from PyQt5 import QtCore
 
 # Import Global settings
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
@@ -64,7 +64,7 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.plot_widget = pg.PlotWidget()
 
-        world_map = os.path.join(root_dir, "visualiser/V2/widgets/graph_stuff/images/world_map.jpg")
+        world_map = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/earth/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
         world_map = np.transpose(np.array(world_map), (1, 0, 2))
         world_img = pg.ImageItem(world_map)

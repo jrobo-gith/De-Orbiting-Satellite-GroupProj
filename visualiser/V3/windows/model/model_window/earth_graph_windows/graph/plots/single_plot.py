@@ -1,6 +1,6 @@
 import pyqtgraph as pg
 import numpy as np
-from visualiser.V2.debug import debug_print
+from visualiser.V3.debug import debug_print
 
 class Plot(pg.PlotWidget):
     """

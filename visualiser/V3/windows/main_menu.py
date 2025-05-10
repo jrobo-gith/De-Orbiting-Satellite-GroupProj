@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLab
 from PyQt5.QtCore import Qt
 
 # Import global settings
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 

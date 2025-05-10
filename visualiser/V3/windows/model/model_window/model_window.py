@@ -12,15 +12,14 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
-from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import system_solver, lat_long_height_plot
-from visualiser.V2.widgets.graph_stuff.graph_script import Grapher
-from visualiser.V2.widgets.graph_stuff.earth_script import Earth
-from visualiser.V2.simulator_files.sat_tracking import initialise_radars
-from visualiser.V2.simulator_files.sat_tracking import get_radar_measurements
-from visualiser.V2.predictor_files.predictor import Predictor
+from visualiser.V3.simulator.simulator import system_solver, lat_long_height_plot
+from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.graph import Grapher
+from visualiser.V3.windows.model.model_window.earth_graph_windows.earth.earth import Earth
+from visualiser.V3.simulator.radar import initialise_radars, get_radar_measurements
+from visualiser.V3.predictor.predictor import Predictor
 
 # Import global settings
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
@@ -82,7 +81,7 @@ class SimWidget(QWidget):
             self.y_sim = []
             self.z_sim = []
             self.t = []
-            existing_file = os.path.join(root_dir, "visualiser/V2/simulator_files/sat_traj.dat")
+            existing_file = os.path.join(root_dir, "visualiser/V3/simulator/sat_traj.dat")
             with open(existing_file, 'r') as file:
                 for line in file:
                     x, y, z, vx, vy, vz, t = line.split()

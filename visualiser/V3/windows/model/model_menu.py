@@ -13,19 +13,19 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
 # Import from other files in the project
-from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
-from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import EARTH_SEMIMAJOR
-from visualiser.V2.partials.navbar import Navbar
+from visualiser.V3.windows.model.model_window.model_window import SimWidget
+from visualiser.V3.partials.constants import EARTH_SEMIMAJOR
+from visualiser.V3.partials.navbar import Navbar
 
 # Import global settings
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
-class SimulationMenu(QWidget):
+class ModelMenu(QWidget):
     """
-    Window displaying the simulation menu to allow the user to input initial conditions and begin the simulation. This
-    limits the simulation from running as soon as the GUI is loaded and gives a more professional feel.
+    Window displaying the model menu to allow the user to input initial conditions and begin the simulation. This
+    limits the model from running as soon as the GUI is loaded and gives a more professional feel.
 
     This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'simulation'
     button.
@@ -40,7 +40,7 @@ class SimulationMenu(QWidget):
     """
     def __init__(self, stacked_widget):
         """
-        Initialises the simulation menu window, contains an instance of the 'navbar' class, also contains 'QLineEdits'
+        Initialises the model menu window, contains an instance of the 'navbar' class, also contains 'QLineEdits'
         that are used to allow the user to input initial conditions. If the user inputs anything other than floating
         point numbers or ints, the program will not continue. A collection of QLabels, QLineEdits and a QPushButton are
         stacked and layed out to display the simulation menu.
@@ -161,7 +161,7 @@ class SimulationMenu(QWidget):
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
             self.sim_stacked_widget = QStackedWidget() # Create new simulation
-            self.sim_stacked_widget.addWidget(SimulationMenu(self.stacked_widget))
+            self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
             self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)
@@ -169,7 +169,7 @@ class SimulationMenu(QWidget):
         else:
             # Create stacked widget (load in sim window)
             self.sim_stacked_widget = QStackedWidget()
-            self.sim_stacked_widget.addWidget(SimulationMenu(self.stacked_widget))
+            self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
             self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)

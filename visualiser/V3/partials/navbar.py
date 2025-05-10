@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
 # Import global settings for font-family, font-color, etc.
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 

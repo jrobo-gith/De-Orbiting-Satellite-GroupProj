@@ -8,10 +8,11 @@ sys.path.insert(0, root_dir)
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from visualiser.V2.partials.navbar import Navbar
+
+from visualiser.V3.partials.navbar import Navbar
 
 # Import global settings
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 

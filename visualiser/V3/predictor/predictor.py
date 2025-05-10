@@ -6,15 +6,12 @@ from filterpy.kalman import UnscentedKalmanFilter as UKF
 from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
 
-from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import lat_long_height,  EARTH_SEMIMAJOR, lat_long_height_plot
-from visualiser.V2.predictor_files.predictor_UseThisToIntegrateWithVisualiser_v1 import ode, stop_condition, solve_ivp, f, h_radar, ukf_Q, ECI2latlon_earth_rotate
-from visualiser.V2.simulator_files. sat_tracking import do_conversions
+from visualiser.V3.simulator.simulator import lat_long_height
+from visualiser.V3.predictor.predctor_functions import ode, stop_condition, solve_ivp, f, h_radar, ukf_Q
+from visualiser.V3.debug import debug_print
 
-from datetime import datetime, timedelta
 import sys
 import threading
-import matplotlib.pyplot as plt
-from visualiser.V2.debug import debug_print
 
 np.random.seed(0)
 
@@ -74,9 +71,23 @@ class Predictor(QWidget):
         self.Ps = []
         self.ts = [0.0]
 
+        position_x = [0, 0, 0]
+        position_y = [0, 0, 0]
+
+        velocity_x = [0, 0]
+        velocity_y = [0, 0]
+
+        alt_x = [0, 0, 0]
+        alt_y = [0, 0, 0]
+
+        plot_x = [position_x, velocity_x, alt_x]
+        plot_y = [position_y, velocity_y, alt_y]
+
+        first_update = (plot_x, plot_y)
+
         self.grapher_helper = Helper()
         self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3, 3)}, np.array([0, 0, 0])),
+        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3, 3)}, first_update),
                          daemon=True).start()  # Target will be GRAPHS
 
         self.dt = 50

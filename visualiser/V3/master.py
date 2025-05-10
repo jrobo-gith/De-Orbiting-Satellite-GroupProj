@@ -7,7 +7,7 @@ from debug import debug_print
 # Get root directory to run from mac and windows.
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
-req_file = os.path.join(root_dir, "visualiser/V2/requirements.txt")
+req_file = os.path.join(root_dir, "visualiser/V3/requirements.txt")
 debug_print("visualiser", os.path.exists(req_file))
 
 # Install required files
@@ -15,20 +15,20 @@ cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
 subprocess.run(cmd, check=True)
 
 # Import windows from other files
-from widgets.main_menu import MainMenu
-from widgets.instructions import Instructions
-from widgets.simulation_menu import SimulationMenu
-from widgets.credits import Credits
+from windows.main_menu import MainMenu
+from windows.instructions import Instructions
+from windows.model.model_menu import ModelMenu
+from windows.credits import Credits
 
 # Import Necessary Widgets
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
 
-json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
+json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
 # Root for background image
-image_file = os.path.join(root_dir, "visualiser/V2/partials/images/backgroundimage.jpg")
+image_file = os.path.join(root_dir, "visualiser/V3/partials/backgroundimage.jpg")
 
 class MasterWindow(QMainWindow):
     """
@@ -63,12 +63,12 @@ class MasterWindow(QMainWindow):
         self.setWindowTitle('SNOE Group Project ~ De-Orbiting Satellite')
         self.resize(glob_setting['screen-height'], glob_setting['screen-width'])
         self.setStyleSheet(f"""background-color: rgba{glob_setting['background-color']};
-        background-image: url(visualiser/V2/partials/images/backgroundimage.jpg);
+        background-image: url(visualiser/V3/partials/backgroundimage.jpg);
         background-repeat: no-repeat;""")
 
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
-        self.stacked_widget.addWidget(SimulationMenu(self.stacked_widget))
+        self.stacked_widget.addWidget(ModelMenu(self.stacked_widget))
         self.stacked_widget.addWidget(Instructions(self.stacked_widget))
         self.stacked_widget.addWidget(Credits(self.stacked_widget))
 

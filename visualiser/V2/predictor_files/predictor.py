@@ -74,13 +74,9 @@ class Predictor(QWidget):
         self.Ps = []
         self.ts = [0.0]
 
-        position_3d_x = [0, 0, 0]
-        position_3d_y = [0, 0, 0]
-        position_3d_z = [0, 0, 0]
 
         position_x = [0, 0, 0]
         position_y = [0, 0, 0]
-        position_z = [0, 0, 0]
 
         velocity_x = [0,0]
         velocity_y = [0, 0]
@@ -88,11 +84,10 @@ class Predictor(QWidget):
         alt_x = [0, 0, 0]
         alt_y = [0, 0, 0]
 
-        plot_x = [position_x, position_3d_x, velocity_x, alt_x]
-        plot_y = [position_y, position_3d_y, velocity_y, alt_y]
-        plot_z = [position_z, position_3d_z, position_x, alt_x]
+        plot_x = [position_x, velocity_x, alt_x]
+        plot_y = [position_y, velocity_y, alt_y]
 
-        first_update = (plot_x, plot_y, plot_z)
+        first_update = (plot_x, plot_y)
 
         self.grapher_helper = Helper()
         self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)

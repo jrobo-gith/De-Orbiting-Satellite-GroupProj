@@ -2,19 +2,16 @@ import os
 import sys
 import json
 import numpy as np
-from visualiser.V2.debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 import pyqtgraph as pg
-from PyQt5.QtGui import QColor, QBrush
-from PyQt5.QtWidgets import QWidget, QGridLayout, QGraphicsScene, QGraphicsRectItem, QGraphicsView
-
-from visualiser.V2.widgets.graph_stuff.single_plot import Plot
-from visualiser.V2.widgets.graph_stuff.single_3D_plot import ThreeDPlot
-
+from PyQt5.QtWidgets import QWidget, QGridLayout
 from PyQt5 import QtCore
+
+from visualiser.V3.debug import debug_print
+from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
 
 class Grapher(QWidget):
     """
@@ -45,15 +42,15 @@ class Grapher(QWidget):
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
-        position = os.path.join(root_dir, "visualiser/V2/profiles/prior_post.json")
+        position = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/prior_post.json")
         with open(position) as f:
             position = json.load(f)
 
-        velocity = os.path.join(root_dir, "visualiser/V2/profiles/velocities.json")
+        velocity = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/velocities.json")
         with open(velocity) as f:
             velocity = json.load(f)
 
-        alt = os.path.join(root_dir, "visualiser/V2/profiles/altitude.json")
+        alt = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/altitude.json")
         with open(alt) as f:
             altitude = json.load(f)
 
