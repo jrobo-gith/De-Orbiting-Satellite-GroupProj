@@ -85,7 +85,7 @@ class Predictor(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
-        debug_print("predictor", f'{info['obs-time']}, dt={self.dt}')
+        debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
         self.ts.append(info['obs-time'])
 
         stime, radobj = info['stime'], info['radobj']
