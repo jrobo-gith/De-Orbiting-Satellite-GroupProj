@@ -197,10 +197,10 @@ class Earth(pg.GraphicsLayoutWidget):
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
         if self.radar_checkbox.isChecked():
-            debug_print("visualiser", "Radar Checked!")
+            [radar_plot.show() for radar_plot in self.radar_plots]
         else:
-            debug_print("visualiser", "Radar Not Checked!")
-
+            [radar_plot.hide() for radar_plot in self.radar_plots]
+            
     def prediction_overlay_switch(self):
         """
         Function that sits inside the 'self.prediction_checkbox' QCheckBox. When altered (checked or unchecked), the

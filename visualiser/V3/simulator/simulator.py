@@ -177,10 +177,11 @@ def system_solver(t_span_, initial_conditions):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     sat_file = os.path.join(script_dir, "sat_traj.dat")
     # Write satellite data to a file
-    with open(sat_file, "w") as fp:
-        for i in range(solution.y[0].shape[0]):
-            fp.write(
-                f"{x_vals[i]:.6f}\t{y_vals[i]:.6f}\t{z_vals[i]:.6f}\t{vx_vals[i]:.6f}\t{vy_vals[i]:.6f}\t{vz_vals[i]:.6f}\t{t_vals[i]:.3f}\n")
+    if __name__ != '__main__':
+        with open(sat_file, "w") as fp:
+            for i in range(solution.y[0].shape[0]):
+                fp.write(
+                    f"{x_vals[i]:.6f}\t{y_vals[i]:.6f}\t{z_vals[i]:.6f}\t{vx_vals[i]:.6f}\t{vy_vals[i]:.6f}\t{vz_vals[i]:.6f}\t{t_vals[i]:.3f}\n")
 
     return solution
 
@@ -189,7 +190,7 @@ if __name__ == '__main__':
     # Testing the satellite dynamics to make sure it works correctly, just use the above functions to get radar measurements
 
     # Initial conditions
-    altitude_initial = 300e3
+    altitude_initial = 150e3
     velocity_initial = 8100
     x0 = EARTH_SEMIMAJOR + altitude_initial
     y0 = 0
@@ -200,11 +201,11 @@ if __name__ == '__main__':
     initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
     # Time span
-    t_span = (0, 50000)
-    t_eval = np.linspace(t_span[0], t_span[1], 1000)  # Points for evaluation
+    t_span = 5000000
+    t_eval = np.linspace(0, t_span, 1000)  # Points for evaluation
 
     # Solve differential equations using RK45
-    solution = system_solver(t_span, initial_conditions, t_evals=1000)
+    solution = system_solver(t_span, initial_conditions)
 
     x_vals = solution.y[0]
     y_vals = solution.y[1]
