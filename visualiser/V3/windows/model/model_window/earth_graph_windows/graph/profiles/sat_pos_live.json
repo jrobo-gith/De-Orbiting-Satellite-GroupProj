@@ -1,0 +1,16 @@
+{
+  "plot-type": ["line"],
+  "title": "Live Satellite Position",
+  "label_title_x": "X Val",
+  "label_title_y": "Y Val",
+  "line_names": ["Satellite Pos"],
+  "legend": false,
+  "grid": false,
+  "pens": [{"color": [255, 255, 255], "width": 5}],
+  "symbols": [["o", 1]],
+  "x-lim": "None",
+  "y-lim": "None",
+  "label_style": {"color": "black", "font-size": "15px"},
+  "title_style": {"color": "black", "font-size": "20px"},
+  "array-limit": 100
+}

@@ -145,7 +145,7 @@ class Radar:
         return True
 
 # Simulate radar measurements
-def get_radar_measurements(radars, earth_helper, predictor_helper):
+def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper):
     # Inputs  - An array of satellite positions in ECEF coordinates
     #         - A dictionary of radar objects
     # Outputs - A dictionary of measurements taken by each radar
@@ -198,6 +198,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
         lat, lon, _ = ecef2lla(radM_ecef_nn)
 
         earth_helper.changedSignal.emit(info, (lat, lon))
+        graph_helper.changedSignal.emit(info, (radM_ecef_nn,))
 
         time.sleep(.2)
     for key, vals in measurements.items():

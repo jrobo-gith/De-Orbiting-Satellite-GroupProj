@@ -64,6 +64,11 @@ class Grapher(QWidget):
         with open(prior_post_res) as f:
             prior_post_res = json.load(f)
 
+        satellite_pos_live = os.path.join(root_dir,
+                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/sat_pos_live.json")
+        with open(satellite_pos_live) as f:
+            live_position = json.load(f)
+
         ## Create two graphics layout widgets
         self.column0_graphs = pg.GraphicsLayoutWidget()
         self.column1_graphs = pg.GraphicsLayoutWidget()
@@ -74,8 +79,8 @@ class Grapher(QWidget):
         self.layout.addWidget(self.column1_graphs, 0, 2)
         self.setLayout(self.layout)
 
-
         self.plot_list = []
+        self.live_plot_list = []
         # Add column0 graphs
         self.position_graph = self.column0_graphs.addPlot(row=0, col=0)
         self.position_graph = Plot(self.position_graph,
@@ -113,6 +118,13 @@ class Grapher(QWidget):
                           args=altitude)
         self.plot_list.append(self.altitude_graph)
 
+        self.satellite_pos_live = self.column1_graphs.addPlot(row=1, col=0)
+        self.satellite_pos_live = Plot(self.satellite_pos_live,
+                                       [[0]],
+                                       [[0]],
+                                       args=live_position)
+        self.live_plot_list.append(self.satellite_pos_live)
+
 
     @QtCore.pyqtSlot(dict, tuple)
     def update_plots(self, name, update):
@@ -136,6 +148,17 @@ class Grapher(QWidget):
         x, y = update
 
         for i, plot in enumerate(self.plot_list):
+            x_vals = np.array(x[i])
+            y_vals = np.array(y[i])
+            plot.update_plot(x_vals, y_vals)
+
+    @QtCore.pyqtSlot(dict, tuple)
+    def update_plot_no_radar(self, name, update):
+        XYZ = update[0]
+        x, y, z = [[XYZ[0]]], [[XYZ[1]]], [[XYZ[2]]]
+
+
+        for i, plot in enumerate(self.live_plot_list):
             x_vals = np.array(x[i])
             y_vals = np.array(y[i])
             plot.update_plot(x_vals, y_vals)

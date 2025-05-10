@@ -175,8 +175,11 @@ class SimWidget(QWidget):
         earth_helper = Helper()
         earth_helper.changedSignal.connect(self.earth.update_satellite_position, QtCore.Qt.QueuedConnection)
 
-        threading.Thread(target=get_radar_measurements, args=(self.radars, earth_helper, pred_helper), daemon=True).start()
+        # Graph
+        graph_helper = Helper()
+        graph_helper.changedSignal.connect(self.graph.update_plot_no_radar, QtCore.Qt.QueuedConnection)
 
+        threading.Thread(target=get_radar_measurements, args=(self.radars, graph_helper, earth_helper, pred_helper), daemon=True).start()
 
     def click_graph_button(self):
         """

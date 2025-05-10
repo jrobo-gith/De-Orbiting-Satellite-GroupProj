@@ -11,5 +11,6 @@
   "x-lim": [-1e4, 1e4],
   "y-lim": [-1e4, 1e4],
   "label_style": {"color": "black", "font-size": "15px"},
-  "title_style": {"color": "black", "font-size": "20px"}
+  "title_style": {"color": "black", "font-size": "20px"},
+  "array-limit": 50
 }
