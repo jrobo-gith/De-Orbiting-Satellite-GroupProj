@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import numpy as np
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -64,29 +64,6 @@ class Grapher(QWidget):
         # self.combined_graphs = pg.GraphicsLayoutWidget()
 
 
-        # Add graphics scenes
-        sim_scene = self.simulator_graphs.scene()
-        sim_rect = QGraphicsRectItem(0, 0, 1000, 1000)
-        sim_brush = QBrush(QColor(0, 0, 255, 35))
-        sim_rect.setBrush(sim_brush)
-        sim_rect.setZValue(-1)
-        sim_scene.addItem(sim_rect)
-
-        pred_scene = self.predictor_graphs.scene()
-        pred_rect = QGraphicsRectItem(0, 0, 1000, 1000)
-        pred_brush = QBrush(QColor(0, 255, 0, 35))
-        pred_rect.setBrush(pred_brush)
-        pred_rect.setZValue(-1)
-        pred_scene.addItem(pred_rect)
-
-        # combined_scene = self.combined_graphs.scene()
-        # combined_rect = QGraphicsRectItem(0, 0, 1000, 1000)
-        # combined_brush = QBrush(QColor(0, 255, 255, 35))
-        # combined_rect.setBrush(combined_brush)
-        # combined_rect.setZValue(-1)
-        # combined_scene.addItem(combined_rect)
-
-
         # Create layout and add layout widgets
         self.layout = QGridLayout()
         self.layout.addWidget(self.simulator_graphs, 0, 0)
@@ -102,7 +79,6 @@ class Grapher(QWidget):
                           [[0], [0], [0]],
                           [[0], [0], [0]],
                           args=position)
-
         self.plot_list.append(self.sim_1)
 
         self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
@@ -110,7 +86,6 @@ class Grapher(QWidget):
                           [[0], [0]],
                           [[0], [0]],
                           args=velocity)
-
         self.plot_list.append(self.sim_2)
 
         # Add predictor plots
@@ -119,7 +94,6 @@ class Grapher(QWidget):
                           [[0], [0], [0]],
                           [[0], [0], [0]],
                           args=altitude)
-
         self.plot_list.append(self.pred_1)
 
 

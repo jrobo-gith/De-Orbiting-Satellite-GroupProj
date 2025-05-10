@@ -1,6 +1,6 @@
 import pyqtgraph as pg
 import numpy as np
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 class Plot(pg.PlotWidget):
     """
@@ -57,6 +57,11 @@ class Plot(pg.PlotWidget):
         self.plot_allocation.setLabel("left", args["label_title_y"])
 
         # If there is an x-lim or y-lim, add it to the plot.
+        if args['x-lim'] != "None":
+            self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
+        if args['y-lim'] != "None":
+            self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
+
         if args['x-lim'] != "None":
             self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
         if args['y-lim'] != "None":

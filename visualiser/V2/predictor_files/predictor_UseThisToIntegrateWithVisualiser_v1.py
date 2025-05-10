@@ -11,7 +11,7 @@ from numpy.random import randn
 from scipy.integrate import solve_ivp
 from math import atan2
 from tqdm import tqdm
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 """ Set constants ==================================================="""
 

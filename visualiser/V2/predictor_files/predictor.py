@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import sys
 import threading
 import matplotlib.pyplot as plt
-from debug import debug_print
+from visualiser.V2.debug import debug_print
 
 np.random.seed(0)
 
@@ -85,7 +85,7 @@ class Predictor(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
-        debug_print("predictor", f'{info['obs-time']}, dt={self.dt}')
+        debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
         self.ts.append(info['obs-time'])
 
         stime, radobj = info['stime'], info['radobj']
