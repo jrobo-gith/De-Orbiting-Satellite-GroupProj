@@ -98,8 +98,8 @@ def get_sat_data():
 class Radar:
     # Contains radar specific information
     __range_uncertainty = 100
-    __theta_uncertainty = 0.01
-    __phi_uncertainty = 0.01
+    __theta_uncertainty = 0.0001
+    __phi_uncertainty = 0.0001
     __vel_uncertainty = 0.05
 
     def __init__(self, longlat, azfov=360, elfov=180):
@@ -270,7 +270,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
             # Convert to ENU coordinates to compute azimuth and elevation
             rel_pos_enu = ecef2enu(rel_pos, radobj.pos_lla)
             
-            radM = radobj.radar_measurements(rel_pos_enu, sat_vel[i])
+            radM = radobj.radar_measurements(rel_pos_enu, sat_vel[i], noise = True)    # Set it back to noise = TRUE later !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, sat_vel[i], noise=False)  # NO NOISE
 
             # Check if the satellite is in field of view of the radar
@@ -313,14 +313,15 @@ def sat_ecef2lla(sat_pos_ecef):
     return sat_pos_lla
 
 # Function to convert satellite position in ECI to radar's local spherical coordinates
-def do_conversions(eci_coords, stime, radar):
+def do_conversions(radar_z_ECI, stime, radar):
     # Inputs  - ECI coordinates of the satellite
     #         - A datetime object corresponding to the satellite position
     #         - Name of the radar
     # Outputs - An array containing range, azimuth and elevation
 
     sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
-
+    eci_coords = radar_z_ECI[:3]
+    eci_vel = radar_z_ECI[3:6]
 
     # radar = radars[radar_name]
     # debug_print("simulator", radar)
@@ -333,7 +334,7 @@ def do_conversions(eci_coords, stime, radar):
     rel_pos = pos_ecef - radar.pos_ecef
     rel_pos_enu = ecef2enu(rel_pos, radar.pos_lla)
     # Get spherical coordinate values
-    radM = radar.radar_measurements(rel_pos_enu, noise=False)
+    radM = radar.radar_measurements(rel_pos_enu, eci_vel, noise=False)
 
     return radM
 
