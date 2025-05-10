@@ -87,8 +87,8 @@ class Earth(pg.GraphicsLayoutWidget):
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
         self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-1], y=full_sim_pixels[1][:-1], size=5, brush=pg.mkBrush('yellow'))
-        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[1][-1]], y=[full_sim_pixels[0][-1]], size=10, brush=pg.mkBrush('red'))
-        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[1][0]], y=[full_sim_pixels[0][0]], size=20, brush=pg.mkBrush('black'))
+        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
+        self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
         self.satellite_start_position.setOpacity(0.9)
@@ -200,7 +200,7 @@ class Earth(pg.GraphicsLayoutWidget):
             [radar_plot.show() for radar_plot in self.radar_plots]
         else:
             [radar_plot.hide() for radar_plot in self.radar_plots]
-            
+
     def prediction_overlay_switch(self):
         """
         Function that sits inside the 'self.prediction_checkbox' QCheckBox. When altered (checked or unchecked), the
