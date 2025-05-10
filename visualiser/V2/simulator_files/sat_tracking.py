@@ -242,7 +242,7 @@ def radM2eci(radM, stime, radar):
     gmst_angle = get_gmst(stime)
     Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
     pos_x, pos_y, pos_z = Rot_eci2ecef.dot(radM_ecef)    
-    return (pos_x, pos_y, pos_z)
+    return np.array([pos_x, pos_y, pos_z])
 
 # Simulate radar measurements
 def get_radar_measurements(radars, earth_helper, predictor_helper):
@@ -273,11 +273,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
             radM = radobj.radar_measurements(rel_pos_enu, sat_vel[i])
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, sat_vel[i], noise=False)  # NO NOISE
 
-            radM_enu = radobj.radM2enu(radM[:3]) #CHANGE TO RADM
-            radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
-            gmst_angle = get_gmst(sim_times[i])
-            Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
-            pos_x, pos_y, pos_z = Rot_eci2ecef.dot(radM_ecef)
+            pos_x, pos_y, pos_z = radM2eci(radM[:3], sim_times[i], radobj)
 
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM[:3])):
