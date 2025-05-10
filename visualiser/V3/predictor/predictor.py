@@ -160,8 +160,8 @@ class Predictor(QWidget):
                 #
         if altitude_post < 0:
             sys.exit()
-        #
-        #
+
+
         if altitude_post <= 140e3:
             # debug_print("predictor", "============== predict landing ================")
             ### sample from the updated state distribution and predict landing position
@@ -235,19 +235,18 @@ class Predictor(QWidget):
             # debug_print("predictor", f"We are getting out: {x_post}")
             # debug_print("predictor", f"{self.ts}, {self.xs}")
 
-        position_x = [update[0], x_prior[0], x_post[0]]
-        position_y = [update[1], x_prior[1], x_post[1]]
-
-        velocity_x = [x_prior[3], x_post[3]]
-        velocity_y = [x_prior[4], x_post[4]]
-
-        alt_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
-        alt_y = [altitude_post, 50e3, 140e3]
-
-        plot_x = [position_x, velocity_x, alt_x]
-        plot_y = [position_y, velocity_y, alt_y]
-
         if info['rdist'] != 'none':
+            position_x = [info['state_no_noise'][0], x_prior[0], x_post[0]]
+            position_y = [info['state_no_noise'][1], x_prior[1], x_post[1]]
+
+            velocity_x = [x_prior[3], x_post[3]]
+            velocity_y = [x_prior[4], x_post[4]]
+
+            alt_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
+            alt_y = [altitude_post, 50e3, 140e3]
+
+            plot_x = [position_x, velocity_x, alt_x]
+            plot_y = [position_y, velocity_y, alt_y]
 
             pred_update = (plot_x, plot_y)
             send_to_graph(self.grapher_helper, {'shape': (3,3)}, pred_update)
