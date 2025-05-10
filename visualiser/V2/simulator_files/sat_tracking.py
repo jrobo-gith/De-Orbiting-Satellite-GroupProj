@@ -236,6 +236,14 @@ def enu2lla(enu_coords, ref_lla_coords):
     lla_coords = ecef2lla(ecef_coords)
     return lla_coords
 
+def radM2eci(radM, stime, radar):
+    radM_enu = radar.radM2enu(radM[:3]) #CHANGE TO RADM
+    radM_ecef = enu2ecef(radM_enu, radar.pos_lla)
+    gmst_angle = get_gmst(stime)
+    Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
+    pos_x, pos_y, pos_z = Rot_eci2ecef.dot(radM_ecef)    
+    return (pos_x, pos_y, pos_z)
+
 # Simulate radar measurements
 def get_radar_measurements(radars, earth_helper, predictor_helper):
     # Inputs  - An array of satellite positions in ECEF coordinates
