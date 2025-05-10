@@ -61,6 +61,11 @@ class Plot(pg.PlotWidget):
         if args['y-lim'] != "None":
             self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
 
+        if args['x-lim'] != "None":
+            self.plot_allocation.setXRange(args["x-lim"][0], args["x-lim"][1])
+        if args['y-lim'] != "None":
+            self.plot_allocation.setYRange(args["y-lim"][0], args["y-lim"][1])
+
         # Plot initial values for each line
         self.lines = []
         for i in range(self.num_lines):
