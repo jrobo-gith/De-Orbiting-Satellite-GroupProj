@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import numpy as np
+from debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -137,9 +138,9 @@ class Grapher(QWidget):
         :param name: redundant parameter
         :param update: contains x and y to update the plots.
         """
-        assert type(name) == dict, print("Name must be a dictionary")
-        assert type(update) == tuple, print("Update must be a tuple")
-        assert type(update[0]) == type(update[1]) == list, print(f"""All of update must be a list, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
+        assert type(name) == dict, debug_print("visualiser", "Name must be a dictionary")
+        assert type(update) == tuple, debug_print("visualiser", "Update must be a tuple")
+        assert type(update[0]) == type(update[1]) == list, debug_print("visualiser", f"""All of update must be a list, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
 
         x, y = update
 

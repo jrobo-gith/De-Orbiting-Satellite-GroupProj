@@ -3,6 +3,7 @@ import sys
 from PIL import Image
 import json
 import numpy as np
+from debug import debug_print
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -196,9 +197,9 @@ class Earth(pg.GraphicsLayoutWidget):
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
         if self.radar_checkbox.isChecked():
-            print("Radar Checked!")
+            debug_print("visualiser", "Radar Checked!")
         else:
-            print("Radar Not Checked!")
+            debug_print("visualiser", "Radar Not Checked!")
 
     def prediction_overlay_switch(self):
         """
