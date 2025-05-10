@@ -1,29 +1,52 @@
+# Import standard files
 import os
 import sys
+import numpy as np
+import json
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QStackedWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout,
-                             QProgressBar)
-from PyQt5 import QtCore
+# Import PyQt Widgets
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QLineEdit, QPushButton, QHBoxLayout
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
-import numpy as np
-from PyQt5 import QtGui
 
+# Import from other files in the project
 from visualiser.V2.widgets.graph_stuff.simulator_window import SimWidget
 from visualiser.V2.simulator_files.Py_Simulation_Jai_Testing import EARTH_SEMIMAJOR
-
 from visualiser.V2.partials.navbar import Navbar
-import json
+
+# Import global settings
 json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
-
 class SimulationMenu(QWidget):
+    """
+    Window displaying the simulation menu to allow the user to input initial conditions and begin the simulation. This
+    limits the simulation from running as soon as the GUI is loaded and gives a more professional feel.
+
+    This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'simulation'
+    button.
+
+    Functions:
+   -  __init__(self, stacked_widget)
+
+    References:
+        Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+
+    Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
+    """
     def __init__(self, stacked_widget):
+        """
+        Initialises the simulation menu window, contains an instance of the 'navbar' class, also contains 'QLineEdits'
+        that are used to allow the user to input initial conditions. If the user inputs anything other than floating
+        point numbers or ints, the program will not continue. A collection of QLabels, QLineEdits and a QPushButton are
+        stacked and layed out to display the simulation menu.
+
+        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        """
         super().__init__()
         self.stacked_widget = stacked_widget
 
@@ -113,6 +136,15 @@ class SimulationMenu(QWidget):
 
 
     def loadSim(self):
+        """
+        Connected to the 'start_sim_btn' QPushButton. Runs when the 'start_sim_btn' button is clicked. This takes the
+        input values from each QLineEdit and constructions a list of 'initial conditions' to be fed into
+        'simulation_window.py'. It also takes the inputs of radar locations into a list and passes it into
+        'simulation_window.py'.
+
+        It then checks if an instance of the simulation already exists, if so, it removes the instance and adds it back,
+        effectively restarting the simulation. If it does not exist, it creates a new instance of the Simwidget.
+        """
         # init_x_p = int(self.input_X_pos.text()) + EARTH_SEMIMAJOR
         # init_y_p = int(self.input_Y_pos.text())
         # init_z_p = int(self.input_Z_pos.text())
