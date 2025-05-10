@@ -253,7 +253,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
 
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, noise=False)  # NO NOISE
 
-            radM_enu = radobj.radM2enu(radM)
+            radM_enu = radobj.radM2enu(radM_no_noise) #CHANGE TO RADM
             radM_ecef = enu2ecef(radM_enu, radobj.pos_lla)
             gmst_angle = get_gmst(sim_times[i])
             Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
@@ -281,7 +281,7 @@ def get_radar_measurements(radars, earth_helper, predictor_helper):
 
         earth_helper.changedSignal.emit(info, (lat, lon))
 
-        time.sleep(0.1)
+        time.sleep(.2)
     for key, vals in measurements.items():
         measurements[key] = np.array(vals)
     return measurements

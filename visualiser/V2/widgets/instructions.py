@@ -1,21 +1,43 @@
 import os
 import sys
+import json
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-import json
-from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QStackedWidget, QMainWindow, QScrollArea)
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from visualiser.V2.partials.navbar import Navbar
 
+# Import global settings
 json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
 class Instructions(QWidget):
+    """
+    Window displaying instructions on how to navigate the GUI and run simulations.
+    This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'instructions'
+    button.
+
+    Functions:
+    - __init__(self, stacked_widget)
+
+     References:
+        Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+
+    Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
+
+    """
     def __init__(self, stacked_widget):
+        """
+        Initialises the instructions window, contains an instance of the 'navbar' class, contains many QLabels
+        outlining the instructions and structured using a Vertical Box Layout (QVBoxLayout) to produce the instructions
+        window.
+
+        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        """
         super().__init__()
         self.stacked_widget = stacked_widget
 

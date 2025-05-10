@@ -1,26 +1,54 @@
 import os
 import sys
+from PIL import Image
+import json
+import numpy as np
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QCheckBox
+# Import necessary PyQt5 components
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap
 import pyqtgraph as pg
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 
-from PIL import Image
-import json
-import numpy as np
-import matplotlib.pyplot as plt
-
+# Import Global settings
 json_file = os.path.join(root_dir, "visualiser/V2/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
 class Earth(pg.GraphicsLayoutWidget):
+    """
+    Window displaying the Earth Window in the simulation, used for visualising the satellite orbit trajectory,
+    prediction of landing sites, and radar locations where each one can be dynamically switched off to gain a better
+    view of the user's interest.
+    This window's parent is the SimWidget in simulator_window.py, navigable to using the SimWidget under the 'EarthView'
+    button at the top right.
+
+    Functions:
+    - __init__(self, stacked_widget)
+    - update_satellite_position(self, name, update)
+    - sim_overlay_switch(self)
+    - radar_overlay_switch(self)
+    - prediction_overlay_switch(self)
+
+    References:
+        Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+
+    Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
+    """
     def __init__(self, full_sim_data, radar_list):
+        """
+        Initialises the Earth Window, converts a .jpg image of the world into a plottable ImageItem through a numpy
+        array. Also takes the full simulation data, ran in simulator_window.py, and plots it on the 2D map of earth.
+
+        Also lays out optional checkboxes which turn simulation data, radar locations or prediction info off and on at
+        the user's convenience.
+
+        :param full_sim_data: the full simulation data in lat lon, used to plot the full simulation on the 2d world map.
+        :param radar_list: list of radar lat lons, initialised in simulator_window.py, used to plot on the 2d world map.
+        """
         super().__init__()
 
         self.lat, self.lon, self.t = full_sim_data
@@ -132,11 +160,27 @@ class Earth(pg.GraphicsLayoutWidget):
 
     @QtCore.pyqtSlot(dict, tuple)
     def update_satellite_position(self, name, update):
+        """
+        Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
+        from simulator_files/sat_tracking via multi-threading and a 'helper' function, which emits the satellite's
+        location at a given time interval.
+        We receive the data as (dict, tuple), we do not use the dict (name) in this instance, and it is redundant, and
+        the update is a tuple containing the latitude and longitude of the satellite.
+
+        We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
+
+        :param name: redundant parameter
+        :param update: contains one latitude and one longitude to update the satellite's position.
+        """
         lat, lon = update
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
 
     def sim_overlay_switch(self):
+        """
+        Function that sits inside the 'self.simulation_checkbox' QCheckBox. When altered (checked or unchecked), the
+        function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
+        """
         if self.simulation_checkbox.isChecked():
             self.satellite_start_position.show()
             self.sim_plot.show()
@@ -147,12 +191,20 @@ class Earth(pg.GraphicsLayoutWidget):
             self.crash_site.hide()
 
     def radar_overlay_switch(self):
+        """
+        Function that sits inside the 'self.radar_checkbox' QCheckBox. When altered (checked or unchecked), the
+        function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
+        """
         if self.radar_checkbox.isChecked():
             print("Radar Checked!")
         else:
             print("Radar Not Checked!")
 
     def prediction_overlay_switch(self):
+        """
+        Function that sits inside the 'self.prediction_checkbox' QCheckBox. When altered (checked or unchecked), the
+        function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
+        """
         if self.prediction_checkbox.isChecked():
             self.prediction_crash_point.show()
             self.prediction_crash_1std.show()
@@ -163,7 +215,14 @@ class Earth(pg.GraphicsLayoutWidget):
             self.prediction_crash_2std.hide()
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
-    """Returns pixel values for lat and lon. Returns tuple (x, y)"""
+    """
+    Returns pixel values for lat and lon. Returns tuple (x, y)
+
+    :param lat: latitude trajectory
+    :param lon: longitude trajectory
+    :param screen_w: screen width
+    :param screen_h: screen height
+    """
     x = []
     y = []
     for i in range(len(lat)):
