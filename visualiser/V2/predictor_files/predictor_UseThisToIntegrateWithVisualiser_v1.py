@@ -11,6 +11,7 @@ from numpy.random import randn
 from scipy.integrate import solve_ivp
 from math import atan2
 from tqdm import tqdm
+from debug import debug_print
 
 """ Set constants ==================================================="""
 
@@ -193,7 +194,7 @@ def ode(t, state_x):
         F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
         F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
         F_drag_z = -0.5 * rho * CD * A * v * vz / M_SAT
-        # print("drag:", [F_drag_x, F_drag_y, F_drag_z])
+        # debug_print("predictor", f"drag: [F_drag_x, F_drag_y, F_drag_z]")
         
         # Acceleration
         ax = F_gravity * (x / r) + F_drag_x
@@ -222,7 +223,7 @@ def f(state_x, dt):
     # else:
     #     # Use RK4 for larger dt
     #     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt])
-    #     # print(solution.y)
+    #     # debug_print("predictor", solution.y)
     #     return solution.y.flatten()
     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
@@ -250,7 +251,7 @@ def satellite_UKF(state0,  fx, hx, dt=1.0):
     ### initialise UKF
     sigmas_generator = MerweScaledSigmaPoints(n=6, alpha=0.1, beta = 2., kappa= -3.)  #kappa = -3.
     ukf = UKF(dim_x=6, dim_z=3, fx = fx, hx = hx, dt = dt, points=sigmas_generator) # take f, h from Jai and Vijay
-    # print(ukf.Q)
+    # debug_print("predictor", ukf.Q)
 
 
     """ ============== Define items in UKF """
@@ -312,28 +313,28 @@ if __name__ == "__main__":
         for dt_sim in dt_sim_arr:
             time_duration += dt_sim
             sate_pos = np.concatenate(satellite_pos_true.update(dt_sim)).reshape(1,-1).flatten()
-            # print(sate_pos)
+            # debug_print("predictor", sate_pos)
             xs_true.append(sate_pos)
             ### get radar measurement
             z = np.array(radar.noisy_reading(satellite_pos=sate_pos[:3], time=time_duration))
-            # print(z)
+            # debug_print("predictor", z)
             # zs_batch.append(z)
             zs.append(z)
             ts.append(z[3])
-            # print(np.array(ts), np.array(ts).shape)
+            # debug_print("predictor", f"{np.array(ts)}, {np.array(ts).shape}")
             if lat_long_height(sate_pos[0], sate_pos[1], sate_pos[2])[2] <=0: break
 
-        # print("iteration=", iter, "\tbatch length=", num_in_batch, "\tts=", ts)
-        # print("iteration=", iter, "\tbatch length=", num_in_batch, "\nvarying dt:", np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1])
-        # print("iteration=", iter, "\tbatch length=", num_in_batch, "time=", np.array(ts),
-        #       "\nvarying dt:", np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1],
-        #       "\nbatch:",  np.array(zs)[-num_in_batch:])
+        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, \tts= {ts}"")
+        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, \nvarying dt: {np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1]}")
+        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, time= {np.array(ts)},
+        #       \nvarying dt: {np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1]},
+        #       \nbatch: {np.array(zs)[-num_in_batch:]}")
 
         ### UKF with batch processing (each batch has varying timesteps) =======================================
         # (x, cov) = ukf.batch_filter(zs=np.array(zs)[-num_in_batch:, :3],
         #                                 dts=np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1])
-        # print(np.array(ts)[-num_in_batch:])
-        # print(np.array(ts)[-num_in_batch-1:-1])
+        # debug_print("predictor", np.array(ts)[-num_in_batch:])
+        # debug_print("predictor", np.array(ts)[-num_in_batch-1:-1])
         for i, (z, dt) in enumerate(zip(np.array(zs)[-num_in_batch:, :],
                                         np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1])):
             ukf.predict(dt=dt)
@@ -343,17 +344,17 @@ if __name__ == "__main__":
             xs.append(x_post)
             x_cov = ukf.P
             Ps.append(x_cov)
-            # print(np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5))
+            # debug_print("predictor", np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5))
 
             """Predict landing ====================================================================="""
             altitude_val = lat_long_height(sate_pos[0], sate_pos[1], sate_pos[2])[2]
 
-            print("altitude=", altitude_val)
+            debug_print("predictor", f"altitude= {altitude_val}")
 
             if altitude_val <= 0:   # if state position is less than ? meters away from the earth
                 break
             elif altitude_val <= 200e3:
-                print("============== predict landing ================")
+                debug_print("predictor", "============== predict landing ================")
                 ### sample from the updated state distribution and predict landing position
                 state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5)
 
@@ -373,8 +374,8 @@ if __name__ == "__main__":
                         end += 1000000
                         landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end], events= stop_condition)
                     if landing.success and len(landing.y)==0:
-                        # print(landing.y_events, np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH)
-                        # print(landing.y_events[0][0][:3])
+                        # debug_print("predictor", f"{landing.y_events}, {np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH}")
+                        # debug_print("predictor", f"{landing.y_events[0][0][:3]}")
                         landing_time = landing.t_events[0][0]
                         landing_position = landing.y_events[0][0][:3]
                         landing_position_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])

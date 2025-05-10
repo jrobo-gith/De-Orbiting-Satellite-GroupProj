@@ -1,5 +1,6 @@
 import pyqtgraph as pg
 import numpy as np
+from debug import debug_print
 
 class Plot(pg.PlotWidget):
     """
@@ -34,9 +35,9 @@ class Plot(pg.PlotWidget):
         super().__init__()
 
         # Check basic things
-        assert type(init_x) == list, print("Initial x must be a list")
-        assert type(init_y) == list, print("Initial y must be a list")
-        assert type(args) == dict, print("Arguments must be a dictionary")
+        assert type(init_x) == list, debug_print("visualiser", "Initial x must be a list")
+        assert type(init_y) == list, debug_print("visualiser", "Initial y must be a list")
+        assert type(args) == dict, debug_print("visualiser", "Arguments must be a dictionary")
 
         self.plot_allocation = plot_allocation
         self.args = args
@@ -114,13 +115,13 @@ class Plot(pg.PlotWidget):
         :param new_data_X: New x values
         :param new_data_Y: New y values
         """
-        assert type(new_data_X) == np.ndarray, print(f"New X must be a numpy array. {type(new_data_X)}")
-        assert type(new_data_Y) == np.ndarray, print(f"New Y must be a numpy array. {type(new_data_Y)}")
+        assert type(new_data_X) == np.ndarray, debug_print("visualiser", f"New X must be a numpy array. {type(new_data_X)}")
+        assert type(new_data_Y) == np.ndarray, debug_print("visualiser", f"New Y must be a numpy array. {type(new_data_Y)}")
 
-        assert new_data_X.shape == new_data_Y.shape, print(f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
+        assert new_data_X.shape == new_data_Y.shape, debug_print("visualiser", f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
 
-        # assert new_data_X.shape == np.array(self.init_x[0]).shape, print(f"New X must be same size as initial X. {new_data_X.shape} != {np.array(self.init_x[0]).shape}")
-        # assert new_data_Y.shape == np.array(self.init_y[0]).shape, print("New Y must be same size as initial Y.")
+        # assert new_data_X.shape == np.array(self.init_x[0]).shape, debug_print("visualiser", f"New X must be same size as initial X. {new_data_X.shape} != {np.array(self.init_x[0]).shape}")
+        # assert new_data_Y.shape == np.array(self.init_y[0]).shape, debug_print("visualiser", "New Y must be same size as initial Y.")
 
         for i, self.line in enumerate(self.lines):
             if len(self.init_x[i]) > 50: # If the length is larger than 100

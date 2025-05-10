@@ -7,6 +7,7 @@ from pyproj import CRS, Transformer, Proj
 from datetime import datetime, timedelta
 import os
 import time
+from debug import debug_print
 
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)
@@ -55,9 +56,9 @@ def get_sat_data():
                 sat_pos_z.append(float(values[2]))
                 t_vals.append(float(values[-1]))
     except FileNotFoundError:
-        print("Error: File 'sat_traj.dat' not found.")
+        debug_print("simulator", "Error: File 'sat_traj.dat' not found.")
     except ValueError as e:
-        print(f"Error: Could not convert value to float on line {line_num}: {e}")
+        debug_print("simulator", f"Error: Could not convert value to float on line {line_num}: {e}")
 
     sat_pos_x = np.array(sat_pos_x)
     sat_pos_y = np.array(sat_pos_y)
@@ -300,7 +301,7 @@ def do_conversions(eci_coords, stime, radar):
 
 
     # radar = radars[radar_name]
-    # print(radar)
+    # debug_print("simulator", radar)
     # Convert satellite position from ECI to ECEF
     gmst_angle = get_gmst(stime)
     Rot_eci2ecef = eci2ecef_matrix(gmst_angle)
