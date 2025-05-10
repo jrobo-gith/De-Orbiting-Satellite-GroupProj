@@ -1,5 +1,6 @@
 import numpy as np
 from pyproj import CRS, Transformer, Proj
+from datetime import datetime, timedelta
 
 # ECI to ECEF rotation matrix
 def eci2ecef_matrix(theta):
@@ -83,3 +84,45 @@ def sat_ecef2lla(sat_pos_ecef):
         sat_pos_lla.append(ecef2lla(sat_pos_ecef[i]))
     sat_pos_lla = np.array(sat_pos_lla)
     return sat_pos_lla
+
+def radM2eci(radM, stime, radar):
+    radM_enu = radar.radM2enu(radM[:3]) #CHANGE TO RADM
+    radM_ecef = enu2ecef(radM_enu, radar.pos_lla)
+    gmst_angle = get_gmst(stime)
+    Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T
+    pos_eci = Rot_eci2ecef.dot(radM_ecef)
+    return pos_eci
+
+def get_gmst(t):
+    # Inputs  - A datetime object
+    # Outputs - GMST angle in radians
+    epoch_J2000 = datetime(2000, 1, 1, 12, 0, 0)
+    days_since_J2000 = (t - epoch_J2000).total_seconds() / 86400.0
+    gmst = 2 * np.pi * (0.779057 + 1.002738 * days_since_J2000)
+    gmst %= 360
+    return np.radians(gmst)
+
+# Function to convert satellite position in ECI to radar's local spherical coordinates
+def do_conversions(radar_z_ECI, stime, radar):
+    # Inputs  - ECI coordinates of the satellite
+    #         - A datetime object corresponding to the satellite position
+    #         - Name of the radar
+    # Outputs - An array containing range, azimuth and elevation
+
+    eci_coords = radar_z_ECI[:3]
+    eci_vel = radar_z_ECI[3:6]
+
+    # radar = radars[radar_name]
+    # debug_print("simulator", radar)
+    # Convert satellite position from ECI to ECEF
+    gmst_angle = get_gmst(stime)
+    Rot_eci2ecef = eci2ecef_matrix(gmst_angle)
+    pos_ecef = Rot_eci2ecef.dot(eci_coords)
+
+    # Convert the relative position between satellite and radar to ENU coordinates
+    rel_pos = pos_ecef - radar.pos_ecef
+    rel_pos_enu = ecef2enu(rel_pos, radar.pos_lla)
+    # Get spherical coordinate values
+    radM = radar.radar_measurements(rel_pos_enu, eci_vel, noise=False)
+
+    return radM
