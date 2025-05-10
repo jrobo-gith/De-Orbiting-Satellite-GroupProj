@@ -1,0 +1,8 @@
+pyqtgraph==0.13.7
+QtPy==2.2.0
+pymsis==0.10.0
+filterpy==1.4.5
+pyproj
+PyQt5
+tqdm
+PyOpenGl

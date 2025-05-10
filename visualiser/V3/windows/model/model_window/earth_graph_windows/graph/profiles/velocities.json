@@ -1,0 +1,15 @@
+{
+  "plot-type": ["line", "line"],
+  "title": "XY Velocity",
+  "label_title_x": "X Vel",
+  "label_title_y": "Y Vel",
+  "line_names": ["Prior Velocity", "Post Velocity"],
+  "legend": true,
+  "grid": false,
+  "pens": [{"color": [255, 255, 255], "width": 5}, {"color": [0, 134, 193], "width": 5}],
+  "symbols": [["+", 2], ["o", 2]],
+  "x-lim": [-1e4, 1e4],
+  "y-lim": [-1e4, 1e4],
+  "label_style": {"color": "black", "font-size": "15px"},
+  "title_style": {"color": "black", "font-size": "20px"}
+}
