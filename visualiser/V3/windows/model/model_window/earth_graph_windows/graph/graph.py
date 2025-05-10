@@ -42,7 +42,7 @@ class Grapher(QWidget):
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
-        position = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/prior_post.json")
+        position = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/position.json")
         with open(position) as f:
             position = json.load(f)
 
@@ -54,44 +54,64 @@ class Grapher(QWidget):
         with open(alt) as f:
             altitude = json.load(f)
 
+        post_covariance = os.path.join(root_dir,
+                           "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/post_covariance.json")
+        with open(post_covariance) as f:
+            post_covariance = json.load(f)
+
+        prior_post_res = os.path.join(root_dir,
+                           "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/prior_post_res.json")
+        with open(prior_post_res) as f:
+            prior_post_res = json.load(f)
 
         ## Create two graphics layout widgets
-        self.simulator_graphs = pg.GraphicsLayoutWidget()
-        self.predictor_graphs = pg.GraphicsLayoutWidget()
-        # self.combined_graphs = pg.GraphicsLayoutWidget()
-
+        self.column0_graphs = pg.GraphicsLayoutWidget()
+        self.column1_graphs = pg.GraphicsLayoutWidget()
 
         # Create layout and add layout widgets
         self.layout = QGridLayout()
-        self.layout.addWidget(self.simulator_graphs, 0, 0)
-        # self.layout.addWidget(self.combined_graphs, 0, 1)
-        self.layout.addWidget(self.predictor_graphs, 0, 2)
+        self.layout.addWidget(self.column0_graphs, 0, 0)
+        self.layout.addWidget(self.column1_graphs, 0, 2)
         self.setLayout(self.layout)
 
 
         self.plot_list = []
-        # Add simulator plots
-        self.sim_1 = self.simulator_graphs.addPlot(row=0, col=0)
-        self.sim_1 = Plot(self.sim_1,
+        # Add column0 graphs
+        self.position_graph = self.column0_graphs.addPlot(row=0, col=0)
+        self.position_graph = Plot(self.position_graph,
                           [[0], [0], [0]],
                           [[0], [0], [0]],
                           args=position)
-        self.plot_list.append(self.sim_1)
+        self.plot_list.append(self.position_graph)
 
-        self.sim_2 = self.simulator_graphs.addPlot(row=1, col=0)
-        self.sim_2 = Plot(self.sim_2,
+        self.velocity_graph = self.column0_graphs.addPlot(row=0, col=1)
+        self.velocity_graph = Plot(self.velocity_graph,
                           [[0], [0]],
                           [[0], [0]],
                           args=velocity)
-        self.plot_list.append(self.sim_2)
+        self.plot_list.append(self.velocity_graph)
 
-        # Add predictor plots
-        self.pred_1 = self.predictor_graphs.addPlot(row=0, col=0)
-        self.pred_1 = Plot(self.pred_1,
+        self.post_covariance_graph = self.column0_graphs.addPlot(row=1, col=0)
+        self.post_covariance_graph = Plot(self.post_covariance_graph,
+                          [[0]],
+                          [[0]],
+                          args=post_covariance)
+        self.plot_list.append(self.post_covariance_graph)
+
+        self.prior_post_residual = self.column0_graphs.addPlot(row=1, col=1)
+        self.prior_post_residual = Plot(self.prior_post_residual,
+                          [[0], [0], [0]],
+                          [[0], [0], [0]],
+                          args=prior_post_res)
+        self.plot_list.append(self.prior_post_residual)
+
+        # Add column1 graphs
+        self.altitude_graph = self.column1_graphs.addPlot(row=0, col=0)
+        self.altitude_graph = Plot(self.altitude_graph,
                           [[0], [0], [0]],
                           [[0], [0], [0]],
                           args=altitude)
-        self.plot_list.append(self.pred_1)
+        self.plot_list.append(self.altitude_graph)
 
 
     @QtCore.pyqtSlot(dict, tuple)

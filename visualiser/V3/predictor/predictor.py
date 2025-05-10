@@ -235,18 +235,31 @@ class Predictor(QWidget):
             # debug_print("predictor", f"We are getting out: {x_post}")
             # debug_print("predictor", f"{self.ts}, {self.xs}")
 
+
         if info['rdist'] != 'none':
+            # Compute crude RESIDUAL
+
             position_x = [info['state_no_noise'][0], x_prior[0], x_post[0]]
             position_y = [info['state_no_noise'][1], x_prior[1], x_post[1]]
 
             velocity_x = [x_prior[3], x_post[3]]
             velocity_y = [x_prior[4], x_post[4]]
 
+            cov_x = [self.ts[-1]]
+            cov_y = [x_cov[0, 0]]
+
+            prior_residual = np.linalg.norm([x_prior[0], x_prior[1], x_prior[2]]) - np.linalg.norm([info['state_no_noise'][0], info['state_no_noise'][1], info['state_no_noise'][2]])
+
+            post_residual = np.linalg.norm([x_post[0], x_post[1], x_post[2]]) - np.linalg.norm([info['state_no_noise'][0], info['state_no_noise'][1], info['state_no_noise'][2]])
+
+            residual_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
+            residual_y = [prior_residual, post_residual, 0]
+
             alt_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
             alt_y = [altitude_post, 50e3, 140e3]
 
-            plot_x = [position_x, velocity_x, alt_x]
-            plot_y = [position_y, velocity_y, alt_y]
+            plot_x = [position_x, velocity_x, cov_x, residual_x, alt_x]
+            plot_y = [position_y, velocity_y, cov_y, residual_y, alt_y]
 
             pred_update = (plot_x, plot_y)
             send_to_graph(self.grapher_helper, {'shape': (3,3)}, pred_update)
