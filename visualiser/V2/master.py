@@ -2,12 +2,13 @@ import sys
 import json
 import subprocess
 import os 
+from debug import debug_print
 
 # Get root directory to run from mac and windows.
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 req_file = os.path.join(root_dir, "visualiser/V2/requirements.txt")
-print(os.path.exists(req_file))
+debug_print("visualiser", os.path.exists(req_file))
 
 # Install required files
 cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
