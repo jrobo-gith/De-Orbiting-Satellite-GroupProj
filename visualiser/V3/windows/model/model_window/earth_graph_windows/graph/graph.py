@@ -148,7 +148,7 @@ class Grapher(QWidget):
         self.drag_plot = self.column1_graphs.addPlot(row=1, col=0)
         self.drag_plot = Plot(self.drag_plot,
                                         [[0], [0]],
-                                        [[0], [0]],
+                                        [[2], [2]],
                                         args=drag)
         self.plot_list.append(self.drag_plot)
 
@@ -162,7 +162,7 @@ class Grapher(QWidget):
         self.radar_bar_graph = self.column1_graphs.addPlot(row=2, col=0)
         self.radar_bar_graph = BarPlot(self.radar_bar_graph,
                                        self.radar_list,
-                                       np.zeros(2),
+                                       np.zeros(10),
                                        args=live_position) # Temp args
 
         self.percent_uptime = self.column1_graphs.addPlot(row=2, col=1,)

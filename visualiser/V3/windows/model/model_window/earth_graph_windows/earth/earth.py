@@ -113,7 +113,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.radar_plots = []
         self.radar_texts = []
         for i, radar in enumerate(self.radar_list):
-            x, y = latlon2pixel(np.array([radar[1]]), np.array([radar[0]]))
+            x, y = latlon2pixel(np.array([radar[0]]), np.array([radar[1]]))
             radar_plot = pg.ScatterPlotItem(x=x, y=y, size=20, brush=pg.mkBrush((173, 216, 230)))
             self.radar_plots.append(radar_plot)
 

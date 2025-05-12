@@ -80,9 +80,10 @@ class Radar:
         # Inputs - An array containing lat-long-alt of radar
         #        - Azimuth field of view in degrees
         #        - Elevation field of view in degrees
-        self.lon = longlat[0]  # Longitude
-        self.lat = longlat[1]  # Latitude
+        self.lat = longlat[0]  # Latitude
+        self.lon = longlat[1]  # Longitude
         self.alt = longlat[2]  # Altitude
+        longlat = [longlat[1], longlat[0], longlat[2]]
         self.pos_lla = longlat
         self.azfov = azfov  # Azimuth angle field of view
         self.elfov = elfov  # Elevation angle field of view
@@ -199,7 +200,7 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
                 if radar_dist < closest_radar_distance:
                     closest_radar_distance = radar_dist
                     measurement = (*radM,)
-                    true_pos = (*curr_sat_pos_eci, CD)
+                    true_pos = (*curr_sat_pos_eci, *sat_vel[i],CD)
                     info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i],
                             'rdist': radM[0],
                             "state_no_noise": true_pos, 'state_noise': radM_ecef_noise,}
@@ -228,7 +229,7 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         earth_helper.changedSignal.emit(info, (lat, lon))
         graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
 
-        time.sleep(0.2)
+        time.sleep(0.1)
     if dev_mode:
         fp.close()
     return True
