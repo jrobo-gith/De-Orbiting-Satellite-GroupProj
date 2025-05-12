@@ -1,17 +1,17 @@
 {
   "plot-type": ["line"],
-  "title": "Post Covariance",
+  "title": "Radar Uptime",
   "label_title_x": "Time (Hrs)",
-  "label_title_y": "Variance",
-  "line_names": ["Covariance"],
+  "label_title_y": "Percentage Uptime (%)",
+  "line_names": ["Percent uptime (%)"],
   "legend": false,
   "grid": true,
-  "pens": [{"color": [0, 255, 0], "width": 5}],
-  "symbols": [["+", 5]],
+  "pens": [{"color": [255, 255, 255], "width": 5}],
+  "symbols": [["+", 0]],
   "x-lim": "None",
   "y-lim": "None",
   "label_style": {"color": "black", "font-size": "15px"},
   "title_style": {"color": "black", "font-size": "20px"},
-  "array-limit": 50,
-  "hide-axes": false
+  "array-limit": "None",
+  "hide-axes": true
 }

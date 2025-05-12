@@ -15,3 +15,6 @@ H_SCALE = 8500
 R_EARTH_EQUATOR = 6378e3  # Radius of Earth near equator (m)
 R_EARTH_POLES = 6357e3 # Radius of Earth near poles (m)
 EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) # Accounting for earth's rotation without time t
+
+toHrs = 1/(60*60)
+toKM = 1/1000

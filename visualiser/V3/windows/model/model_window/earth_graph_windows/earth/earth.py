@@ -3,6 +3,7 @@ import sys
 from PIL import Image
 import json
 import numpy as np
+import threading
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
 
@@ -10,15 +11,19 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 # Import necessary PyQt5 components
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 from PyQt5 import QtCore
+from PyQt5.QtGui import QFont
 
 # Import Global settings
 json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
+
+class Helper(QtCore.QObject):
+    changedSignal = QtCore.pyqtSignal(str, tuple)
 
 class Earth(pg.GraphicsLayoutWidget):
     """
@@ -40,7 +45,7 @@ class Earth(pg.GraphicsLayoutWidget):
 
     Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
     """
-    def __init__(self, full_sim_data, radar_list):
+    def __init__(self, predictor, full_sim_data, radar_list):
         """
         Initialises the Earth Window, converts a .jpg image of the world into a plottable ImageItem through a numpy
         array. Also takes the full simulation data, ran in simulator_window.py, and plots it on the 2D map of earth.
@@ -53,6 +58,7 @@ class Earth(pg.GraphicsLayoutWidget):
         """
         super().__init__()
 
+        self.predictor = predictor
         self.lat, self.lon, self.t = full_sim_data
         self.radar_list = radar_list
 
@@ -105,10 +111,16 @@ class Earth(pg.GraphicsLayoutWidget):
 
         # Add Radars locations
         self.radar_plots = []
-        for radar in self.radar_list:
+        self.radar_texts = []
+        for i, radar in enumerate(self.radar_list):
             x, y = latlon2pixel(np.array([radar[1]]), np.array([radar[0]]))
-            radar_plot = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('blue'))
+            radar_plot = pg.ScatterPlotItem(x=x, y=y, size=20, brush=pg.mkBrush((173, 216, 230)))
             self.radar_plots.append(radar_plot)
+
+            # Add Radar Labels
+            self.txt = pg.TextItem(f'R{i}')
+            self.txt.setPos(x[0]-1, y[0]+1)
+            self.radar_texts.append(self.txt)
 
         # Add world image
         self.plot_widget.addItem(world_img)
@@ -121,6 +133,8 @@ class Earth(pg.GraphicsLayoutWidget):
         self.plot_widget.addItem(self.prediction_crash_1std)
         self.plot_widget.addItem(self.prediction_crash_2std)
         [self.plot_widget.addItem(radar_plot) for radar_plot in self.radar_plots]
+        [self.plot_widget.addItem(radar_text) for radar_text in self.radar_texts]
+
 
         # Plotting details
         self.plot_widget.setAspectLocked(True)
@@ -148,6 +162,10 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.prediction_checkbox.setChecked(True)
         self.prediction_checkbox.stateChanged.connect(self.prediction_overlay_switch)
+
+        self.make_prediction_button = QPushButton("Make Prediction")
+        self.make_prediction_button.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 35))
 
         self.filter_layout.addWidget(self.simulation_checkbox)
         self.filter_layout.addWidget(self.radar_checkbox)
@@ -245,6 +263,22 @@ class Earth(pg.GraphicsLayoutWidget):
             self.prediction_crash_point.hide()
             self.prediction_crash_1std.hide()
             self.prediction_crash_2std.hide()
+
+    def request_prediction(self, helper):
+        helper.changedSignal.emit("Requested prediction", (0, 0))
+
+    def set_predictor(self, predictor):
+        self.predictor = predictor
+        # Establish connection with helper
+        prediction_requester_helper = Helper()
+        prediction_requester_helper.changedSignal.connect(predictor.send_prediction, QtCore.Qt.QueuedConnection)
+        threading.Thread(target=self.request_prediction, args=(prediction_requester_helper,), daemon=True).start()
+
+        #Connect button to function
+        self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))
+
+        self.filter_layout.addWidget(self.make_prediction_button)
+
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """

@@ -7,11 +7,13 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 import pyqtgraph as pg
-from PyQt5.QtWidgets import QWidget, QGridLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication
 from PyQt5 import QtCore
 
 from visualiser.V3.debug import debug_print
 from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
+from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot import BarPlot
+from visualiser.V3.partials.constants import toHrs
 
 class Grapher(QWidget):
     """
@@ -31,7 +33,7 @@ class Grapher(QWidget):
 
     Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
     """
-    def __init__(self):
+    def __init__(self, radar_list):
         """
         Initialises the plotting window. Opens the necessary profiles for styling each plot (see
          profiles/profile_READ_ME) for full details. Creates two graphics layout widgets and assigns different plots
@@ -39,6 +41,10 @@ class Grapher(QWidget):
          as the update matrices. That is 1xL, where L is the number of lines.
         """
         super().__init__()
+        self.radar_list = radar_list
+        self.uptime = 0
+        self.downtime = 0
+
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
@@ -53,6 +59,11 @@ class Grapher(QWidget):
         alt = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/altitude.json")
         with open(alt) as f:
             altitude = json.load(f)
+
+        live_alt = os.path.join(root_dir,
+                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/live_altitude.json")
+        with open(live_alt) as f:
+            live_alt = json.load(f)
 
         post_covariance = os.path.join(root_dir,
                            "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/post_covariance.json")
@@ -69,30 +80,40 @@ class Grapher(QWidget):
         with open(satellite_pos_live) as f:
             live_position = json.load(f)
 
-        ## Create two graphics layout widgets
+        drag = os.path.join(root_dir,
+                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/drag.json")
+        with open(drag) as f:
+            drag = json.load(f)
+
+        percent_uptime = os.path.join(root_dir,
+                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/percent_uptime.json")
+        with open(percent_uptime) as f:
+            percent_uptime = json.load(f)
+
+
+        ## Create one graphics layout widget
         self.column0_graphs = pg.GraphicsLayoutWidget()
         self.column1_graphs = pg.GraphicsLayoutWidget()
 
         # Create layout and add layout widgets
         self.layout = QGridLayout()
-        self.layout.addWidget(self.column0_graphs, 0, 0)
-        self.layout.addWidget(self.column1_graphs, 0, 2)
+        self.layout.addWidget(self.column0_graphs, 0,0)
+        self.layout.addWidget(self.column1_graphs, 0,1)
         self.setLayout(self.layout)
 
         self.plot_list = []
-        self.live_plot_list = []
         # Add column0 graphs
         self.position_graph = self.column0_graphs.addPlot(row=0, col=0)
         self.position_graph = Plot(self.position_graph,
-                          [[0], [0], [0]],
-                          [[0], [0], [0]],
+                          [[0], [0], [0], [0]],
+                          [[0], [0], [0], [0]],
                           args=position)
         self.plot_list.append(self.position_graph)
 
         self.velocity_graph = self.column0_graphs.addPlot(row=0, col=1)
         self.velocity_graph = Plot(self.velocity_graph,
-                          [[0], [0]],
-                          [[0], [0]],
+                          [[0], [0], [0]],
+                          [[0], [0], [0]],
                           args=velocity)
         self.plot_list.append(self.velocity_graph)
 
@@ -113,17 +134,43 @@ class Grapher(QWidget):
         # Add column1 graphs
         self.altitude_graph = self.column1_graphs.addPlot(row=0, col=0)
         self.altitude_graph = Plot(self.altitude_graph,
-                          [[0], [0], [0]],
-                          [[0], [0], [0]],
+                          [[0], [0]],
+                          [[0], [0]],
                           args=altitude)
         self.plot_list.append(self.altitude_graph)
 
-        self.satellite_pos_live = self.column1_graphs.addPlot(row=1, col=0)
+        self.satellite_altitude_live = self.column1_graphs.addPlot(row=0, col=1)
+        self.satellite_altitude_live = Plot(self.satellite_altitude_live,
+                          [[0], [0]],
+                          [[0], [0]],
+                          args=live_alt)
+
+        self.drag_plot = self.column1_graphs.addPlot(row=1, col=0)
+        self.drag_plot = Plot(self.drag_plot,
+                                        [[0], [0]],
+                                        [[0], [0]],
+                                        args=drag)
+        self.plot_list.append(self.drag_plot)
+
+        self.satellite_pos_live = self.column1_graphs.addPlot(row=1, col=1)
         self.satellite_pos_live = Plot(self.satellite_pos_live,
                                        [[0]],
                                        [[0]],
                                        args=live_position)
-        self.live_plot_list.append(self.satellite_pos_live)
+
+
+        self.radar_bar_graph = self.column1_graphs.addPlot(row=2, col=0)
+        self.radar_bar_graph = BarPlot(self.radar_bar_graph,
+                                       self.radar_list,
+                                       np.array([0,0,0]),
+                                       args=live_position) # Temp args
+
+        self.percent_uptime = self.column1_graphs.addPlot(row=2, col=1,)
+        self.percent_uptime.setYRange(0, 100)
+        self.percent_uptime = Plot(self.percent_uptime,
+                                   [[0]],
+                                   [[0]],
+                                   args=percent_uptime)
 
 
     @QtCore.pyqtSlot(dict, tuple)
@@ -155,14 +202,34 @@ class Grapher(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def update_plot_no_radar(self, name, update):
         XYZ = update[0]
-        x, y, z = [[XYZ[0]]], [[XYZ[1]]], [[XYZ[2]]]
+        x, y, z = [XYZ[0]], [XYZ[1]], [XYZ[2]]
 
+        radar_alt = update[1]
+        alt_x, alt_y = np.array(radar_alt[0]), np.array(radar_alt[1])
 
-        for i, plot in enumerate(self.live_plot_list):
-            x_vals = np.array(x[i])
-            y_vals = np.array(y[i])
-            plot.update_plot(x_vals, y_vals)
-            if name['name'] == 'no radar':
-                plot.line.setPen(color=[255, 0, 0], width=5)
-            else:
-                plot.line.setPen(color=[0, 255, 0], width=5)
+        self.satellite_altitude_live.update_plot(alt_x, alt_y)
+
+        x_vals = np.array(x)
+        y_vals = np.array(y)
+        self.satellite_pos_live.update_plot(x_vals, y_vals)
+        if name['name'] == 'no radar':
+            self.satellite_pos_live.line.setPen(color=[255, 0, 0], width=5)
+        else:
+            self.satellite_pos_live.line.setPen(color=[0, 255, 0], width=5)
+
+        # Update bar graph
+        radar_name = update[2]
+        self.radar_bar_graph.update_plot(radar_name)
+
+        if name['name'] == 'no radar':
+            self.downtime += 1
+        else:
+            self.uptime += 1
+
+        current_time = np.array([name['obs-time']*toHrs])
+        percent_uptime = np.array([(self.uptime / (self.uptime + self.downtime)) * 100])
+
+        self.percent_uptime.update_plot(current_time, percent_uptime)
+        self.percent_uptime.hideAxis('left')
+        self.percent_uptime.hideAxis('bottom')
+

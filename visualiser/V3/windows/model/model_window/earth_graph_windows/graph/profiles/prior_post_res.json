@@ -1,7 +1,7 @@
 {
   "plot-type": ["line", "line", "line"],
   "title": "Prior Post Residual of Radar Measurements",
-  "label_title_x": "Time (s)",
+  "label_title_x": "Time (Hrs)",
   "label_title_y": "Error",
   "line_names": ["Prior Residual", "Post Residual", "Radar Measurement"],
   "legend": true,
@@ -12,5 +12,6 @@
   "y-lim": "None",
   "label_style": {"color": "black", "font-size": "15px"},
   "title_style": {"color": "black", "font-size": "20px"},
-  "array-limit": 50
+  "array-limit": 50,
+  "hide-axes": false
 }

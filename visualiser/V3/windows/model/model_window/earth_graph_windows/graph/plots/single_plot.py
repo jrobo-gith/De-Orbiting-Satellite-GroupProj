@@ -81,6 +81,7 @@ class Plot(pg.PlotWidget):
                                               brush=pg.mkBrush(args["brushes"][i]['color']))
             self.lines.append(self.line)
 
+
     def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
         """
         Plots a line using pyqtgraph.
@@ -126,10 +127,11 @@ class Plot(pg.PlotWidget):
         assert new_data_X.shape == new_data_Y.shape, debug_print("visualiser", f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
 
         for i, self.line in enumerate(self.lines):
-            if len(self.init_x[i]) > self.args['array-limit']: # If the length is larger than the array limit in args
-                # Remove oldest datapoint
-                self.init_x[i] = self.init_x[i][1:]
-                self.init_y[i] = self.init_y[i][1:]
+            if self.args['array-limit'] != "None":
+                if len(self.init_x[i]) > self.args['array-limit']: # If the length is larger than the array limit in args
+                    # Remove oldest datapoint
+                    self.init_x[i] = self.init_x[i][1:]
+                    self.init_y[i] = self.init_y[i][1:]
 
             # Add new data point
             self.init_x[i].append(new_data_X[i])

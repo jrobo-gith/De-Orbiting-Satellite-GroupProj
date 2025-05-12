@@ -117,14 +117,6 @@ class SimWidget(QWidget):
         backarrow.setFont(QFont(glob_setting['font-family'], 35))
         backarrow.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 
-        self.key_sim = QLabel("Simulation Data")
-        self.key_sim.setFont(QFont(glob_setting['font-family'], 20))
-        self.key_sim.setStyleSheet(f"color: rgb(0, 0, 255);")
-
-        self.key_pred = QLabel("Prediction Data")
-        self.key_pred.setFont(QFont(glob_setting['font-family'], 20))
-        self.key_pred.setStyleSheet(f"color: rgb(0, 255, 0);")
-
         self.graph_button = QPushButton("Graph View")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.graph_button.setFont(QFont(glob_setting['font-family'], 20))
@@ -144,16 +136,17 @@ class SimWidget(QWidget):
         sim_window_navbar.addWidget(self.graph_button, 0, 3, Qt.AlignCenter)
         sim_window_navbar.addWidget(self.earth_button, 0, 4, Qt.AlignCenter)
 
-        sim_window_navbar.addWidget(self.key_sim, 1, 1, Qt.AlignCenter)
-        sim_window_navbar.addWidget(self.key_pred, 1, 3, Qt.AlignCenter)
-
         ## Earth window
-        self.earth = Earth(full_sim_data=(self.lat, self.lon, self.t), radar_list=self.radar_list)
-        ## graph_script
-        self.graph = Grapher()
+        self.earth = Earth(predictor=None, full_sim_data=(self.lat, self.lon, self.t), radar_list=self.radar_list)
 
-        ## Predictor TESTING
-        self.predictor = Predictor(grapher=self.graph, earth=self.earth,state0=initial_conditions)
+        ## graph_script
+        self.graph = Grapher(self.radar_list)
+
+        ## Predictor
+        self.predictor = Predictor(grapher=self.graph, earth=self.earth, state0=initial_conditions)
+
+        # Now predictor exists, give it to the earth
+        self.earth.set_predictor(self.predictor)
 
         self.radars = initialise_radars(radar_list)
 
@@ -200,8 +193,6 @@ class SimWidget(QWidget):
         self.graph_earth_container.setCurrentIndex(1)
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
-        self.key_sim.setStyleSheet(f"color: rgba(0, 0, 255, 0);")
-        self.key_pred.setStyleSheet(f"color: rgba(0, 255, 0, 0);")
 
 
 

@@ -7,9 +7,10 @@ import time
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)
 
-from visualiser.V3.partials.constants import G, M_EARTH, R_EARTH_POLES, R_EARTH_EQUATOR, CD
+from visualiser.V3.partials.constants import G, M_EARTH, R_EARTH_POLES, R_EARTH_EQUATOR, CD, toHrs, toKM
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.coordinate_conversions import eci2ecef_matrix, lla2ecef, ecef2enu, enu2ecef, ecef2lla, get_gmst
+from visualiser.V3.simulator.simulator import lat_long_height
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -174,6 +175,10 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
                                              noise=True)  # Set it back to noise = TRUE later !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, sat_vel[i], noise=False)  # NO NOISE
 
+            # Convert radM to ecef for plotting
+            radM_enu_noise = radobj.radM2enu(radM[:3])
+            radM_ecef_noise = enu2ecef(radM_enu_noise, radobj.pos_lla)
+
             # Check if the satellite is in field of view of the radar
             if (radobj.check_fov(radM[:3])):
                 seen_satellite = True
@@ -185,22 +190,28 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
                     true_pos = (*curr_sat_pos, *sat_vel[i], CD)
                     info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj,
                             'rdist': radM[0],
-                            "state_no_noise": true_pos}
+                            "state_no_noise": true_pos, 'state_noise': radM_ecef_noise,}
 
         if seen_satellite:
             predictor_helper.changedSignal.emit(info, measurement)
         else:
-            info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj, 'rdist': "none"}
+            info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj, 'rdist': "none", 'state_noise': radM_ecef_noise,}
             predictor_helper.changedSignal.emit(info, (0, 0, 0))
 
         radM_enu_nn = radobj.radM2enu(radM_no_noise[:3])
         radM_ecef_nn = enu2ecef(radM_enu_nn, radobj.pos_lla)
         lat, lon, _ = ecef2lla(radM_ecef_nn)
 
-        earth_helper.changedSignal.emit(info, (lat, lon))
-        graph_helper.changedSignal.emit(info, (radM_ecef_nn,))
+        altitude_sat = lat_long_height(radM_ecef_nn[0], radM_ecef_nn[1], radM_ecef_nn[2])[2]
+        altitude_x = [t_vals[i]*toHrs, t_vals[i]*toHrs]
+        altitude_y = [altitude_sat*toKM, 140e3*toKM]
+        radar_alt = [altitude_x, altitude_y]
 
-        time.sleep(.2)
+        radar_name = info['name']
+        earth_helper.changedSignal.emit(info, (lat, lon))
+        graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
+
+        time.sleep(.1) # Cannot remove
     for key, vals in measurements.items():
         measurements[key] = np.array(vals)
     return measurements

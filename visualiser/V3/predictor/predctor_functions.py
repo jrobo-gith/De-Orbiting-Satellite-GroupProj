@@ -12,370 +12,120 @@ from scipy.integrate import solve_ivp
 from math import atan2
 from tqdm import tqdm
 from visualiser.V3.debug import debug_print
+from visualiser.V3.simulator.simulator import lat_long_height, atmospheric_density
 
 # Import constants
 from visualiser.V3.partials.constants import *
 
-
-# def curvature_in_prime_vertical(phi):
-#             return EARTH_SEMIMAJOR / np.sqrt(1 - E_SQUARED * np.sin(phi)**2)
-        
-# def latitude_iterator_and_height(x, y, z):
-#     r = np.sqrt(x**2 + y**2)
-#     phi = np.arctan(z / (r * (1 - E_SQUARED)))
-#     phi_new = phi + 100
-    
-#     while np.abs(phi_new - phi) > 1e-9:
-#         phi = phi_new
-#         N = curvature_in_prime_vertical(phi)
-#         phi_new = np.arctan2(z + (N * E_SQUARED) * np.sin(phi), r - (N * E_SQUARED) * np.cos(phi))
-    
-#     height = (r / np.cos(phi)) - N
-#     if height < 0:
-#         height = 0
-    
-#     return phi_new, height
-
-
-# def earth_radius_WGS84(latitude):
-#     numerator = (EARTH_SEMIMAJOR**2 * np.cos(latitude))**2 + (EARTH_SEMIMINOR**2 * np.sin(latitude))**2
-#     denominator = (EARTH_SEMIMAJOR * np.cos(latitude))**2 + (EARTH_SEMIMINOR * np.sin(latitude))**2
-#     return np.sqrt(numerator / denominator)
-
-# def lat_long_height(x, y, z):
-#     r = np.linalg.norm([x,y,z])
-#     longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
-#     latitude, height = latitude_iterator_and_height(x, y, z)
-#     R_earth = earth_radius_WGS84(latitude)
-#     height = r - R_earth
-#     return latitude, longitude, height
-
-# def atmospheric_density(altitude):
-#     # White noise as random perturbations of magnitude 0.1*RHO_0
-#     density = RHO_0 * np.exp(-altitude / H_SCALE)
-#     if altitude > 0:
-#         return density
-#     else:
-#         return 0
-
-def curvature_in_prime_vertical(phi):
-            return EARTH_SEMIMAJOR / np.sqrt(1 - E_SQUARED * np.sin(phi)**2)
-        
-def latitude_iterator_and_height(x, y, z):
-    r = np.sqrt(x**2 + y**2)
-    phi = np.arctan(z / (r * (1 - E_SQUARED)))
-    phi_new = phi + 100
-    
-    while np.abs(phi_new - phi) > 1e-9:
-        phi = phi_new
-        N = curvature_in_prime_vertical(phi)
-        phi_new = np.arctan2(z + (N * E_SQUARED) * np.sin(phi), r - (N * E_SQUARED) * np.cos(phi))
-    
-    height = (r / np.cos(phi)) - N
-    if height < 0:
-        height = 0
-            
-    return phi_new, height
-
-
-def earth_radius_WGS84(latitude):
-    numerator = (EARTH_SEMIMAJOR**2 * np.cos(latitude))**2 + (EARTH_SEMIMINOR**2 * np.sin(latitude))**2
-    denominator = (EARTH_SEMIMAJOR * np.cos(latitude))**2 + (EARTH_SEMIMINOR * np.sin(latitude))**2
-    return np.sqrt(numerator / denominator)
-
-def lat_long_height(x, y, z):
-    r = np.linalg.norm([x,y,z])
-    longitude = np.arctan2(y, x)
-    latitude, height = latitude_iterator_and_height(x, y, z)
-    R_earth = earth_radius_WGS84(latitude)
-    height = r - R_earth
-    return latitude, longitude, height
-
-def latitude_iterator_and_height_plot(x, y, z):
-    x = np.asarray(x)
-    y = np.asarray(y)
-    z = np.asarray(z)
-
-    r = np.sqrt(x**2 + y**2)
-    phi = np.arctan(z / (r * (1 - E_SQUARED)))
-    phi_new = phi + 100  # ensures entry into the loop
-
-    converged = np.zeros_like(phi, dtype=bool)
-    max_iter = 100
-    iter_count = 0
-
-    while not np.all(converged) and iter_count < max_iter:
-        phi[~converged] = phi_new[~converged]
-        N = curvature_in_prime_vertical(phi)
-        phi_new[~converged] = np.arctan2(z[~converged] + (N[~converged] * E_SQUARED) * np.sin(phi[~converged]),
-                                         r[~converged] - (N[~converged] * E_SQUARED) * np.cos(phi[~converged]))
-        converged[~converged] = np.abs(phi_new[~converged] - phi[~converged]) <= 1e-9
-        iter_count += 1
-
-    phi_final = phi_new
-    N_final = curvature_in_prime_vertical(phi_final)
-    height = (r / np.cos(phi_final)) - N_final
-    height = np.maximum(height, 0)  # ensure non-negative height
-
-    return phi_final, height
-
-def lat_long_height_plot(x, y, z):
-    r = np.sqrt(x**2 + y**2 + z**2)
-    longitude = np.arctan2(z, np.sqrt(x**2 + y**2))
-    latitude, height = latitude_iterator_and_height_plot(x, y, z)
-    R_earth = earth_radius_WGS84(latitude)
-    height = r - R_earth
-    return latitude, longitude, height
-
-def ECI2latlon_earth_rotate(x,y,z, time_duration):
-    """turns fixed ECI coordinates to lat long in degrees, 
-    accounting for rotating earth
-    """
-    rotation_per_s_rad = ((2*np.pi)/(23*3600 + 56*60 + 4))
-    rotation_over_time_rad = rotation_per_s_rad * time_duration
-    angle_current = np.arctan2(y,x)
-    ### rotate (x,y,z)
-    # norm = np.linalg.norm([x,y])
-    # x_rot = norm*np.cos(angle_current-rotation_over_time_rad)
-    # y_rot = norm*np.sin(angle_current-rotation_over_time_rad)
-    # z_rot = z
-    # lat, lon, _ = lat_long_height(x_rot, y_rot, z_rot)
-    cos_theta = np.cos(rotation_over_time_rad)
-    sin_theta = np.sin(rotation_over_time_rad)
-    x_rot =  x * cos_theta + y * sin_theta
-    y_rot = -x * sin_theta + y * cos_theta
-    z_rot = z
-    lat, lon, _ = lat_long_height(x_rot, y_rot, z_rot)
-    lat = np.degrees(lat)
-    lon = np.degrees(lon)
-    return lat, lon
-
-def atmospheric_density(altitude):
-    # White noise as random perturbations of magnitude 0.1*RHO_0
-    density = RHO_0 * np.exp(-altitude / H_SCALE)
-    return density
-    
 """ Landing stopping condition"""
+
+
 def stop_condition(t, y):
     # Stop when altitude <= 0
     r = np.linalg.norm(y[:3])
     _, _, altitude = lat_long_height(y[0], y[1], y[2])
     return altitude
 
+
 """ Define the ODE of the orbit dynamics ================================="""
+
+
 def ode(t, state_x):
-        x, y, z, vx, vy, vz= state_x        
-        
-        r = np.linalg.norm(state_x[:3])
+    x, y, z, vx, vy, vz = state_x
 
-        altitude = lat_long_height(x, y, z)[2]
+    r = np.linalg.norm(state_x[:3])
 
-        # Gravity
-        F_gravity = -G * M_EARTH / r**2
+    altitude = lat_long_height(x, y, z)[2]
 
-        # Drag
-        rho = atmospheric_density(altitude)
-        
-        v = np.linalg.norm([vx,vy,vz])
+    # Gravity
+    F_gravity = -G * M_EARTH / r ** 2
 
-        F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
-        F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
-        F_drag_z = -0.5 * rho * CD * A * v * vz / M_SAT
-        # debug_print("predictor", f"drag: [F_drag_x, F_drag_y, F_drag_z]")
-        
-        # Acceleration
-        ax = F_gravity * (x / r) + F_drag_x
-        ay = F_gravity * (y / r) + F_drag_y
-        az = F_gravity * (z / r) + F_drag_z
+    # Drag
+    rho = atmospheric_density(altitude)
 
-        return np.array([vx, vy, vz, ax, ay, az])
+    v = np.linalg.norm([vx, vy, vz])
+
+    F_drag_x = -0.5 * rho * CD * A * v * vx / M_SAT
+    F_drag_y = -0.5 * rho * CD * A * v * vy / M_SAT
+    F_drag_z = -0.5 * rho * CD * A * v * vz / M_SAT
+    # debug_print("predictor", f"drag: [F_drag_x, F_drag_y, F_drag_z]")
+
+    # Acceleration
+    ax = F_gravity * (x / r) + F_drag_x
+    ay = F_gravity * (y / r) + F_drag_y
+    az = F_gravity * (z / r) + F_drag_z
+
+    return np.array([vx, vy, vz, ax, ay, az])
+
+
+def ode_with_Cd(t, state_x):
+    x, y, z, vx, vy, vz, Cd = state_x
+
+    r = np.linalg.norm(state_x[:3])
+    altitude = lat_long_height(x, y, z)[2]
+
+    # Gravity
+    F_gravity = -G * M_EARTH / r ** 2
+
+    # Drag
+    rho = atmospheric_density(altitude)
+
+    v = np.linalg.norm([vx, vy, vz])
+
+    F_drag_x = -0.5 * rho * Cd * A * v * vx / M_SAT
+    F_drag_y = -0.5 * rho * Cd * A * v * vy / M_SAT
+    F_drag_z = -0.5 * rho * Cd * A * v * vz / M_SAT
+
+    # Acceleration
+    ax = F_gravity * (x / r) + F_drag_x
+    ay = F_gravity * (y / r) + F_drag_y
+    az = F_gravity * (z / r) + F_drag_z
+
+    dCd_dt = 0
+    return np.array([vx, vy, vz, ax, ay, az, dCd_dt])
 
 
 """ Define the process model f(x) ======================================="""
+
+
 def f(state_x, dt):
-
     """state vector = state_x = [x,y,z,vx, vy, vz]"""
-
-    # if dt <= 10.:
-    #     x, y, z, vx, vy, vz= state_x
-    #     _, _, _, ax, ay, az = ode(0, state_x)
-    #     # Use Euler's method for small dt
-    #     x_new = x + vx * dt
-    #     y_new = y + vy * dt
-    #     z_new = z + vz * dt
-    #     vx_new = vx + ax * dt
-    #     vy_new = vy + ay * dt
-    #     vz_new = vz + az * dt
-    #     return np.array([x_new, y_new, z_new, vx_new, vy_new, vz_new])
-    # else:
-    #     # Use RK4 for larger dt
-    #     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt])
-    #     # debug_print("predictor", solution.y)
-    #     return solution.y.flatten()
     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
 
+
+def f_with_Cd(state_x, dt):
+    """state vector = state_x = [x,y,z,vx, vy, vz, Cd]"""
+    Cd = state_x[-1]
+    solution = solve_ivp(ode_with_Cd, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
+    return solution.y.flatten()
+
+
 """ Define measurement function h(x) ================================================="""
+
+
 def h_radar(x):
     """x is the state vector,
     this H function assumes ra`rdar sends positions in global coordinate system"""
-    return x[:3] # return x,y,z position if state order is (x,y,z,vx,vy,vz)
+    return x[:3]  # return x,y,z position if state order is (x,y,z,vx,vy,vz)
+
 
 def ukf_Q(dim, dt, var_):
     Q = np.zeros((dim, dim))
-    Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect x and vx
-    Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect y and vy
-    Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect z and vz
+    Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,
+                                                       var=var_)  # Q matrix for how other noise affect x and vx
+    Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,
+                                                       var=var_)  # Q matrix for how other noise affect y and vy
+    Q[np.ix_([2, 5], [2, 5])] = Q_discrete_white_noise(dim=2, dt=dt,
+                                                       var=var_)  # Q matrix for how other noise affect z and vz
     return Q
 
-""" Define Unscented Kalman Filter ==================================================="""
-def satellite_UKF(state0,  fx, hx, dt=1.0):
-    """state0 :list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1]
-                                [300e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7800/np.sqrt(2), 7800/np.sqrt(2)]
-    """
 
-    """ =============== Generate sigma points """
-    ### initialise UKF
-    sigmas_generator = MerweScaledSigmaPoints(n=6, alpha=0.1, beta = 2., kappa= -3.)  #kappa = -3.
-    ukf = UKF(dim_x=6, dim_z=3, fx = fx, hx = hx, dt = dt, points=sigmas_generator) # take f, h from Jai and Vijay
-    # debug_print("predictor", ukf.Q)
-
-
-    """ ============== Define items in UKF """
-    ### initial state values of (x,y,z,vx,vy,vz)
-    ukf.x = np.array(state0)  # initial state
-    ### initial uncertainty of the state
-    ukf.P = np.diag([50**2, 50**2, 50**2,
-                    5**2, 5**2, 5**2])    # experiment this
-    ### uncertainty in the process model
-    ukf.Q = np.zeros((6,6))
-    ukf.Q[np.ix_([0,3], [0,3])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect x and vx
-    ukf.Q[np.ix_([1,4], [1,4])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect y and vy
-    ukf.Q[np.ix_([2,5], [2,5])] = Q_discrete_white_noise(dim=2, dt=dt, var=0.01)  # Q matrix for how other noise affect z and vz
-
-
-    # range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
-    # elev_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!! (get from radar)
-    # azim_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!1 (get from radar)
-    # ukf.R = np.diag([range_std**2, elev_std**2, azim_std**2])
-
-    """### radar measurement noise (for the simple UKF only! change this!!!!!!!!!!!!!!!!!!!!!!)"""
-    # x_std = 500  # meters. 
-    # y_std = 500  # meters.
-    # z_std = 10  # meters. 
-    # ukf.R = np.diag([x_std**2, y_std**2, z_std**2])
-
-    range_std = 10 # meters.
-    azim_std = 0.002 # radians. (theta)
-    elev_std = 0.002  # radians. (phi)
-    ukf.R = np.diag([range_std**2, azim_std**2, elev_std**2])
-
-    # ukf.save_x_prior = True
-    return ukf
-if __name__ == "__main__":
-    """Initialise satellite, radar and UKF========================"""
-    # np.random.seed(0)  # for reproducibility
-    # satellite_pos_true = SatelliteTraj(pos=[R_EARTH + 1500e3, 0, 0], vel=[0, 7600, 0], vel_std=0.)  # true satellite position with noise
-    # radar = RadarStation(radar_pos = (0,0,0), x_std=50000, y_std=50, z_std=10)
-    ukf = satellite_UKF(state0= [EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1] , fx = f, hx = h_radar, dt=1)
-
-
-    """Generate radar measurement batches and do batch processing in UKF"""
-    num_iterations = 10
-
-    xs_true = []
-    xs_prior = []
-    zs = []
-    xs = []
-    Ps = []
-    ts = [0.0]
-
-
-    time_duration = 0.0 # initialise total time duration of the filtering process
-
-    for iter in tqdm(range(num_iterations)):
-        num_in_batch = np.random.choice([5, 15, 25])  # random number of measurements in a batch
-        dt_sim_arr = np.random.randint(10., 200., num_in_batch) ### randomely generate timesteps
-        # zs_batch = []
-        for dt_sim in dt_sim_arr:
-            time_duration += dt_sim
-            sate_pos = np.concatenate(satellite_pos_true.update(dt_sim)).reshape(1,-1).flatten()
-            # debug_print("predictor", sate_pos)
-            xs_true.append(sate_pos)
-            ### get radar measurement
-            z = np.array(radar.noisy_reading(satellite_pos=sate_pos[:3], time=time_duration))
-            # debug_print("predictor", z)
-            # zs_batch.append(z)
-            zs.append(z)
-            ts.append(z[3])
-            # debug_print("predictor", f"{np.array(ts)}, {np.array(ts).shape}")
-            if lat_long_height(sate_pos[0], sate_pos[1], sate_pos[2])[2] <=0: break
-
-        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, \tts= {ts}"")
-        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, \nvarying dt: {np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1]}")
-        # debug_print("predictor", f"iteration= {iter}, \tbatch length= {num_in_batch}, time= {np.array(ts)},
-        #       \nvarying dt: {np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1]},
-        #       \nbatch: {np.array(zs)[-num_in_batch:]}")
-
-        ### UKF with batch processing (each batch has varying timesteps) =======================================
-        # (x, cov) = ukf.batch_filter(zs=np.array(zs)[-num_in_batch:, :3],
-        #                                 dts=np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1])
-        # debug_print("predictor", np.array(ts)[-num_in_batch:])
-        # debug_print("predictor", np.array(ts)[-num_in_batch-1:-1])
-        for i, (z, dt) in enumerate(zip(np.array(zs)[-num_in_batch:, :],
-                                        np.array(ts)[-num_in_batch:] - np.array(ts)[-num_in_batch-1:-1])):
-            ukf.predict(dt=dt)
-            xs_prior.append(ukf.x_prior)
-            ukf.update(z[:3])
-            x_post = ukf.x
-            xs.append(x_post)
-            x_cov = ukf.P
-            Ps.append(x_cov)
-            # debug_print("predictor", np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5))
-
-            """Predict landing ====================================================================="""
-            altitude_val = lat_long_height(sate_pos[0], sate_pos[1], sate_pos[2])[2]
-
-            debug_print("predictor", f"altitude= {altitude_val}")
-
-            if altitude_val <= 0:   # if state position is less than ? meters away from the earth
-                break
-            elif altitude_val <= 200e3:
-                debug_print("predictor", "============== predict landing ================")
-                ### sample from the updated state distribution and predict landing position
-                state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5)
-
-                ### record the landing position (inertia coord), and landing time
-                predicted_landing_ECI = []
-                predicted_landing_latlon = []
-                predicted_landing_time = []
-
-                for state0 in state_samples:
-                    # t_eval_arr = np.linspace(ts[-1], ts[-1]+100000, 1000)
-                    stop_condition.terminal = True
-                    stop_condition.direction = -1
-                    start = ts[-1]
-                    end = start + 1000000
-                    landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end], events= stop_condition)
-                    while (landing.success and len(landing.y)> 0):
-                        end += 1000000
-                        landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end], events= stop_condition)
-                    if landing.success and len(landing.y)==0:
-                        # debug_print("predictor", f"{landing.y_events}, {np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH}")
-                        # debug_print("predictor", f"{landing.y_events[0][0][:3]}")
-                        landing_time = landing.t_events[0][0]
-                        landing_position = landing.y_events[0][0][:3]
-                        landing_position_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])
-                        predicted_landing_ECI.append(landing_position)
-                        predicted_landing_latlon.append(landing_position_latlon)
-                        predicted_landing_time.append(landing_time)
-
-
-    xs_true = np.array(xs_true)
-    xs_prior = np.array(xs_prior)
-    zs = np.array(zs)
-    ts = np.array(ts)
-    # xs = np.concatenate(xs, axis=0)
-    # Ps = np.concatenate(Ps, axis=0)
-    xs = np.array(xs)
-    Ps = np.array(Ps)
+def ukf_Q_7dim(dim, dt, var_, Cd_var):
+    Q = np.zeros((dim, dim))
+    uncertainty = Q_discrete_white_noise(dim=2, dt=dt, var=var_)
+    Q[np.ix_([0, 3], [0, 3])] = uncertainty  # Q matrix for how other noise affect x and vx
+    Q[np.ix_([1, 4], [1, 4])] = uncertainty  # Q matrix for how other noise affect y and vy
+    Q[np.ix_([2, 5], [2, 5])] = uncertainty  # Q matrix for how other noise affect z and vz
+    Q[dim - 1, dim - 1] = Cd_var * dt
+    return Q
