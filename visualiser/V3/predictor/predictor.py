@@ -7,6 +7,7 @@ from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
 
 from visualiser.V3.simulator.simulator import lat_long_height
+from visualiser.V3.simulator.radar import radars
 from visualiser.V3.predictor.predctor_functions import ode, stop_condition, solve_ivp, f, h_radar, ukf_Q, ukf_Q_7dim, ode_with_Cd, f_with_Cd
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.coordinate_conversions import do_conversions, radM2eci
@@ -46,8 +47,8 @@ class Predictor(QWidget):
 
         ### uncertainty in the measurement
         range_std = 100  # meters.
-        azim_std = 0.01  # radians. (theta)
-        elev_std = 0.01  # radians. (phi)
+        azim_std = 0.001  # radians. (theta)
+        elev_std = 0.001  # radians. (phi)
         vel_std = 0.05
         self.ukf.R = np.diag([range_std ** 2, azim_std ** 2, elev_std ** 2,
                               vel_std**2, vel_std**2, vel_std**2])
@@ -87,15 +88,16 @@ class Predictor(QWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
+        pred_alt = 120e3
         debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
         self.ts.append(info['obs-time'])
-        stime, radobj = info['stime'], info['radobj']
-
+        stime, radar_name = info['stime'], info['name']
+        radobj = radars[radar_name] if radar_name != "no radar" else None
         radar_z = list(update)
         debug_print("predictor", f'dimension of radar z:  {len(radar_z)} \nRadar measurement = {radar_z}')
 
         ### at time 0, take the radar measurement as state0 for UKF. A radar measurement at t=0 must be provided!
-        if info['obs-time'] == 0:
+        if info['obs-time'] == 0:     
             init_pos = radM2eci(radM=update, stime=stime, radar=radobj)  # get the radar z of position in ECI
             debug_print("predictor", f'first radar z position (ECI): {init_pos}. type is: {type(init_pos)}')
             init_vel = radar_z[3:]
@@ -119,7 +121,7 @@ class Predictor(QWidget):
 
             ### Decide whether to update ============================================
             ###### if no radar measurement, don't update.
-            if update == (0, 0, 0):
+            if update == (0, 0, 0, 0, 0, 0):
                 debug_print("predictor", 'NO RADAR!!!!!!!!!!!!!!!!!!!!!')
 
                 x_post = self.ukf.x_post.copy()
@@ -132,7 +134,7 @@ class Predictor(QWidget):
                 self.dt_adjust = self.dt_adjust + self.dt
                 debug_print("predictor", f'increased dt = {self.dt_adjust}')
 
-                self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
+                # self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
                 debug_print("predictor", f'Q = {self.ukf.Q}')
 
             ###### if has radar measurement, update.
@@ -148,18 +150,20 @@ class Predictor(QWidget):
                 print(f'RADAR Z: {radar_z} \nx_post is: {x_post}')
                 x_cov = self.ukf.P_post.copy()
                 # debug_print("predictor", f'P_post is:, {x_cov}')
-                self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
+                # self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
                 debug_print("predictor", f'Q = {self.ukf.Q}')
 
         altitude_prior = lat_long_height(x_prior[0], x_prior[1], x_prior[2])[2]
         altitude_post = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
-        if update != (0, 0, 0):
+        radar_z_pos_ECI = (0, 0, 0, 0, 0, 0)
+        
+        if update != (0, 0, 0, 0, 0, 0):
             radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
             altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
             debug_print("predictor", f"Altitude of measurement: {altitude_z}")
             print(f"Altitude of measurement: {altitude_z}")
         debug_print("predictor", f"Altitude of x_post: {altitude_post}\n")
-        print(f"Altitude of x_post: {altitude_post}\n")
+        print(f"Altitude of x_post: {altitude_post} and x_prior: {altitude_prior}\n")
                 #
         if altitude_post < 0:
             sys.exit()
@@ -168,7 +172,7 @@ class Predictor(QWidget):
         
         ### start predict landing if altitude of x_prior is below threshold. 
         ### this is in case we don't receive radar measurement around threshold altitude.
-        if altitude_prior <= 140e3:
+        if altitude_prior <= pred_alt:
             ### sample from the updated state distribution and predict landing position
             state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=20)
             # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
@@ -206,14 +210,14 @@ class Predictor(QWidget):
             send_to_graph(self.earth_helper, {'predicting-landing': True, "time": landing_time_mean}, earth_update)
 
 
-        position_x = [update[0], x_prior[0], x_post[0]]
-        position_y = [update[1], x_prior[1], x_post[1]]
+        position_x = [radar_z_pos_ECI[0], x_prior[0], x_post[0]]
+        position_y = [radar_z_pos_ECI[1], x_prior[1], x_post[1]]
 
         velocity_x = [x_prior[3], x_post[3]]
         velocity_y = [x_prior[4], x_post[4]]
 
         alt_x = [self.ts[-1], self.ts[-1], self.ts[-1]]
-        alt_y = [altitude_post, 50e3, 140e3]
+        alt_y = [altitude_post, 50e3, pred_alt]
 
         plot_x = [position_x, velocity_x, alt_x]
         plot_y = [position_y, velocity_y, alt_y]

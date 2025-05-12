@@ -17,6 +17,7 @@ from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.graph im
 from visualiser.V3.windows.model.model_window.earth_graph_windows.earth.earth import Earth
 from visualiser.V3.simulator.radar import initialise_radars, get_radar_measurements
 from visualiser.V3.predictor.predictor import Predictor
+from visualiser.V3.debug import debug_print, dev_mode
 
 # Import global settings
 json_file = os.path.join(root_dir, "visualiser/V3/partials/global_settings.json")
@@ -73,8 +74,6 @@ class SimWidget(QWidget):
         self.stacked_widget = stacked_widget
         self.initial_conditions = initial_conditions
         self.radar_list = radar_list
-
-        dev_mode = False
 
         if dev_mode:
             self.x_sim = []

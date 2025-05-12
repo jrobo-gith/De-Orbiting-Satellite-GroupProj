@@ -40,6 +40,8 @@ def enu2ecef(enu_coords, ref_lla_coords):
     # Outputs - ECEF coordinates of the object
     ecef_coords = lla2ecef(ref_lla_coords) # ECEF coordinates of the reference point
     lon, lat, alt = ref_lla_coords
+    lon = np.radians(lon)
+    lat = np.radians(lat)
     Xform_matrix = np.array([[-np.sin(lon), -np.sin(lat)*np.cos(lon), np.cos(lat)*np.cos(lon)],
                              [np.cos(lon), -np.sin(lat)*np.sin(lon), np.cos(lat)*np.sin(lon)],
                              [0, np.cos(lat), np.sin(lat)]])
@@ -51,6 +53,8 @@ def ecef2enu(ecef_coords, ref_lla_coords):
     #           Reference coordinates in lat-long
     # Outputs - ENU coordinates of the object
     lon, lat, alt = ref_lla_coords
+    lon = np.radians(lon)
+    lat = np.radians(lat)
     Xform_matrix = np.array([[-np.sin(lon), np.cos(lon), 0],
                              [-np.sin(lat)*np.cos(lon), -np.sin(lat)*np.sin(lon), np.cos(lat)],
                              [np.cos(lat)*np.cos(lon), np.cos(lat)*np.sin(lon), np.sin(lat)]])
@@ -86,7 +90,7 @@ def sat_ecef2lla(sat_pos_ecef):
     return sat_pos_lla
 
 def radM2eci(radM, stime, radar):
-    radM_enu = radar.radM2enu(radM[:3]) #CHANGE TO RADM
+    radM_enu = radar.radM2enu(radM[:3])
     radM_ecef = enu2ecef(radM_enu, radar.pos_lla)
     gmst_angle = get_gmst(stime)
     Rot_eci2ecef = eci2ecef_matrix(gmst_angle).T

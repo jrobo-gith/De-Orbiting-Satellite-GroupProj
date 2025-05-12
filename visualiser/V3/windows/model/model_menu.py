@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt
 
 # Import from other files in the project
 from visualiser.V3.windows.model.model_window.model_window import SimWidget
-from visualiser.V3.partials.constants import EARTH_SEMIMAJOR
+from visualiser.V3.partials.constants import EARTH_SEMIMAJOR, MU_EARTH
 from visualiser.V3.partials.navbar import Navbar
 
 # Import global settings
@@ -154,9 +154,10 @@ class ModelMenu(QWidget):
         #
         # initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
 
-        stable_condition = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7900/np.sqrt(2), 7800/np.sqrt(2)]
+        stable_condition = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, np.sqrt(MU_EARTH/(150e3 + EARTH_SEMIMAJOR)) * 1.002, 0]
 
-        radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
+        #radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
+        radar_list = [[np.random.randint(-180, 180), 0, np.random.choice([100, 200])] for i in range(50)]
 
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
