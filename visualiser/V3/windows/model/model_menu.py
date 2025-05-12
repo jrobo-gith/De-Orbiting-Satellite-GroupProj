@@ -157,7 +157,7 @@ class ModelMenu(QWidget):
 
         stable_condition = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7900/np.sqrt(2), 7800/np.sqrt(2)]
 
-        radar_list = give_random_radar_locations(5)
+        radar_list = give_random_radar_locations(2)
 
         # radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
 

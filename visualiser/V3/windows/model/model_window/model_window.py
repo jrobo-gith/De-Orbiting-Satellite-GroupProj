@@ -182,8 +182,6 @@ class SimWidget(QWidget):
         self.graph_earth_container.setCurrentIndex(0)
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
-        self.key_sim.setStyleSheet(f"color: rgb(0, 0, 255);")
-        self.key_pred.setStyleSheet(f"color: rgb(0, 255, 0);")
 
     def click_earth_button(self):
         """

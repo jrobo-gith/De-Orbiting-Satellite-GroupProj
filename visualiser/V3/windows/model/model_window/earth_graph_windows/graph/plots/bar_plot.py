@@ -80,7 +80,7 @@ class BarPlot(pg.PlotWidget):
             radar_hot_variable_copy = radar_hot_variable_copy[sorted_index_list][::-1]
             new_radar_ticks = []
             for i, index in enumerate(sorted_index_list[:len(self.init_y)]):
-                new_radar_ticks.append((i, f"R: {index+1}"))
+                new_radar_ticks.append((i, f"R{index+1}"))
 
             self.plot_allocation.removeItem(self.bar_plot)
             self.new_bar_plot = pg.BarGraphItem(x=self.x_axis[:len(self.init_y)], height=radar_hot_variable_copy[:len(self.init_y)], width=0.6)

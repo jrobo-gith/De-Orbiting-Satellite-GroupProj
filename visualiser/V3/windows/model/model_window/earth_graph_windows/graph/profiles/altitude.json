@@ -1,6 +1,6 @@
 {
   "plot-type": ["line", "line"],
-  "title": "Altitude",
+  "title": "Predicted Satellite Altitude",
   "label_title_x": "Time (Hrs)",
   "label_title_y": "Altitude (Km)",
   "line_names": ["Altitude", "Landing Prediction Point"],
