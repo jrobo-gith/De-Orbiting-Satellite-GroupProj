@@ -13,9 +13,8 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
 # Import from other files in the project
-from visualiser.V3.simulator.radar import initialise_radars
 from visualiser.V3.windows.model.model_window.model_window import SimWidget
-from visualiser.V3.partials.constants import EARTH_SEMIMAJOR
+from visualiser.V3.partials.constants import EARTH_SEMIMAJOR, MU_EARTH
 from visualiser.V3.partials.navbar import Navbar
 
 # Import global settings
@@ -155,9 +154,14 @@ class ModelMenu(QWidget):
         #
         # initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
 
-        stable_condition = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7900/np.sqrt(2), 7800/np.sqrt(2)]
+        # Stable non-equatorial
+        stable_condition_none = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7900/np.sqrt(2), 7800/np.sqrt(2)]
+        # Stable equitorial
+        stable_condition_e = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, np.sqrt(MU_EARTH/(150e3 + EARTH_SEMIMAJOR)) * 1.002, 0]
 
-        radar_list = give_random_radar_locations(2)
+        radar_list = give_random_radar_locations(50)
+
+        stable_condition = stable_condition_e
 
         # radar_list = [[-50, -1.5, 15], [37, -1.3, 1650], [100, 0.8, 25], [0.55, 50, 70], [0, 90, 1000]]
 
@@ -178,11 +182,14 @@ class ModelMenu(QWidget):
             self.stacked_widget.addWidget(self.sim_stacked_widget)
             self.stacked_widget.setCurrentIndex(4)
 
-def give_random_radar_locations(num_radars):
+def give_random_radar_locations(num_radars, equatorial:bool=True):
     radar_list = []
     for i in range(num_radars):
-        rand_lat = np.random.randint(-180, 180)
-        rand_lon = np.random.randint(-90, 90)
+        if equatorial:
+            rand_lat = 0
+        else:
+            rand_lat = np.random.randint(-90, 90)
+        rand_lon = np.random.randint(-180, 180)
         rand_height = np.random.randint(0, 1000)
         radar_details = [rand_lat, rand_lon, rand_height]
         radar_list.append(radar_details)

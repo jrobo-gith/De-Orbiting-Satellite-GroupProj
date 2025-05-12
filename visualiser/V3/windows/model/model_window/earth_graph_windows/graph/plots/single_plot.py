@@ -81,7 +81,6 @@ class Plot(pg.PlotWidget):
                                               brush=pg.mkBrush(args["brushes"][i]['color']))
             self.lines.append(self.line)
 
-
     def plot_line(self, x:list, y:list, line_name:str, pen, symbol:list):
         """
         Plots a line using pyqtgraph.

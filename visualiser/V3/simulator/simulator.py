@@ -61,7 +61,8 @@ def latitude_iterator_and_height(x, y, z):
     r = np.sqrt(x**2 + y**2)
     phi = np.arctan(z / (r * (1 - E_SQUARED)))
     phi_new = phi + 100
-    
+    N = curvature_in_prime_vertical(phi)
+
     while np.abs(phi_new - phi) > 1e-9:
         phi = phi_new
         N = curvature_in_prime_vertical(phi)

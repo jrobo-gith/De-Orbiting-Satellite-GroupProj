@@ -18,3 +18,4 @@ EARTH_ROTATION_ANGLE = ((2*np.pi)/(23*3600 + 56*60 + 4)) # Accounting for earth'
 
 toHrs = 1/(60*60)
 toKM = 1/1000
+MU_EARTH = G * M_EARTH

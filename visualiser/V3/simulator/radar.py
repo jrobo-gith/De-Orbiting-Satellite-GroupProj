@@ -7,8 +7,8 @@ import time
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)
 
+from visualiser.V3.debug import debug_print, dev_mode
 from visualiser.V3.partials.constants import G, M_EARTH, R_EARTH_POLES, R_EARTH_EQUATOR, CD, toHrs, toKM
-from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.coordinate_conversions import eci2ecef_matrix, lla2ecef, ecef2enu, enu2ecef, ecef2lla, get_gmst
 from visualiser.V3.simulator.simulator import lat_long_height
 
@@ -66,17 +66,17 @@ def get_sat_data():
     for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
         Rot_eci2ecef = eci2ecef_matrix(theta)
         sat_pos_ecef[i] = Rot_eci2ecef.dot(pos)
-    return sat_pos_ecef, sat_vel, t_vals
+    return sat_pos_ecef, sat_pos_eci, sat_vel, t_vals
 
 # Radar class - contains radar specifications and functions
 class Radar:
     # Contains radar specific information
     __range_uncertainty = 100
-    __theta_uncertainty = 0.0001
-    __phi_uncertainty = 0.0001
+    __theta_uncertainty = 0.001
+    __phi_uncertainty = 0.001
     __vel_uncertainty = 0.05
 
-    def __init__(self, longlat, azfov=360, elfov=180):
+    def __init__(self, longlat, azfov=360, elfov=180, azcen=0, maxr=5e6, minr=10, minel=2):
         # Inputs - An array containing lat-long-alt of radar
         #        - Azimuth field of view in degrees
         #        - Elevation field of view in degrees
@@ -86,6 +86,10 @@ class Radar:
         self.pos_lla = longlat
         self.azfov = azfov  # Azimuth angle field of view
         self.elfov = elfov  # Elevation angle field of view
+        self.azcen = azcen # Azimuth centre
+        self.maxr = maxr # Maximum range
+        self.minr = minr # Minimum range
+        self.minel = minel # Minimum elevation
         self.pos_ecef = lla2ecef(np.array([self.lon, self.lat, self.alt]))
 
     def __add_noise(self, radM):
@@ -136,22 +140,25 @@ class Radar:
         #           Boolean False otherwise
         rho, theta, phi = radM_pos
 
-        theta_deg = np.degrees(theta)
+        theta_deg = np.degrees(theta) % 360
         phi_deg = np.degrees(phi)
 
-        if ((rho < 10)
-                or (theta_deg > self.azfov)
-                or (phi < 0) or (phi_deg > self.elfov)):
-            return False
-        return True
+        azcen = np.random.randint(360)
+        diff = ((theta_deg - azcen) + 180) % 360 - 180 # wrap to [-180, 180]
+
+        if ((self.minr <= rho <= self.maxr)
+            and (abs(diff) <= self.azfov/2)
+            and (self.minel <= phi_deg <= self.elfov)):
+            debug_print("simulator", f"{phi_deg}, {diff}, {rho}")
+            return True
+        return False
 
 # Simulate radar measurements
 def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper):
     # Inputs  - An array of satellite positions in ECEF coordinates
     #         - A dictionary of radar objects
     # Outputs - A dictionary of measurements taken by each radar
-    sat_pos_ecef, sat_vel, t_vals = get_sat_data()
-    measurements = {key: [] for key in radars.keys()}
+    sat_pos_ecef, sat_pos_eci, sat_vel, t_vals = get_sat_data()
 
     nt = t_vals.shape[0]
     dt = t_vals[1] - t_vals[0]
@@ -159,9 +166,14 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
     sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
     sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
 
+    if dev_mode:
+        rad_file = os.path.join(script_dir, "rad_measurements.dat")
+        fp = open(rad_file, "w")
+
     # Check every t seconds
     for i in range(t_vals.shape[0]):
         curr_sat_pos = sat_pos_ecef[i]
+        curr_sat_pos_eci = sat_pos_eci[i]
         closest_radar_distance = np.inf
         seen_satellite = False
         for rname, radobj in radars.items():
@@ -180,23 +192,28 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
             radM_ecef_noise = enu2ecef(radM_enu_noise, radobj.pos_lla)
 
             # Check if the satellite is in field of view of the radar
-            if (radobj.check_fov(radM[:3])):
+            if ((radobj.check_fov(radM_no_noise[:3])) or t_vals[i] == 0):
                 seen_satellite = True
                 # IN FOV
                 radar_dist = radM[0]
                 if radar_dist < closest_radar_distance:
                     closest_radar_distance = radar_dist
                     measurement = (*radM,)
-                    true_pos = (*curr_sat_pos, *sat_vel[i], CD)
-                    info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj,
+                    true_pos = (*curr_sat_pos_eci, CD)
+                    info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i],
                             'rdist': radM[0],
                             "state_no_noise": true_pos, 'state_noise': radM_ecef_noise,}
 
         if seen_satellite:
             predictor_helper.changedSignal.emit(info, measurement)
+            if dev_mode:
+                fp.write(f"{info}; {measurement}\n")
         else:
-            info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'radobj': radobj, 'rdist': "none", 'state_noise': radM_ecef_noise,}
-            predictor_helper.changedSignal.emit(info, (0, 0, 0))
+            info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'rdist': "none"}
+            measurement = (0,0,0,0,0,0)
+            predictor_helper.changedSignal.emit(info, measurement)
+            if dev_mode:
+                fp.write(f"{info}; {measurement}\n")
 
         radM_enu_nn = radobj.radM2enu(radM_no_noise[:3])
         radM_ecef_nn = enu2ecef(radM_enu_nn, radobj.pos_lla)
@@ -211,15 +228,15 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         earth_helper.changedSignal.emit(info, (lat, lon))
         graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
 
-        time.sleep(.1) # Cannot remove
-    for key, vals in measurements.items():
-        measurements[key] = np.array(vals)
-    return measurements
+        time.sleep(0.2)
+    if dev_mode:
+        fp.close()
+    return True
 
 radars = {}
 
-def initialise_radars(latlon:list):
-    for i, pos in enumerate(latlon):
-        radars[f"radar{i}"] = Radar(pos, azfov=60, elfov=60)
+def initialise_radars(lonlat:list):
+    for i, pos in enumerate(lonlat):
+        radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=80, azcen=0, maxr=5e6)
 
     return radars
