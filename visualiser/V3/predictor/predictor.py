@@ -13,6 +13,7 @@ from visualiser.V3.partials.coordinate_conversions import do_conversions, radM2e
 
 import sys
 import threading
+import time
 
 np.random.seed(0)
 
@@ -30,8 +31,8 @@ class Predictor(QWidget):
 
         """ =============== Generate sigma points """
         ### initialise self.ukf
-        sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.1, beta=2., kappa=-4.)  # kappa = 3-n.
-        self.ukf = UKF(dim_x=7, dim_z=6, fx=f_with_Cd, hx=None, dt=dt, points=sigmas_generator)
+        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.1, beta=2., kappa=-4.)  # kappa = 3-n.
+        self.ukf = UKF(dim_x=7, dim_z=6, fx=f_with_Cd, hx=None, dt=dt, points=self.sigmas_generator)
 
         """ ============== Define items in self.ukf """
         ### initial state values of (x,y,z,vx,vy,vz, Cd)
@@ -150,106 +151,106 @@ class Predictor(QWidget):
                 self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
                 debug_print("predictor", f'Q = {self.ukf.Q}')
 
+        altitude_prior = lat_long_height(x_prior[0], x_prior[1], x_prior[2])[2]
         altitude_post = lat_long_height(x_post[0], x_post[1], x_post[2])[2]
         if update != (0, 0, 0):
             radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
             altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
-            debug_print("predictor",
-                        f"Altitude of measurement: {altitude_z}")
+            debug_print("predictor", f"Altitude of measurement: {altitude_z}")
             print(f"Altitude of measurement: {altitude_z}")
         debug_print("predictor", f"Altitude of x_post: {altitude_post}\n")
         print(f"Altitude of x_post: {altitude_post}\n")
                 #
         if altitude_post < 0:
             sys.exit()
-        #
-        # """Predict landing ====================================================================="""
         
+        # Predict landing ====================================================================="""
+        
+        ### start predict landing if altitude of x_prior is below threshold. 
+        ### this is in case we don't receive radar measurement around threshold altitude.
+        if altitude_prior <= 140e3:
+            # landing_sigmas = MerweScaledSigmaPoints(n=7, alpha=0.9, beta=2., kappa=-4.)
+            # ukf_landing = UKF(dim_x=7, dim_z=6, dt=self.dt, hx=None, fx=f_with_Cd, points=landing_sigmas)
+            # ukf_landing.x = x_post.copy()
+            # ukf_landing.P = x_cov.copy()
+            # # ukf_landing.Q = ukf_Q_7dim(dim=7, dt=self.dt, var_=0.001, Cd_var=1e-6)
+            # ukf_landing.Q = np.zeros((7,7))
+            # landing_time = self.latest_measurement_time
+            # dt_predict = self.dt
+            # dt_predict_adj = self.dt
 
-        if altitude_post <= 140e3:
-            # debug_print("predictor", "============== predict landing ================")
+            # altitude_start_landing = altitude_post
+            # while altitude_start_landing > 0:
+            #     time.sleep(.5)
+            #     ukf_landing.predict(dt=dt_predict)  # UKF predict forward
+            #     ukf_landing.P = x_cov.copy()    # freeze P
+            #     landing_prior = ukf_landing.x_prior.copy()
+            #     landing_cov = ukf_landing.P_prior.copy()
+            #     altitude_start_landing = lat_long_height(landing_prior[0], landing_prior[1], landing_prior[2])[2]
+            #     landing_time = landing_time + dt_predict    # update landing time
+            #     # dt_predict_adj= dt_predict_adj + dt_predict # adjust dt
+            #     # ukf_landing.Q = ukf_Q_7dim(dim=7, dt=dt_predict_adj, var_=0.001, Cd_var=1e-6)
+            #     print(f'time update = {landing_time} \nx_predict={landing_prior} \nx_cov = {landing_cov}\nlanding alt update ={altitude_start_landing}')
+            
+            # landing_xyz_mean = landing_prior[:3]
+            # landing_xyz_cov = landing_cov[:3, :3] # take the covariance matrix of position only
+
+            # landing_latlon_mean = lat_long_height(landing_xyz_mean[0],
+            #                                       landing_xyz_mean[1],
+            #                                       landing_xyz_mean[2])[:2]
+            # sampled_landing_xyz = np.random.multivariate_normal(mean=landing_xyz_mean, cov = landing_xyz_cov, size=500)
+            # landing_latlon_samples = []
+            # for sample in sampled_landing_xyz:
+            #     latlon = lat_long_height(sample[0],sample[1], sample[2])[:2]
+            #     landing_latlon_samples.append(latlon)
+            
+            # landing_latlon_cov = np.cov(np.array(landing_latlon_samples).T)
+
+            # print(f'landing mean = {landing_latlon_mean}\nlanding cov = {landing_latlon_cov}')
+
+            # earth_update = (landing_latlon_mean[0], landing_latlon_mean[1])
+
+            # ### Should it be landing.t_events (ODE solved landing time) instead?
+            # send_to_graph(self.earth_helper, {'predicting-landing': True, "time": landing_time}, earth_update)
+            
+
+
             ### sample from the updated state distribution and predict landing position
-            state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=5)
+            state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=20)
             # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
             start = self.latest_measurement_time
             end = start + 10000000000
             stop_condition.terminal = True
             stop_condition.direction = -1
             landing_latlon_arr = []
+            landing_time_arr = []
             for sample in state_samples:
                 landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
                                     max_step=50, events=stop_condition)
                 landing_position = landing.y_events[0][0][:3]
+                landing_time = landing.t_events
                 # print('landing_position sample = \n',landing_position)
                 landing_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])[:2]
                 # print('landing_position sample = \n',landing_latlon)
                 landing_latlon_arr.append(landing_latlon)
+                landing_time_arr.append(landing_time)
             # print('landing_position ALL = \n',landing_latlon_arr)
             landing_latlon_mean = np.mean(landing_latlon_arr, axis=0)
             print('landing_position MEAN = \n',landing_latlon_mean)
             landing_latlon_cov = np.cov(np.array(landing_latlon_arr).T)
             print(f'Landing position COV: \n{landing_latlon_cov}')
+
+            landing_time_mean = np.mean(landing_time_arr)
+            print(f'Landing time (mean): \n{landing_time_mean}')
             # landing_position_latlon = lat_long_height(landing_position_mean[0], landing_position_mean[1],
             #                                         landing_position_mean[2])[:2]
 
             earth_update = (landing_latlon_mean[0], landing_latlon_mean[1])
-            send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.latest_measurement_time}, earth_update)
-            # for sample_state0 in state_samples:
-            #     stop_condition.terminal = True
-            #     stop_condition.direction = -1
-                # landing = solve_ivp(fun=ode, t_span=[start, end], y0=sample_state0, method='RK45', t_eval=[end],
-                #                     max_step=10, events=stop_condition)
-                # debug_print("predictor", f'next step before landing: {landing.y}')
 
-        #
-        # #    ### record the landing position (inertia coord), and landing time
-        #     predicted_landing_ECI = []
-        #     predicted_landing_latlon = []
-        #     predicted_landing_time = []
-        #     predicted_landing_height = []
-        # #
-        #     debug_print("predictor", f"time start landing: {self.ts[-1]}')
-        #     for sample_state0 in state_samples:
-        #         # t_eval_arr = np.linspace(ts[-1], ts[-1]+100000, 1000)
-        #         start = self.latest_measurement_time
-        #         end = start + 100_000_000
-        #         debug_print("predictor", "\nSOLVING ODE")
-        #         landing = solve_ivp(fun=ode, t_span=[start, end], y0=sample_state0, method='RK45', t_eval=[end], max_step = 50,
-        #                             events=stop_condition)
-        #         debug_print("predictor", "FINISHED SOLVING ODE\n")
-        #         # while (landing.success and len(landing.y) > 0):
-        #         #     end += 10_000_000
-        #         #     landing = solve_ivp(fun=ode, t_span=[start, end], y0=state0, method='RK45', t_eval=[end], max_step = dt,
-        #         #                         events=stop_condition)
-        #         if landing.success and len(landing.y) == 0:
-        #             # debug_print("predictor", f'landing.y_events: {np.linalg.norm(landing.y_events[0][0][:3])-R_EARTH}')
-        #             # debug_print("predictor", landing.y_events[0][0][:3])
-        #             landing_time = landing.t_events[0][0]       #landing time
-        #             landing_position = landing.y_events[0][0][:3]
-        #             # landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
-        #             #                                           landing_position[2])[:2]
-        #             landing_position_latlon = ECI2latlon_earth_rotate(landing_position[0], landing_position[1],landing_position[2], time_duration=landing_time)
-        #             # debug_print("predictor", f'landing position is: {landing_position}')
-        #             landing_height = lat_long_height(landing_position[0], landing_position[1], landing_position[2])[2]
-        #             predicted_landing_ECI.append(landing_position)
-        #             predicted_landing_latlon.append(landing_position_latlon)
-        #             predicted_landing_time.append(landing_time)
-        #             predicted_landing_height.append(landing_height)
+            ### Should it be landing.t_events (ODE solved landing time) instead?
+            # send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.latest_measurement_time}, earth_update)
+            send_to_graph(self.earth_helper, {'predicting-landing': True, "time": landing_time_mean}, earth_update)
 
-
-
-            # debug_print("predictor", f'landing positions are (lat lon degrees): {np.array(predicted_landing_latlon)}')
-            # debug_print("predictor", f'landing heights are: {predicted_landing_height}')
-            # debug_print("predictor", f'landing times are: {predicted_landing_time}')
-            #
-            #
-            # mean_landing_latlon = np.mean(np.array(predicted_landing_latlon), axis=0)
-            # cov_landing_latlon = np.cov(np.array(predicted_landing_latlon).T)
-            # debug_print("predictor", f"mean_landing_latlon: {mean_landing_latlon}") # mean of the landing lat long
-            # debug_print("predictor", f"cov_landing_latlon: {cov_landing_latlon}\n")  # covariance matrix of the landing lat long
-            
-            # debug_print("predictor", f"We are getting out: {x_post}")
-            # debug_print("predictor", f"{self.ts}, {self.xs}")
 
         position_x = [update[0], x_prior[0], x_post[0]]
         position_y = [update[1], x_prior[1], x_post[1]]
