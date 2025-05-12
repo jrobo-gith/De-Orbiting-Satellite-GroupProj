@@ -169,52 +169,6 @@ class Predictor(QWidget):
         ### start predict landing if altitude of x_prior is below threshold. 
         ### this is in case we don't receive radar measurement around threshold altitude.
         if altitude_prior <= 140e3:
-            # landing_sigmas = MerweScaledSigmaPoints(n=7, alpha=0.9, beta=2., kappa=-4.)
-            # ukf_landing = UKF(dim_x=7, dim_z=6, dt=self.dt, hx=None, fx=f_with_Cd, points=landing_sigmas)
-            # ukf_landing.x = x_post.copy()
-            # ukf_landing.P = x_cov.copy()
-            # # ukf_landing.Q = ukf_Q_7dim(dim=7, dt=self.dt, var_=0.001, Cd_var=1e-6)
-            # ukf_landing.Q = np.zeros((7,7))
-            # landing_time = self.latest_measurement_time
-            # dt_predict = self.dt
-            # dt_predict_adj = self.dt
-
-            # altitude_start_landing = altitude_post
-            # while altitude_start_landing > 0:
-            #     time.sleep(.5)
-            #     ukf_landing.predict(dt=dt_predict)  # UKF predict forward
-            #     ukf_landing.P = x_cov.copy()    # freeze P
-            #     landing_prior = ukf_landing.x_prior.copy()
-            #     landing_cov = ukf_landing.P_prior.copy()
-            #     altitude_start_landing = lat_long_height(landing_prior[0], landing_prior[1], landing_prior[2])[2]
-            #     landing_time = landing_time + dt_predict    # update landing time
-            #     # dt_predict_adj= dt_predict_adj + dt_predict # adjust dt
-            #     # ukf_landing.Q = ukf_Q_7dim(dim=7, dt=dt_predict_adj, var_=0.001, Cd_var=1e-6)
-            #     print(f'time update = {landing_time} \nx_predict={landing_prior} \nx_cov = {landing_cov}\nlanding alt update ={altitude_start_landing}')
-            
-            # landing_xyz_mean = landing_prior[:3]
-            # landing_xyz_cov = landing_cov[:3, :3] # take the covariance matrix of position only
-
-            # landing_latlon_mean = lat_long_height(landing_xyz_mean[0],
-            #                                       landing_xyz_mean[1],
-            #                                       landing_xyz_mean[2])[:2]
-            # sampled_landing_xyz = np.random.multivariate_normal(mean=landing_xyz_mean, cov = landing_xyz_cov, size=500)
-            # landing_latlon_samples = []
-            # for sample in sampled_landing_xyz:
-            #     latlon = lat_long_height(sample[0],sample[1], sample[2])[:2]
-            #     landing_latlon_samples.append(latlon)
-            
-            # landing_latlon_cov = np.cov(np.array(landing_latlon_samples).T)
-
-            # print(f'landing mean = {landing_latlon_mean}\nlanding cov = {landing_latlon_cov}')
-
-            # earth_update = (landing_latlon_mean[0], landing_latlon_mean[1])
-
-            # ### Should it be landing.t_events (ODE solved landing time) instead?
-            # send_to_graph(self.earth_helper, {'predicting-landing': True, "time": landing_time}, earth_update)
-            
-
-
             ### sample from the updated state distribution and predict landing position
             state_samples = np.random.multivariate_normal(mean=x_post, cov=x_cov, size=20)
             # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
