@@ -276,9 +276,8 @@ class Predictor(QWidget):
         landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
                                                   landing_position[2])[:2]
 
-        earth_update = (landing_position_latlon[0], landing_position_latlon[1])
-        send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.ts[-1]},
-                      earth_update)
+        earth_update = (landing_position_latlon[0], landing_position_latlon[1], np.zeros((2,2)))
+        send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.ts[-1]}, earth_update)
 
 def send_to_graph(helper, name: dict, update: tuple):
     helper.changedSignal.emit(name, update)

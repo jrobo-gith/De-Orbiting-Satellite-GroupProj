@@ -8,6 +8,7 @@ from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
 from visualiser.V3.simulator.simulator import lat_long_height
 from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
+from filterpy.stats import covariance_ellipse
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -93,6 +94,8 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.lon = (self.lon + 180) % 360 - 180  # wrap to [-180, 180]
 
+
+
         # Get final crash location (pre-accounting for earth's rotation)
         self.final_crash_vector = np.linalg.norm([self.lat[-1], self.lon[-1]])
 
@@ -129,6 +132,10 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_point.setOpacity(0.9)
         self.prediction_crash_1std.setOpacity(0.4)
         self.prediction_crash_2std.setOpacity(0.1)
+
+        # Temp covariance plot
+        self.pred_cov = pg.ScatterPlotItem
+
 
         # Add Radars locations
         self.radar_plots = []
@@ -232,7 +239,7 @@ class Earth(pg.GraphicsLayoutWidget):
 
 
     @QtCore.pyqtSlot(dict, tuple)
-    def update_satellite_position(self, name, update):
+    def update_satellite_position(self, info, update):
         """
         Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
         from simulator/radar via multi-threading and a 'helper' function, which emits the satellite's location at a
@@ -241,24 +248,15 @@ class Earth(pg.GraphicsLayoutWidget):
 
         We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
 
-        :param name: redundant parameter
+        :param info: radar info, contains observed time
         :param update: contains one latitude and one longitude to update the satellite's position.
         """
         XYZ = update[0]
         ## Convert x, y, z to lat lon
         lat, lon, _ = lat_long_height(XYZ[0], XYZ[1], XYZ[2])
 
-        ## Account for earth's rotation
-        EARTH_ROTATION = EARTH_ROTATION_ANGLE * name['obs-time']
-        lon -= EARTH_ROTATION
-        ## Convert to Miller Coordinates
-        lat = (5 / 4) * np.arcsinh(np.tan((4 * lat) / 5))
-
-        # Convert to degrees
-        lon *= (180 / np.pi)
-        lat *= (180 / np.pi)
-
-        lon = (lon + 180) % 360 - 180  # wrap to [-180, 180]
+        # Account for earth's rotation and apply miller's coordinates.
+        lat, lon = prepare_latlon_for_graph(time=info['obs-time'], lat=lat, lon=lon)
 
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
@@ -284,21 +282,14 @@ class Earth(pg.GraphicsLayoutWidget):
         :param update: contains the latitude and longitude of the predicted crash site
         """
         self.prediction_count += 1
-        lat, lon = update
+        lat, lon, cov = update
 
-        # Account for earth's rotation
-        earth_rotation = EARTH_ROTATION_ANGLE * info['time']
-        lon -= earth_rotation
+        lat_cov, lon_cov = create_covariance_plot(cov_mat=cov, mean_lat=lat, mean_lon=lon)
+        lat_cov, lon_cov = prepare_latlon_for_graph(time=info['time'], lat=lat_cov, lon=lon_cov)
 
-        # Convert to miller coordinates
-        lat = (5/4) * np.arcsinh(np.tan((4*lat)/5))
 
-        # Convert to degrees
-        lon *= (180 / np.pi)
-        lat *= (180 / np.pi)
-
-        # Keep between -180 and 180 degrees
-        lon = (lon + 180) % 360 - 180
+        # Account for earth's rotation, also currently in radians
+        lat, lon = prepare_latlon_for_graph(time=info['time'], lat=lat, lon=lon)
 
         # Compute error between two lat lon vectors and update the graph
         prediction_residual = np.linalg.norm([lat, lon]) - self.final_crash_vector
@@ -308,6 +299,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_point.setData(x, y)
         self.prediction_crash_1std.setData(x, y)
         self.prediction_crash_2std.setData(x, y)
+
 
     def sim_overlay_switch(self):
         """
@@ -391,3 +383,49 @@ def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=270
         x.append(int((lon[i] + 180) * (screen_w / 360)))
         y.append(int((90 - lat[i]) * (screen_h / 180)))
     return x, y
+
+def prepare_latlon_for_graph(time: float, lon, lat):
+    # Account for earth's rotation
+    earth_rotation = EARTH_ROTATION_ANGLE * time
+    lon -= earth_rotation
+
+    # Convert to miller coordinates
+    lat = (5 / 4) * np.arcsinh(np.tan((4 * lat) / 5))
+
+    # Convert to degrees
+    lon *= (180 / np.pi)
+    lat *= (180 / np.pi)
+
+    # Keep between -180 and 180 degrees
+    lon = (lon + 180) % 360 - 180
+    return lat, lon
+
+def create_covariance_plot(cov_mat, mean_lat, mean_lon):
+    assert cov_mat[0, 1] == cov_mat[1, 0], "off-diagonals of covariance matrix should be equal!"
+
+    a = cov_mat[0, 0]
+    b = cov_mat[0, 1]
+    c = cov_mat[1, 0]
+
+    root = np.sqrt(((a+c)/2)**2 + b**2)
+
+    lambda_1 = ((a+c)/2) + root
+    lambda_2 = ((a+c)/2) - root
+
+    if b == 0 and a >= c:
+        theta = 0
+    elif b == 0 and a < c:
+        theta = np.pi/2
+    else:
+        theta = np.arctan2(lambda_1-a, b)
+
+    # Compute x and y in radians
+    t = np.linspace(0, 2*np.pi, 100)
+    lat_cov = np.sqrt(lambda_1) * np.cos(theta) * np.cos(t) - np.sqrt(lambda_2) * np.sin(theta) * np.sin(t) + mean_lat
+    lon_cov = np.sqrt(lambda_1) * np.sin(theta) * np.cos(t) + np.sqrt(lambda_2) * np.cos(theta) * np.sin(t) + mean_lon
+
+    return lat_cov, lon_cov
+
+
+
+
