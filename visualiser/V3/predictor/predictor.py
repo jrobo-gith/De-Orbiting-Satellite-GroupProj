@@ -105,26 +105,26 @@ class Predictor(QWidget):
     def predictor_loop(self, info, update):
 
         pred_alt = 120e3
-        debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
+        # debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
         self.ts.append(info['obs-time'])
         stime, radar_name = info['stime'], info['name']
         radobj = radars[radar_name] if radar_name != "no radar" else None
         radar_z = list(update)
-        debug_print("predictor", f'dimension of radar z:  {len(radar_z)} \nRadar measurement = {radar_z}')
+        # debug_print("predictor", f'dimension of radar z:  {len(radar_z)} \nRadar measurement = {radar_z}')
 
         ### at time 0, take the radar measurement as state0 for UKF. A radar measurement at t=0 must be provided!
         if info['obs-time'] == 0:
             init_pos = radM2eci(radM=update, stime=stime, radar=radobj)  # get the radar z of position in ECI
-            debug_print("predictor", f'first radar z position (ECI): {init_pos}. type is: {type(init_pos)}')
+            # debug_print("predictor", f'first radar z position (ECI): {init_pos}. type is: {type(init_pos)}')
             init_vel = radar_z[3:]
-            debug_print("predictor", f'first radar z velocity (ECI): {init_vel}. type is: {type(init_vel)}')
+            # debug_print("predictor", f'first radar z velocity (ECI): {init_vel}. type is: {type(init_vel)}')
             init_state = np.concatenate([init_pos, init_vel, [self.Cd]]).tolist()  # complete the initial state
-            debug_print("predictor", f'first radar z (ECI): {init_state}. type is: {type(init_state)}')
+            # debug_print("predictor", f'first radar z (ECI): {init_state}. type is: {type(init_state)}')
             self.ukf.x = init_state
-            debug_print('predictor', f'first state of ukf is: {self.ukf.x}')
+            # debug_print('predictor', f'first state of ukf is: {self.ukf.x}')
 
-            print(f'first radar z (ECI): {init_state}, {init_vel}')
-            print(f'first state of ukf is: {self.ukf.x}')
+            # print(f'first radar z (ECI): {init_state}, {init_vel}')
+            # print(f'first state of ukf is: {self.ukf.x}')
             self.x_post = self.ukf.x.copy()
         ### at time > 0, start UKF process
         else:
@@ -132,42 +132,42 @@ class Predictor(QWidget):
             self.ukf.hx = lambda x: do_conversions(x[:6], stime, radobj)  # update hx according to radar pos
             self.ukf.predict(dt=self.dt)
             x_prior = self.ukf.x_prior.copy()
-            debug_print("predictor", f'x_prior is: {x_prior}')
-            print(f'x_prior is: {x_prior}')
+            # debug_print("predictor", f'x_prior is: {x_prior}')
+            # print(f'x_prior is: {x_prior}')
 
             ### Decide whether to update ============================================
             ###### if no radar measurement, don't update.
             if update == (0, 0, 0, 0, 0, 0):
-                debug_print("predictor", 'NO RADAR!!!!!!!!!!!!!!!!!!!!!')
+                # debug_print("predictor", 'NO RADAR!!!!!!!!!!!!!!!!!!!!!')
 
                 self.x_post = self.ukf.x_post.copy()
-                debug_print("predictor", f'self.x_post is: {self.x_post}')
-                print(f'NO RADAR!!! x_post is: {self.x_post}')
+                # debug_print("predictor", f'self.x_post is: {self.x_post}')
+                # print(f'NO RADAR!!! x_post is: {self.x_post}')
 
                 x_cov = self.ukf.P_post.copy()
                 # debug_print("predictor", f'P_post is:, {x_cov}')
 
                 self.dt_adjust = self.dt_adjust + self.dt
-                debug_print("predictor", f'increased dt = {self.dt_adjust}')
+                # debug_print("predictor", f'increased dt = {self.dt_adjust}')
 
                 # self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
-                debug_print("predictor", f'Q = {self.ukf.Q}')
+                # debug_print("predictor", f'Q = {self.ukf.Q}')
 
             ###### if has radar measurement, update.
             else:
                 self.dt_adjust = self.dt  # reset self.dt_adjust
                 self.latest_measurement_time = self.ts[-1]  #
-                debug_print("predictor", f'RADAR Z: {radar_z}')
+                # debug_print("predictor", f'RADAR Z: {radar_z}')
 
                 ### Update
                 self.ukf.update(radar_z)
                 self.x_post = self.ukf.x_post
-                debug_print("predictor", f'x_post is: {self.x_post}')
-                print(f'RADAR Z: {radar_z} \nx_post is: {self.x_post}')
+                # debug_print("predictor", f'x_post is: {self.x_post}')
+                # print(f'RADAR Z: {radar_z} \nx_post is: {self.x_post}')
                 x_cov = self.ukf.P_post.copy()
                 # debug_print("predictor", f'P_post is:, {x_cov}')
                 # self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
-                debug_print("predictor", f'Q = {self.ukf.Q}')
+                # debug_print("predictor", f'Q = {self.ukf.Q}')
 
         altitude_prior = lat_long_height(x_prior[0], x_prior[1], x_prior[2])[2]
         altitude_post = lat_long_height(self.x_post[0], self.x_post[1], self.x_post[2])[2]
@@ -176,10 +176,10 @@ class Predictor(QWidget):
         if update != (0, 0, 0, 0, 0, 0):
             radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
             altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
-            debug_print("predictor", f"Altitude of measurement: {altitude_z}")
-            print(f"Altitude of measurement: {altitude_z}")
-        debug_print("predictor", f"Altitude of x_post: {altitude_post}\n")
-        print(f"Altitude of x_post: {altitude_post} and x_prior: {altitude_prior}\n")
+        #     debug_print("predictor", f"Altitude of measurement: {altitude_z}")
+        #     print(f"Altitude of measurement: {altitude_z}")
+        # debug_print("predictor", f"Altitude of x_post: {altitude_post}\n")
+        # print(f"Altitude of x_post: {altitude_post} and x_prior: {altitude_prior}\n")
         #
         if altitude_post < 0:
             sys.exit()
@@ -188,7 +188,7 @@ class Predictor(QWidget):
 
         ### start predict landing if altitude of x_prior is below threshold.
         ### this is in case we don't receive radar measurement around threshold altitude.
-        if altitude_prior <= pred_alt:
+        if altitude_post <= pred_alt and update != (0, 0, 0, 0, 0, 0):
             ### sample from the updated state distribution and predict landing position
             state_samples = np.random.multivariate_normal(mean=self.x_post, cov=x_cov, size=20)
             # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
@@ -210,16 +210,17 @@ class Predictor(QWidget):
                 landing_time_arr.append(landing_time)
             # print('landing_position ALL = \n',landing_latlon_arr)
             landing_latlon_mean = np.mean(landing_latlon_arr, axis=0)
-            print('landing_position MEAN = \n', landing_latlon_mean)
+            # print('landing_position MEAN = \n', landing_latlon_mean)
             landing_latlon_cov = np.cov(np.array(landing_latlon_arr).T)
             print(f'Landing position COV: \n{landing_latlon_cov}')
+            print(f'Landing position COV shape: {landing_latlon_cov.shape}')
 
             landing_time_mean = np.mean(landing_time_arr)
-            print(f'Landing time (mean): \n{landing_time_mean}')
+            # print(f'Landing time (mean): \n{landing_time_mean}')
             # landing_position_latlon = lat_long_height(landing_position_mean[0], landing_position_mean[1],
             #                                         landing_position_mean[2])[:2]
 
-            earth_update = (landing_latlon_mean[0], landing_latlon_mean[1])
+            earth_update = (landing_latlon_mean[0], landing_latlon_mean[1], landing_latlon_cov)
 
             ### Should it be landing.t_events (ODE solved landing time) instead?
             # send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.latest_measurement_time}, earth_update)

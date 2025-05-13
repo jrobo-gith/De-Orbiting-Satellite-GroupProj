@@ -103,10 +103,22 @@ class Earth(pg.GraphicsLayoutWidget):
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
         self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-1], y=full_sim_pixels[1][:-1], size=5, brush=pg.mkBrush('yellow'))
-        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
+        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+        self.crash_site_outline1 = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=20,
+                                             brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+        self.crash_site_outline2 = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=30,
+                                             brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
         self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
+        # Keep array of live satellite position
+        self.live_satellite_array_x = [full_sim_pixels[0][0]]
+        self.live_satellite_array_y = [full_sim_pixels[0][1]]
+        # Plot live satellite array
+        self.live_satellite_trail = pg.ScatterPlotItem(x=self.live_satellite_array_x, y=self.live_satellite_array_y, size=5, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
+        self.crash_site_outline1.setOpacity(0.4)
+        self.crash_site_outline2.setOpacity(0.1)
         self.satellite_start_position.setOpacity(0.9)
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
@@ -115,8 +127,8 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
         self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
         self.prediction_crash_point.setOpacity(0.9)
-        self.prediction_crash_1std.setOpacity(0.5)
-        self.prediction_crash_2std.setOpacity(0.25)
+        self.prediction_crash_1std.setOpacity(0.4)
+        self.prediction_crash_2std.setOpacity(0.1)
 
         # Add Radars locations
         self.radar_plots = []
@@ -136,6 +148,9 @@ class Earth(pg.GraphicsLayoutWidget):
         # Add simulation data
         self.plot_widget.addItem(self.sim_plot)
         self.plot_widget.addItem(self.crash_site)
+        self.plot_widget.addItem(self.crash_site_outline1)
+        self.plot_widget.addItem(self.crash_site_outline2)
+        self.plot_widget.addItem(self.live_satellite_trail)
         self.plot_widget.addItem(self.satellite_start_position)
         # Add prediction data
         self.plot_widget.addItem(self.prediction_crash_point)
@@ -154,10 +169,16 @@ class Earth(pg.GraphicsLayoutWidget):
         self.viewbox.setRange(xRange=(0, 5400), yRange=(2700, 0))
         self.sim_plot.getViewBox().invertY(True) # Keep consistent with world map
 
-        self.simulation_checkbox = QCheckBox("Show Simulation")
+        self.simulation_checkbox = QCheckBox("Show Full Simulation")
         self.simulation_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.simulation_checkbox.setChecked(True)
         self.simulation_checkbox.stateChanged.connect(self.sim_overlay_switch)
+
+        self.live_simulation_checkbox = QCheckBox("Show Live Satellite")
+        self.live_simulation_checkbox.setStyleSheet(
+            f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.live_simulation_checkbox.setChecked(True)
+        self.live_simulation_checkbox.stateChanged.connect(self.live_satellite_switch)
 
         self.radar_checkbox = QCheckBox("Show Radars")
         self.radar_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
@@ -192,10 +213,11 @@ class Earth(pg.GraphicsLayoutWidget):
         # Filter details
         self.filter_layout = QGridLayout()
         self.filter_layout.addWidget(self.simulation_checkbox, 0, 0)
-        self.filter_layout.addWidget(self.radar_checkbox, 0, 1)
-        self.filter_layout.addWidget(self.prediction_checkbox, 0, 2)
-        self.filter_layout.addWidget(self.filler, 0, 3)
-        self.filter_layout.addWidget(self.make_prediction_button, 0, 4)
+        self.filter_layout.addWidget(self.live_simulation_checkbox, 0, 1)
+        self.filter_layout.addWidget(self.radar_checkbox, 0, 2)
+        self.filter_layout.addWidget(self.prediction_checkbox, 0, 3)
+        self.filter_layout.addWidget(self.filler, 0, 4)
+        self.filter_layout.addWidget(self.make_prediction_button, 0, 5)
         self.filter_layout.setAlignment(Qt.AlignCenter)
 
         self.earth_checkboxes = QVBoxLayout()
@@ -241,6 +263,16 @@ class Earth(pg.GraphicsLayoutWidget):
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
 
+        if len(self.live_satellite_array_x) > 50:
+            # Remove oldest x, y
+            self.live_satellite_array_x = self.live_satellite_array_x[1:]
+            self.live_satellite_array_y = self.live_satellite_array_y[1:]
+        # Add new datapoint
+        self.live_satellite_array_x.append(x[0])
+        self.live_satellite_array_y.append(y[0])
+        # Plot data
+        self.live_satellite_trail.setData(x=self.live_satellite_array_x, y=self.live_satellite_array_y)
+
     @QtCore.pyqtSlot(dict, tuple)
     def update_prediction(self, info, update):
         """
@@ -283,13 +315,21 @@ class Earth(pg.GraphicsLayoutWidget):
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
         if self.simulation_checkbox.isChecked():
-            self.satellite_start_position.show()
             self.sim_plot.show()
             self.crash_site.show()
+            self.crash_site_outline1.show()
+            self.crash_site_outline2.show()
         else:
-            self.satellite_start_position.hide()
             self.sim_plot.hide()
             self.crash_site.hide()
+            self.crash_site_outline1.hide()
+            self.crash_site_outline2.hide()
+
+    def live_satellite_switch(self):
+        if self.live_simulation_checkbox.isChecked():
+            self.satellite_start_position.show()
+        else:
+            self.satellite_start_position.hide()
 
     def radar_overlay_switch(self):
         """
