@@ -6,6 +6,7 @@ import numpy as np
 import threading
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
+from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -62,6 +63,9 @@ class Earth(pg.GraphicsLayoutWidget):
         self.lat, self.lon, self.t = full_sim_data
         self.radar_list = radar_list
 
+        # Keep track of number of predictions made
+        self.prediction_count = 0
+
         if len(self.lat) > 10_000:
             self.lat = self.lat[0:len(self.lat):10]
             self.lon = self.lon[0:len(self.lon):10]
@@ -70,6 +74,7 @@ class Earth(pg.GraphicsLayoutWidget):
             self.adjusted_t = self.t
 
         self.plot_widget = pg.PlotWidget()
+        self.earth_graph = pg.GraphicsLayoutWidget()
 
         world_map = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/earth/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
@@ -87,9 +92,13 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.lon = (self.lon + 180) % 360 - 180  # wrap to [-180, 180]
 
+        # Get final crash location (pre-accounting for earth's rotation)
+        self.final_crash_vector = np.linalg.norm([self.lat[-1], self.lon[-1]])
+
         ## Switch x and y (lat and lon) to account for inverting world axis
         self.x = self.lat
         self.y = self.lon
+
 
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
@@ -152,7 +161,8 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.radar_checkbox = QCheckBox("Show Radars")
         self.radar_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
-        self.radar_checkbox.setChecked(True)
+        self.radar_checkbox.setChecked(False)
+        self.radar_overlay_switch()
         self.radar_checkbox.stateChanged.connect(self.radar_overlay_switch)
 
         self.prediction_checkbox = QCheckBox("Show Prediction")
@@ -167,9 +177,20 @@ class Earth(pg.GraphicsLayoutWidget):
         self.filler = QLabel("Fill")
         self.filler.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: {glob_setting['background-color']}")
 
+        # ## ADD EARTH RESIDUAL GRAPH
+        crash_res = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/crash_residual.json")
+        with open(crash_res) as f:
+            crash_res = json.load(f)
+        self.res_x = [[0]]
+        self.res_y = [[0]]
+        self.residual_plot = self.earth_graph.addPlot()
+        self.residual_plot = Plot(self.residual_plot,
+                                   self.res_x,
+                                   self.res_y,
+                                   args=crash_res)
+
         # Filter details
         self.filter_layout = QGridLayout()
-
         self.filter_layout.addWidget(self.simulation_checkbox, 0, 0)
         self.filter_layout.addWidget(self.radar_checkbox, 0, 1)
         self.filter_layout.addWidget(self.prediction_checkbox, 0, 2)
@@ -177,10 +198,15 @@ class Earth(pg.GraphicsLayoutWidget):
         self.filter_layout.addWidget(self.make_prediction_button, 0, 4)
         self.filter_layout.setAlignment(Qt.AlignCenter)
 
-        self.earth_filter = QVBoxLayout()
-        self.earth_filter.addWidget(self.plot_widget, stretch=19)
-        self.earth_filter.addLayout(self.filter_layout, stretch=1)
-        self.setLayout(self.earth_filter)
+        self.earth_checkboxes = QVBoxLayout()
+        self.earth_checkboxes.addWidget(self.plot_widget, stretch=19)
+        self.earth_checkboxes.addLayout(self.filter_layout, stretch=1)
+
+        self.global_grid = QHBoxLayout()
+
+        self.global_grid.addLayout(self.earth_checkboxes, stretch=15)
+        self.global_grid.addWidget(self.earth_graph, stretch=5)
+        self.setLayout(self.global_grid)
 
 
     @QtCore.pyqtSlot(dict, tuple)
@@ -210,6 +236,7 @@ class Earth(pg.GraphicsLayoutWidget):
         :param info: contains info such as whether we are predicting landing or not
         :param update: contains the latitude and longitude of the predicted crash site
         """
+        self.prediction_count += 1
         lat, lon = update
 
         # Account for earth's rotation
@@ -225,6 +252,10 @@ class Earth(pg.GraphicsLayoutWidget):
 
         # Keep between -180 and 180 degrees
         lon = (lon + 180) % 360 - 180
+
+        # Compute error between two lat lon vectors and update the graph
+        prediction_residual = np.linalg.norm([lat, lon]) - self.final_crash_vector
+        self.update_crash_residual(prediction_residual)
 
         x, y = latlon2pixel([lat], [lon])
         self.prediction_crash_point.setData(x, y)
@@ -284,6 +315,11 @@ class Earth(pg.GraphicsLayoutWidget):
         #Connect button to function
         self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))
 
+    def update_crash_residual(self, Y_data):
+        self.res_x[0].append(self.prediction_count)
+        self.res_y[0].append(Y_data)
+
+        self.residual_plot.update_plot(np.array([self.res_x[0][-1]]), np.array([self.res_y[0][-1]]))
 
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
