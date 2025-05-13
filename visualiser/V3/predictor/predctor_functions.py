@@ -21,6 +21,14 @@ from visualiser.V3.partials.constants import *
     
 """ Landing stopping condition"""
 def stop_condition(t, y):
+    """
+    Stop when altitude <= 0
+    Args:
+        t: time
+        y: state vector [x, y, z, vx, vy, vz]
+    Returns:
+        altitude: altitude of the satellite
+    """
     # Stop when altitude <= 0
     r = np.linalg.norm(y[:3])
     _, _, altitude = lat_long_height(y[0], y[1], y[2])
@@ -28,6 +36,14 @@ def stop_condition(t, y):
 
 """ Define the ODE of the orbit dynamics ================================="""
 def ode(t, state_x):
+        """ 
+        A function that defines the ODE of the orbit dynamics.
+        Args:
+            t: time
+            state_x: state vector [x, y, z, vx, vy, vz]
+        Returns:
+            dx: derivative of the state vector [vx, vy, vz, ax, ay, az]
+        """
         x, y, z, vx, vy, vz= state_x        
         
         r = np.linalg.norm(state_x[:3])
@@ -56,6 +72,14 @@ def ode(t, state_x):
 
 
 def ode_with_Cd(t, state_x):
+        """
+        A function that defines the ODE of the orbit dynamics with drag coefficient.
+        Args:
+            t: time
+            state_x: state vector [x, y, z, vx, vy, vz, Cd]
+        Returns:
+            dx: derivative of the state vector [vx, vy, vz, ax, ay, az, dCd_dt]
+        """
         x, y, z, vx, vy, vz, Cd = state_x        
         
         r = np.linalg.norm(state_x[:3])
@@ -83,23 +107,51 @@ def ode_with_Cd(t, state_x):
 
 """ Define the process model f(x) ======================================="""
 def f(state_x, dt):
-    """state vector = state_x = [x,y,z,vx, vy, vz]"""
+    """
+    A function that defines the process model of the orbit dynamics.
+    Args:
+        state_x: state vector [x, y, z, vx, vy, vz]
+        dt: time step
+    Returns:
+        solution y.flattened: state vector [x, y, z, vx, vy, vz] at time t+dt
+    """
     solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
 
 def f_with_Cd(state_x, dt):
-    """state vector = state_x = [x,y,z,vx, vy, vz, Cd]"""
+    """
+    A function that defines the process model of the orbit dynamics with drag coefficient.
+    Args:
+        state_x: state vector [x, y, z, vx, vy, vz, Cd]
+        dt: time step
+    Returns:
+        solution y.flattened: state vector [x, y, z, vx, vy, vz] at time t+dt
+    """
     Cd = state_x[-1]
     solution = solve_ivp(ode_with_Cd, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
 
 """ Define measurement function h(x) ================================================="""
 def h_radar(x):
-    """x is the state vector,
-    this H function assumes ra`rdar sends positions in global coordinate system"""
+    """
+    Measurement function for radar
+    Args:
+        x: state vector [x, y, z, vx, vy, vz]
+    Returns:
+        radar_measurement: radar measurement [x, y, z]
+    """
     return x[:3] # return x,y,z position if state order is (x,y,z,vx,vy,vz)
 
 def ukf_Q(dim, dt, var_):
+    """
+    Function to create the process noise covariance matrix Q for the Unscented Kalman Filter (UKF).
+    Args:
+        dim: dimension of the state vector
+        dt: time step
+        var_: process noise variance
+    Returns:
+        Q: process noise covariance matrix
+    """
     Q = np.zeros((dim, dim))
     Q[np.ix_([0, 3], [0, 3])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect x and vx
     Q[np.ix_([1, 4], [1, 4])] = Q_discrete_white_noise(dim=2, dt=dt,var=var_)  # Q matrix for how other noise affect y and vy
@@ -107,6 +159,16 @@ def ukf_Q(dim, dt, var_):
     return Q
 
 def ukf_Q_7dim(dim, dt, var_, Cd_var):
+    """
+    Function to create the process noise covariance matrix Q for the Unscented Kalman Filter (UKF) with drag coefficient.
+    Args:
+        dim: dimension of the state vector
+        dt: time step
+        var_: process noise variance
+        Cd_var: drag coefficient variance
+    Returns:
+        Q: process noise covariance matrix
+    """
     Q = np.zeros((dim, dim))
     uncertainty = Q_discrete_white_noise(dim=2, dt=dt,var=var_)
     Q[np.ix_([0, 3], [0, 3])] = uncertainty  # Q matrix for how other noise affect x and vx
