@@ -159,7 +159,7 @@ class ModelMenu(QWidget):
         # Stable equitorial
         stable_condition_e = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, np.sqrt(MU_EARTH/(150e3 + EARTH_SEMIMAJOR)) * 1.002, 0]
 
-        radar_list = give_random_radar_locations(500, equatorial=False)
+        radar_list = give_random_radar_locations(250, equatorial=False)
 
         stable_condition = stable_condition_none
 

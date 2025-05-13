@@ -11,7 +11,7 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 # Import necessary PyQt5 components
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QLabel, QGridLayout
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 from PyQt5 import QtCore
@@ -145,9 +145,6 @@ class Earth(pg.GraphicsLayoutWidget):
         self.viewbox.setRange(xRange=(0, 5400), yRange=(2700, 0))
         self.sim_plot.getViewBox().invertY(True) # Keep consistent with world map
 
-        # Filter details
-        self.filter_layout = QHBoxLayout()
-
         self.simulation_checkbox = QCheckBox("Show Simulation")
         self.simulation_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.simulation_checkbox.setChecked(True)
@@ -164,12 +161,20 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_checkbox.stateChanged.connect(self.prediction_overlay_switch)
 
         self.make_prediction_button = QPushButton("Make Prediction")
-        self.make_prediction_button.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
-        self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 35))
+        self.make_prediction_button.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 20))
 
-        self.filter_layout.addWidget(self.simulation_checkbox)
-        self.filter_layout.addWidget(self.radar_checkbox)
-        self.filter_layout.addWidget(self.prediction_checkbox)
+        self.filler = QLabel("Fill")
+        self.filler.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: {glob_setting['background-color']}")
+
+        # Filter details
+        self.filter_layout = QGridLayout()
+
+        self.filter_layout.addWidget(self.simulation_checkbox, 0, 0)
+        self.filter_layout.addWidget(self.radar_checkbox, 0, 1)
+        self.filter_layout.addWidget(self.prediction_checkbox, 0, 2)
+        self.filter_layout.addWidget(self.filler, 0, 3)
+        self.filter_layout.addWidget(self.make_prediction_button, 0, 4)
         self.filter_layout.setAlignment(Qt.AlignCenter)
 
         self.earth_filter = QVBoxLayout()
@@ -247,8 +252,10 @@ class Earth(pg.GraphicsLayoutWidget):
         """
         if self.radar_checkbox.isChecked():
             [radar_plot.show() for radar_plot in self.radar_plots]
+            [radar_text.show() for radar_text in self.radar_texts]
         else:
             [radar_plot.hide() for radar_plot in self.radar_plots]
+            [radar_text.hide() for radar_text in self.radar_texts]
 
     def prediction_overlay_switch(self):
         """
@@ -277,7 +284,6 @@ class Earth(pg.GraphicsLayoutWidget):
         #Connect button to function
         self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))
 
-        self.filter_layout.addWidget(self.make_prediction_button)
 
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
