@@ -226,7 +226,7 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         radar_alt = [altitude_x, altitude_y]
 
         radar_name = info['name']
-        earth_helper.changedSignal.emit(info, (lat, lon))
+        earth_helper.changedSignal.emit(info, (radM_ecef_nn,))
         graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
 
         time.sleep(0.1)

@@ -6,6 +6,7 @@ import numpy as np
 import threading
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
+from visualiser.V3.simulator.simulator import lat_long_height
 from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
 
 root_dir = os.getcwd()
@@ -98,7 +99,6 @@ class Earth(pg.GraphicsLayoutWidget):
         ## Switch x and y (lat and lon) to account for inverting world axis
         self.x = self.lat
         self.y = self.lon
-
 
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
@@ -222,7 +222,22 @@ class Earth(pg.GraphicsLayoutWidget):
         :param name: redundant parameter
         :param update: contains one latitude and one longitude to update the satellite's position.
         """
-        lat, lon = update
+        XYZ = update[0]
+        ## Convert x, y, z to lat lon
+        lat, lon, _ = lat_long_height(XYZ[0], XYZ[1], XYZ[2])
+
+        ## Account for earth's rotation
+        EARTH_ROTATION = EARTH_ROTATION_ANGLE * name['obs-time']
+        lon -= EARTH_ROTATION
+        ## Convert to Miller Coordinates
+        lat = (5 / 4) * np.arcsinh(np.tan((4 * lat) / 5))
+
+        # Convert to degrees
+        lon *= (180 / np.pi)
+        lat *= (180 / np.pi)
+
+        lon = (lon + 180) % 360 - 180  # wrap to [-180, 180]
+
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
 
@@ -320,7 +335,6 @@ class Earth(pg.GraphicsLayoutWidget):
         self.res_y[0].append(Y_data)
 
         self.residual_plot.update_plot(np.array([self.res_x[0][-1]]), np.array([self.res_y[0][-1]]))
-
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """
