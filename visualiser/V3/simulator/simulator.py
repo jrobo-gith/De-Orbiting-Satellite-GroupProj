@@ -19,17 +19,40 @@ np.random.seed(0)
 # (Uses the WGS-84 ellipsoid model)
 # https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84
 def earth_radius_WGS84(latitude):
+    """
+    Calculate the radius of the Earth at a given latitude using the WGS-84 ellipsoid model.
+    Args:
+        latitude (float or array-like): Latitude in radians.
+    Returns:
+        float or array-like: Radius of the Earth at the given latitude in meters.
+    """
     numerator = (EARTH_SEMIMAJOR**2 * np.cos(latitude))**2 + (EARTH_SEMIMINOR**2 * np.sin(latitude))**2
     denominator = (EARTH_SEMIMAJOR * np.cos(latitude))**2 + (EARTH_SEMIMINOR * np.sin(latitude))**2
     return np.sqrt(numerator / denominator)
 
 def curvature_in_prime_vertical(phi):
+    """
+    Calculate the curvature in the prime vertical at a given latitude.
+    Args:
+        phi: Latitude in radians. 
+    Returns:
+        float: Curvature in the prime vertical at the given latitude in meters.
+    """
     return EARTH_SEMIMAJOR / np.sqrt(1 - E_SQUARED * np.sin(phi)**2)
 
 # Returns latitude and height above the Earth
 # Calculates latitude iteratively for the WGS-84 model using Bowring's method
 # RESEARCH INTO FERRARI'S METHOD FOR BETTER ACCURACY
 def latitude_iterator_and_height_plot(x, y, z):
+    """
+    Calculate latitude and height above the Earth using Bowring's method.
+    Args:
+        x (array-like): X coordinates in meters.
+        y (array-like): Y coordinates in meters.
+        z (array-like): Z coordinates in meters.
+    Returns:
+        tuple: Latitude in radians and height above the Earth in meters.
+    """
     x = np.asarray(x)
     y = np.asarray(y)
     z = np.asarray(z)
@@ -58,6 +81,15 @@ def latitude_iterator_and_height_plot(x, y, z):
     return phi_final, height
 
 def latitude_iterator_and_height(x, y, z):
+    """
+    Calculate latitude and height above the Earth using Bowring's method.
+    Args:
+        x (float): X coordinate in meters.
+        y (float): Y coordinate in meters.
+        z (float): Z coordinate in meters.
+    Returns:
+        tuple: Latitude in radians and height above the Earth in meters.
+    """
     r = np.sqrt(x**2 + y**2)
     phi = np.arctan(z / (r * (1 - E_SQUARED)))
     phi_new = phi + 100
@@ -77,6 +109,15 @@ def latitude_iterator_and_height(x, y, z):
 # Calculates the height of the satellite above an elliptical Earth
 # Latitude is calculated as an approximation for a non-spherical Earth
 def lat_long_height_plot(x, y, z):
+    """
+    Calculate latitude, longitude, and height above the Earth using Bowring's method.
+    Args:
+        x (array-like): X coordinates in meters.
+        y (array-like): Y coordinates in meters.
+        z (array-like): Z coordinates in meters.
+    Returns:
+        tuple: Latitude in radians, longitude in radians, and height above the Earth in meters.
+    """
     r = np.sqrt(x**2 + y**2 + z**2)
     longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height_plot(x, y, z)
@@ -85,6 +126,15 @@ def lat_long_height_plot(x, y, z):
     return latitude, longitude, height
 
 def lat_long_height(x, y, z):
+    """
+    Calculate latitude, longitude, and height above the Earth using Bowring's method.
+    Args:
+        x (float): X coordinate in meters.
+        y (float): Y coordinate in meters.
+        z (float): Z coordinate in meters.
+    Returns:
+        tuple: Latitude in radians, longitude in radians, and height above the Earth in meters.
+    """
     r = np.sqrt(x**2 + y**2 + z**2)
     longitude = np.arctan2(y, x)
     latitude, height = latitude_iterator_and_height(x, y, z)
@@ -96,6 +146,13 @@ def lat_long_height(x, y, z):
 # ------------------------- FUNCTIONS FOR CALCULATING ATMOSPHERIC DENSITY ------------------------------------------
 # Calculates atmospheric density at a given altitude
 def atmospheric_density(altitude):
+    """
+    Calculate atmospheric density at a given altitude using a simplified model.
+    Args:
+        altitude (float): Altitude in meters.
+    Returns:
+        float: Atmospheric density in kg/m^3.
+    """
     # White noise as random perturbations of magnitude 0.1*RHO_0
     density = RHO_0 * np.exp(-altitude / H_SCALE)
     white_noise = np.random.normal(0, 0.05* density)
@@ -116,6 +173,16 @@ def atmospheric_density(altitude):
 # https://www.nrl.navy.mil/our-research/nrlmsise-00
 # (Only accurate when using the WGS-84 model for the Earth)
 def atmospheric_density_true(lat, long, altitude, time = None):
+    """
+    Calculate atmospheric density using the NRLMSISE-00 model.
+    Args:
+        lat (float): Latitude in radians.
+        long (float): Longitude in radians.
+        altitude (float): Altitude in meters.
+        time (datetime): Time for the calculation. If None, uses the current time.
+    Returns:
+        float: Atmospheric density in kg/m^3.
+    """
     if time is None:
         time = datetime.datetime.now()
     
@@ -125,6 +192,14 @@ def atmospheric_density_true(lat, long, altitude, time = None):
 
 # Diff. eqns for satellite motion
 def satellite_dynamics(t, y):
+    """
+    Calculate the dynamics of a satellite in orbit.
+    Args:
+        t (float): Time.
+        y (array-like): State vector [x, y, z, vx, vy, vz].
+    Returns:
+        array-like: Derivative of the state vector [vx, vy, vz, ax, ay, az].
+    """
     x, y_pos, z, vx, vy, vz = y
     r = np.sqrt(x**2 + y_pos**2 + z**2)
     lat, long, altitude = lat_long_height(x, y_pos, z)
@@ -150,12 +225,28 @@ def satellite_dynamics(t, y):
 
 # Stops the simulation when altitude <= 0
 def stop_condition(t, y):
+    """
+    Event function to stop the simulation when altitude is less than or equal to zero.
+    Args:
+        t (float): Time.
+        y (array-like): State vector [x, y, z, vx, vy, vz].
+    Returns:
+        float: Altitude above the Earth.
+    """
     r = np.sqrt(y[0]**2 + y[1]**2 + y[2]**2)
     altitude = lat_long_height(y[0], y[1], y[2])[2]
     return altitude
 
 # Solves diff. eqn system between measurements radar(n) and radar(n+1)
 def system_solver(t_span_, initial_conditions):
+    """
+    Solve the system of equations for satellite dynamics.
+    Args:
+        t_span_ (float): Time span for the simulation.
+        initial_conditions (list): Initial conditions [x0, y0, z0, vx0, vy0, vz0].
+    Returns:
+        solution: Solution object containing the results of the integration.
+    """
     t_evals = int(np.rint(t_span_/50))
     t_eval = np.linspace(0, t_span_, t_evals)
     

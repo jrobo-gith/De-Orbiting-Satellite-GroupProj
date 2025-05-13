@@ -15,6 +15,14 @@ from visualiser.V3.simulator.simulator import lat_long_height
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 def get_sat_data():
+    """ 
+    Reads satellite trajectory data from a file and converts it to ECEF coordinates.
+    Returns:
+        sat_pos_ecef (np.ndarray): Satellite positions in ECEF coordinates.
+        sat_pos_eci (np.ndarray): Satellite positions in ECI coordinates.
+        sat_vel (np.ndarray): Satellite velocities.
+        t_vals (np.ndarray): Time values corresponding to the satellite positions.
+    """
     sat_pos_x = []
     sat_pos_y = []
     sat_pos_z = []
@@ -70,6 +78,20 @@ def get_sat_data():
 
 # Radar class - contains radar specifications and functions
 class Radar:
+    """
+    Radar class to simulate radar measurements and check field of view.
+    Attributes:
+        lon (float): Longitude of the radar.
+        lat (float): Latitude of the radar.
+        alt (float): Altitude of the radar.
+        pos_lla (list): Latitude, longitude, and altitude of the radar.
+        azfov (float): Azimuth field of view in degrees.
+        elfov (float): Elevation field of view in degrees.
+        azcen (float): Azimuth center in degrees.
+        maxr (float): Maximum range of the radar in meters.
+        minr (float): Minimum range of the radar in meters.
+        minel (float): Minimum elevation angle in degrees.
+    """
     # Contains radar specific information
     __range_uncertainty = 100
     __theta_uncertainty = 0.001
@@ -77,6 +99,17 @@ class Radar:
     __vel_uncertainty = 0.05
 
     def __init__(self, longlat, azfov=360, elfov=180, azcen=0, maxr=5e6, minr=10, minel=2):
+        """
+        Initializes the Radar object with given parameters.
+        Args:
+            longlat (list): Latitude, longitude, and altitude of the radar.
+            azfov (float): Azimuth field of view in degrees.
+            elfov (float): Elevation field of view in degrees.
+            azcen (float): Azimuth center in degrees.
+            maxr (float): Maximum range of the radar in meters.
+            minr (float): Minimum range of the radar in meters.
+            minel (float): Minimum elevation angle in degrees.
+        """
         # Inputs - An array containing lat-long-alt of radar
         #        - Azimuth field of view in degrees
         #        - Elevation field of view in degrees
@@ -94,6 +127,13 @@ class Radar:
         self.pos_ecef = lla2ecef(np.array([self.lon, self.lat, self.alt]))
 
     def __add_noise(self, radM):
+        """
+        Adds noise to radar measurements.
+        Args:
+            radM (tuple): Radar measurements (range, azimuth, elevation, velocity).
+        Returns:
+            np.ndarray: Noisy radar measurements.
+        """
         # Inputs  - An array containing radar measurements
         # Outputs - An array containing noisy radar measurements
         rho, theta, phi, vx, vy, vz = radM
@@ -107,6 +147,15 @@ class Radar:
 
     # This function is effectively converting ENU to its equivalent spherical coordinates
     def radar_measurements(self, sat_enu_coords, sat_vel, noise=True):
+        """
+        Computes radar measurements from ENU coordinates.
+        Args:
+            sat_enu_coords (np.ndarray): ENU coordinates of the object.
+            sat_vel (np.ndarray): Velocity of the object.
+            noise (bool): Whether to add noise to the measurements.
+        Returns:
+            np.ndarray: Radar measurements (range, azimuth, elevation).
+        """
         # Inputs  - ENU coordinates of the object
         #           Boolean to check whether to add noise to the measurements
         # Outputs - An array containing radar measurements (range, azimuth, elevation)
@@ -126,6 +175,13 @@ class Radar:
 
     # Convert radar measurements to ENU coordinates
     def radM2enu(self, radM_pos):
+        """
+        Converts radar measurements to ENU coordinates.
+        Args:
+            radM_pos (np.ndarray): Radar measurements (range, azimuth, elevation).
+        Returns:
+            np.ndarray: ENU coordinates of the object.
+        """
         # Inputs  - An array containing radar measurements
         # Outputs - ENU coordinates of the object
         rho, theta, phi = radM_pos  # Range, azimuth, elevation
@@ -136,6 +192,13 @@ class Radar:
         return np.array([e, n, u])
 
     def check_fov(self, radM_pos):
+        """
+        Checks if the object is within the radar's field of view.
+        Args:
+            radM_pos (np.ndarray): Radar measurements (range, azimuth, elevation).
+        Returns:
+            bool: True if the object is within the field of view, False otherwise.
+        """
         # Inputs  - An array containing radar measurements
         # Outputs - Boolean True if object is in radar's field of view
         #           Boolean False otherwise
@@ -156,6 +219,16 @@ class Radar:
 
 # Simulate radar measurements
 def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper):
+    """
+    Simulates radar measurements for a given set of radars and satellite positions.
+    Args:
+        radars (dict): Dictionary of radar objects.
+        graph_helper (Helper): Helper object for graph-related operations.
+        earth_helper (Helper): Helper object for Earth-related operations.
+        predictor_helper (Helper): Helper object for prediction-related operations.
+    Returns:
+        bool: True if the simulation was successful.
+    """
     # Inputs  - An array of satellite positions in ECEF coordinates
     #         - A dictionary of radar objects
     # Outputs - A dictionary of measurements taken by each radar
@@ -237,6 +310,13 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
 radars = {}
 
 def initialise_radars(lonlat:list):
+    """
+    Initializes radar objects with given latitude and longitude.
+    Args:
+        lonlat (list): List of latitude and longitude coordinates for the radars.
+    Returns:
+        dict: Dictionary of radar objects.
+    """
     for i, pos in enumerate(lonlat):
         radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=80, azcen=0, maxr=5e6)
 

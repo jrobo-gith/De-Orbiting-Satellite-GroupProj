@@ -22,11 +22,43 @@ np.random.seed(0)
 
 
 class Helper(QtCore.QObject):
+    """
+    Helper class to send signals to the grapher and earth classes.
+    Atributes:
+        changedSignal: QtCore.pyqtSignal
+    """
     changedSignal = QtCore.pyqtSignal(dict, tuple)
 
 
 class Predictor(QWidget):
+    """
+    This class is used to predict the position of the satellite using the Unscented Kalman Filter (UKF).
+    Attributes:
+        grapher: Grapher object
+        earth: Earth object
+        ukf: Unscented Kalman Filter object
+        sigmas_generator: MerweScaledSigmaPoints object
+        xs_prior: list of prior states
+        zs: list of measurements
+        xs: list of posterior states
+        Ps: list of covariance matrices
+        ts: list of time stamps
+        grapher_helper: Helper object to send signals to the grapher
+        earth_helper: Helper object to send signals to the earth
+        Cd: drag coefficient
+        dt: time step
+        dt_adjust: adjusted time step
+    """
     def __init__(self, grapher, earth, state0, dt=50.0, Cd=2.0):
+        """
+        Initialize the Predictor class.
+        Args:
+            grapher: Grapher object
+            earth: Earth object
+            state0: list of initial state values
+            dt: time step
+            Cd: drag coefficient
+        """
         super().__init__()
         self.grapher = grapher
         self.earth = earth
@@ -103,7 +135,12 @@ class Predictor(QWidget):
 
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
-
+        """
+        This function is used to predict the position of the satellite using the Unscented Kalman Filter (UKF).
+        Args:
+            info: dictionary containing information about the satellite
+            update: tuple containing the radar measurement
+        """
         pred_alt = 120e3
         debug_print("predictor", f"{info['obs-time']}, dt={self.dt}")
         self.ts.append(info['obs-time'])
@@ -280,4 +317,11 @@ class Predictor(QWidget):
                       earth_update)
 
 def send_to_graph(helper, name: dict, update: tuple):
+    """
+    This function is used to send signals to the grapher and earth classes.
+    Args:
+        helper: Helper object to send signals to the grapher
+        name: dictionary containing information about the satellite
+        update: tuple containing the radar measurement
+    """
     helper.changedSignal.emit(name, update)
