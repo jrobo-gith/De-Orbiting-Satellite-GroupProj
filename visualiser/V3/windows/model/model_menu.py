@@ -50,6 +50,7 @@ class ModelMenu(QWidget):
 
         :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
         """
+
         super().__init__()
         self.stacked_widget = stacked_widget
         self.num_radars = 10
@@ -61,21 +62,21 @@ class ModelMenu(QWidget):
 
         # Add input position ability
         self.input_X_pos = QLineEdit()
-        self.input_X_pos.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_X_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_X_pos.setText("X-pos")
         self.input_X_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_X_pos.setFixedWidth(200)
         self.input_X_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_pos = QLineEdit()
-        self.input_Y_pos.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_Y_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_Y_pos.setText("Y-pos")
         self.input_Y_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Y_pos.setFixedWidth(200)
         self.input_Y_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_pos = QLineEdit()
-        self.input_Z_pos.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_Z_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_Z_pos.setText("Z-pos")
         self.input_Z_pos.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
@@ -90,7 +91,7 @@ class ModelMenu(QWidget):
 
         # Add input velocity ability
         self.input_X_vel = QLineEdit()
-        self.input_X_vel.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_X_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_X_vel.setText("X-vel")
         self.input_X_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
@@ -98,7 +99,7 @@ class ModelMenu(QWidget):
         self.input_X_vel.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_vel = QLineEdit()
-        self.input_Y_vel.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_Y_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_Y_vel.setText("Y-vel")
         self.input_Y_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
@@ -106,7 +107,7 @@ class ModelMenu(QWidget):
         self.input_Y_vel.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_vel = QLineEdit()
-        self.input_Z_vel.setFont(QFont(glob_setting['font-family'], 22))
+        self.input_Z_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.input_Z_vel.setText("Z-vel")
         self.input_Z_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
@@ -121,51 +122,51 @@ class ModelMenu(QWidget):
 
         ## Add radar locations ability
         radar_10 = QPushButton("10 Radars")
-        radar_10.setFont(QFont(glob_setting['font-family'], 22))
+        radar_10.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_10.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_10.setFixedWidth(250)
         radar_10.clicked.connect(lambda: self.set_num_radars(radar_10, 10))
 
         radar_25 = QPushButton("25 Radars")
-        radar_25.setFont(QFont(glob_setting['font-family'], 22))
+        radar_25.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_25.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_25.setFixedWidth(250)
         radar_25.clicked.connect(lambda: self.set_num_radars(radar_25, 25))
 
         radar_50 = QPushButton("50 Radars")
-        radar_50.setFont(QFont(glob_setting['font-family'], 22))
+        radar_50.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_50.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_50.setFixedWidth(250)
         radar_50.clicked.connect(lambda: self.set_num_radars(radar_50, 50))
 
         radar_100 = QPushButton("100 Radars")
-        radar_100.setFont(QFont(glob_setting['font-family'], 22))
+        radar_100.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_100.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_100.setFixedWidth(250)
         radar_100.clicked.connect(lambda: self.set_num_radars(radar_100, 100))
 
         radar_150 = QPushButton("150 Radars")
-        radar_150.setFont(QFont(glob_setting['font-family'], 22))
+        radar_150.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_150.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_150.setFixedWidth(250)
         radar_150.clicked.connect(lambda: self.set_num_radars(radar_150, 150))
 
         radar_200 = QPushButton("200 Radars")
-        radar_200.setFont(QFont(glob_setting['font-family'], 22))
+        radar_200.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_200.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_200.setFixedWidth(250)
         radar_200.clicked.connect(lambda: self.set_num_radars(radar_200, 200))
 
         radar_250 = QPushButton("250 Radars")
-        radar_250.setFont(QFont(glob_setting['font-family'], 22))
+        radar_250.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_250.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_250.setFixedWidth(250)
         radar_250.clicked.connect(lambda: self.set_num_radars(radar_250, 250))
 
         radar_500 = QPushButton("500 Radars")
-        radar_500.setFont(QFont(glob_setting['font-family'], 22))
+        radar_500.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_500.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         radar_500.setFixedWidth(250)
@@ -173,13 +174,13 @@ class ModelMenu(QWidget):
 
         # Add equatorial, non equatorial
         equatorial_btn = QPushButton("Equatorial Layout")
-        equatorial_btn.setFont(QFont(glob_setting['font-family'], 22))
+        equatorial_btn.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         equatorial_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         equatorial_btn.setFixedWidth(400)
         equatorial_btn.clicked.connect(lambda: self.set_equatorial_bool(equatorial_btn, True))
 
         non_equatorial_btn = QPushButton("Non-Equatorial Layout")
-        non_equatorial_btn.setFont(QFont(glob_setting['font-family'], 22))
+        non_equatorial_btn.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         non_equatorial_btn.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         non_equatorial_btn.setFixedWidth(400)
@@ -212,7 +213,7 @@ class ModelMenu(QWidget):
         self.equatorial_btn_list = [equatorial_btn, non_equatorial_btn]
 
         start_sim_btn = QPushButton("Start Simulation")
-        start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
+        start_sim_btn.setFont(QFont(glob_setting['font-family'], 23))
         start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         start_sim_btn.clicked.connect(self.load_sim)
         start_sim_btn.setFixedWidth(250)

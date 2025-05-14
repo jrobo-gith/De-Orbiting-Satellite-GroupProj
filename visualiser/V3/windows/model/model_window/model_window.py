@@ -118,12 +118,12 @@ class SimWidget(QWidget):
 
         self.graph_button = QPushButton("Graph View")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
-        self.graph_button.setFont(QFont(glob_setting['font-family'], 20))
+        self.graph_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.graph_button.clicked.connect(self.click_graph_button)
 
         self.earth_button = QPushButton("Earth View")
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
-        self.earth_button.setFont(QFont(glob_setting['font-family'], 20))
+        self.earth_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         self.earth_button.clicked.connect(self.click_earth_button)
 
         filler = QLabel("FILLER")
