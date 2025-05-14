@@ -56,7 +56,7 @@ class Credits(QWidget):
         jai_credit = QLabel("Jai Sagoo")
         vijay_credit = QLabel("Vijay Dharmavel")
         ### Visualiser
-        vis_title = QLabel("Visualiser")
+        vis_title = QLabel("Visualiser/GUI")
         jack_credit = QLabel("Jack Roberts")
 
         # Add credits to box

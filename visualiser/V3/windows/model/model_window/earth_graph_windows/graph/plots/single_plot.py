@@ -16,7 +16,7 @@ class Plot(pg.PlotWidget):
     - update_plot(self, new_data_X, new_data_Y)
 
     References:
-    Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
+        Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
 
     Previous versions can be found in the Group GitHub - https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj
     """
@@ -32,12 +32,13 @@ class Plot(pg.PlotWidget):
         :param init_y: Initial y values
         :param args: Profile of the plot, used for styling.
         """
+
         super().__init__()
 
         # Check basic things
-        assert type(init_x) == list, debug_print("visualiser", "Initial x must be a list")
-        assert type(init_y) == list, debug_print("visualiser", "Initial y must be a list")
-        assert type(args) == dict, debug_print("visualiser", "Arguments must be a dictionary")
+        assert type(init_x) == list, "Initial x must be a list"
+        assert type(init_y) == list, "Initial y must be a list"
+        assert type(args) == dict, "Arguments must be a dictionary"
 
         self.plot_allocation = plot_allocation
         self.args = args
@@ -120,10 +121,10 @@ class Plot(pg.PlotWidget):
         :param new_data_X: New x values
         :param new_data_Y: New y values
         """
-        assert type(new_data_X) == np.ndarray, debug_print("visualiser", f"New X must be a numpy array. {type(new_data_X)}")
-        assert type(new_data_Y) == np.ndarray, debug_print("visualiser", f"New Y must be a numpy array. {type(new_data_Y)}")
+        assert type(new_data_X) == np.ndarray, f"New X must be a numpy array. {type(new_data_X)}"
+        assert type(new_data_Y) == np.ndarray, f"New Y must be a numpy array. {type(new_data_Y)}"
+        assert new_data_X.shape == new_data_Y.shape, f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}"
 
-        assert new_data_X.shape == new_data_Y.shape, debug_print("visualiser", f"New X must be same size as new Y. {new_data_X.shape[0]} != {new_data_Y.shape[0]}")
 
         for i, self.line in enumerate(self.lines):
             if self.args['array-limit'] != "None":

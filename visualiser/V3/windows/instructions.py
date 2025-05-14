@@ -64,9 +64,9 @@ class Instructions(QWidget):
         suggested values which best demonstrates a slow, decaying orbit but the user is encouraged to experiment with 
         whichever inputs they like.""")
         graph_title = QLabel("The Graph Window")
-        graph_explanation = QLabel("""Once initiated the user will be taken to the simulation, where they are met 
-        with _ graphs, each showing important information about the satellite trajectory, velocity, etc. There are two
-        windows within this area, one window displays graphical information, the other is the Earth window.""")
+        graph_explanation = QLabel("""Once initiated, the user will be taken to the simulation, where they are met 
+        with detailed graphs, each showing important information about the satellite trajectory, velocity, etc. There 
+        are two windows within this area, one window displays graphical information, the other is the Earth window.""")
         earth_title = QLabel("The Earth Window")
         earth_explination = QLabel("""The 'Earth Window' button, when clicked, takes the user to a 2d static 
         model of Earth where the simulated trajectory of the satellite (the true trajectory), radar locations, 
@@ -77,6 +77,7 @@ class Instructions(QWidget):
         duration of the simulation. To restart the simulation, the user simply clicks the '<-' button at the top 
         left of the screen and will be taken back to the main menu, where they can navigate back into the simulation 
         menu to input new initial values for the satellite.""")
+
         # Add instructions to instructions box
         instructions_box.addWidget(UI_title)
         instructions_box.addWidget(UI)

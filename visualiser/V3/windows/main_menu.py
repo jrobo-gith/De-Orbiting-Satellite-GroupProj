@@ -52,7 +52,7 @@ class MainMenu(QWidget):
         menu_layout = QHBoxLayout()
         menu_layout.addWidget(menu_title)
 
-        menu_welcome_text = QLabel("Welcome to our group project! Here we use the __ Kalman Filter to predict the crash site of a \nDe-orbiting satellite.")
+        menu_welcome_text = QLabel("Welcome to our group project! Here we use the Unscented Kalman Filter to predict the crash site of a \nDe-orbiting satellite.")
         menu_welcome_text.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         menu_welcome_text.setFont(QFont(glob_setting['font-family'], 20))
         menu_welcome_text.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: transparent;")
@@ -64,7 +64,7 @@ class MainMenu(QWidget):
         graph_button.setFont(QFont(glob_setting['font-family'], 27))
         graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         graph_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(1))
-        graph_button.setFixedWidth(180)
+        graph_button.setFixedWidth(225)
         graph_layout = QHBoxLayout()
         graph_layout.addWidget(graph_button)
 
@@ -72,7 +72,7 @@ class MainMenu(QWidget):
         instructions_button.setFont(QFont(glob_setting['font-family'], 25))
         instructions_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         instructions_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(2))
-        instructions_button.setFixedWidth(165)
+        instructions_button.setFixedWidth(200)
         instructions_layout = QHBoxLayout()
         instructions_layout.addWidget(instructions_button)
 
@@ -80,7 +80,7 @@ class MainMenu(QWidget):
         credits_button.setFont(QFont(glob_setting['font-family'], 23))
         credits_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         credits_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(3))
-        credits_button.setFixedWidth(100)
+        credits_button.setFixedWidth(175)
         credits_layout = QHBoxLayout()
         credits_layout.addWidget(credits_button)
 
@@ -88,7 +88,7 @@ class MainMenu(QWidget):
         exit_button.setFont(QFont(glob_setting['font-family'], 20))
         exit_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%; ")
         exit_button.clicked.connect(sys.exit)
-        exit_button.setFixedWidth(70)
+        exit_button.setFixedWidth(100)
         exit_layout = QHBoxLayout()
         exit_layout.addWidget(exit_button)
 

@@ -8,7 +8,6 @@ from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
 from visualiser.V3.simulator.simulator import lat_long_height
 from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
-from filterpy.stats import covariance_ellipse
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
@@ -27,8 +26,6 @@ with open(json_file) as f:
 
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)
-
-import matplotlib.pyplot as plt
 
 class Earth(pg.GraphicsLayoutWidget):
     """
@@ -59,7 +56,7 @@ class Earth(pg.GraphicsLayoutWidget):
         the user's convenience.
 
         :param full_sim_data: the full simulation data in lat lon, used to plot the full simulation on the 2d world map.
-        :param radar_list: list of radar lat lons, initialised in simulator_window.py, used to plot on the 2d world map.
+        :param radar_list: list of radar lat lon's, initialised in model_window.py, used to plot on the 2d world map.
         """
         super().__init__()
 
@@ -241,8 +238,9 @@ class Earth(pg.GraphicsLayoutWidget):
         """
         Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
         from simulator/radar via multi-threading and a 'helper' function, which emits the satellite's location at a
-        given time interval. We receive the data as (dict, tuple), we do not use the dict (name) in this instance, and
-        it is redundant, and the update is a tuple containing the latitude and longitude of the satellite.
+        given time interval. We receive the data as (dict, tuple), we use the dict (info) in this instance to collect
+        the time to account for earth's rotation, and the update is a tuple containing the latitude and longitude of the
+        satellite.
 
         We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
 
@@ -250,6 +248,7 @@ class Earth(pg.GraphicsLayoutWidget):
         :param update: contains one latitude and one longitude to update the satellite's position.
         """
         XYZ = update[0]
+
         ## Convert x, y, z to lat lon
         lat, lon, _ = lat_long_height(XYZ[0], XYZ[1], XYZ[2])
 
@@ -263,6 +262,7 @@ class Earth(pg.GraphicsLayoutWidget):
             # Remove oldest x, y
             self.live_satellite_array_x = self.live_satellite_array_x[1:]
             self.live_satellite_array_y = self.live_satellite_array_y[1:]
+
         # Add new datapoint
         self.live_satellite_array_x.append(x[0])
         self.live_satellite_array_y.append(y[0])
@@ -272,19 +272,24 @@ class Earth(pg.GraphicsLayoutWidget):
     @QtCore.pyqtSlot(dict, tuple)
     def update_prediction(self, info, update):
         """
-        Function to update the prediction of the crash site as it travels around the earth. Gets information from
+        Function to update the prediction of the crash site as it travels around the earth. Gets called from
         predictor/predictor.py via multi-threading and a 'helper' function, which emits the latitude and longitude of
         a point at which the satellite crashes onto earth.
 
-        :param info: contains info such as whether we are predicting landing or not
-        :param update: contains the latitude and longitude of the predicted crash site
+        :param info: contains info such as whether we are predicting landing or not.
+        :param update: contains the latitude and longitude of the predicted crash site.
         """
+
         self.prediction_count += 1
+
+        # Collect means for latitude, longitude and the covariance (radians)
         lat, lon, cov = update
 
+        # Creates a list of latitudes and longitudes for the covariance plot (radians)
         lat_cov, lon_cov = create_covariance_plot(cov_mat=cov, mean_lat=lat, mean_lon=lon)
-        lat_cov, lon_cov = prepare_latlon_for_graph(time=info['time'], lat=lat_cov, lon=lon_cov)
 
+        # Converts covariance lat and lon's to include earth's rotation and plotting standards(outlined in the function)
+        lat_cov, lon_cov = prepare_latlon_for_graph(time=info['time'], lat=lat_cov, lon=lon_cov)
 
         # Convert to pixel values
         x_cov, y_cov = latlon2pixel(lat_cov, lon_cov)
@@ -296,10 +301,10 @@ class Earth(pg.GraphicsLayoutWidget):
         prediction_residual = np.linalg.norm([lat, lon]) - self.final_crash_vector
         self.update_crash_residual(prediction_residual)
 
+        # Update the data for the prediction
         x, y = latlon2pixel([lat], [lon])
         self.prediction_crash_point.setData(x, y)
         self.prediction_crash_1std.setData(x_cov, y_cov)
-        # self.prediction_crash_2std.setData(x, y)
 
 
     def sim_overlay_switch(self):
@@ -307,6 +312,7 @@ class Earth(pg.GraphicsLayoutWidget):
         Function that sits inside the 'self.simulation_checkbox' QCheckBox. When altered (checked or unchecked), the
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
+
         if self.simulation_checkbox.isChecked():
             self.sim_plot.show()
             self.crash_site.show()
@@ -331,6 +337,7 @@ class Earth(pg.GraphicsLayoutWidget):
         Function that sits inside the 'self.radar_checkbox' QCheckBox. When altered (checked or unchecked), the
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
+
         if self.radar_checkbox.isChecked():
             [radar_plot.show() for radar_plot in self.radar_plots]
             [radar_text.show() for radar_text in self.radar_texts]
@@ -346,17 +353,35 @@ class Earth(pg.GraphicsLayoutWidget):
         if self.prediction_checkbox.isChecked():
             self.prediction_crash_point.show()
             self.prediction_crash_1std.show()
-            # self.prediction_crash_2std.show()
         else:
             self.prediction_crash_point.hide()
             self.prediction_crash_1std.hide()
-            # self.prediction_crash_2std.hide()
 
     def request_prediction(self, helper):
+        """
+        Sends a signal to the predictor to request a prediction. Sits inside the 'make_prediction_button' and triggers
+        the predictor to sample x_post and propagate those samples to a landing site, from which, we can compute the
+        mean and covariance for the landing site which will be plotted on the earth via the function update_prediction.
+
+        :param helper: helper to emit a signal to the function 'send_prediction' in prediction.py.
+        """
+
         helper.changedSignal.emit("Requested prediction", (0, 0))
 
     def set_predictor(self, predictor):
+        """
+        Function to get around adding a problem in 'model_window.py' where instance of earth is added to the instance
+        of predictor and instance of predictor is added to instance of earth. We now initiate earth with
+        (predictor=None) and add the predictor after the predictor is instantiated using this function.
+
+        This function also builds a helper that connects to the 'send_prediction' function in predictor.py to allow
+        signals to be sent to make predictions.
+
+        :param predictor: instance of the predictor
+        """
+
         self.predictor = predictor
+
         # Establish connection with helper
         prediction_requester_helper = Helper()
         prediction_requester_helper.changedSignal.connect(predictor.send_prediction, QtCore.Qt.QueuedConnection)
@@ -366,6 +391,13 @@ class Earth(pg.GraphicsLayoutWidget):
         self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))
 
     def update_crash_residual(self, Y_data):
+        """
+        Updates the plot in earth that plots the crash residual on the right of 'earth view'. Appends the number of
+        guesses to self.res_x using the prediction count and adds the new residual calculated in 'update_prediction'.
+
+        :param Y_data: New residual to be added to the existing plot.
+        """
+
         self.res_x[0].append(self.prediction_count)
         self.res_y[0].append(Y_data)
 
@@ -380,6 +412,7 @@ def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=270
     :param screen_w: screen width
     :param screen_h: screen height
     """
+
     x = []
     y = []
     for i in range(len(lat)):
@@ -388,6 +421,21 @@ def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=270
     return x, y
 
 def prepare_latlon_for_graph(time: float, lon, lat):
+    """
+    Function that applies the necessary augmentations to existing lat lon data to be plotted on a 2d graph of earth.
+    Applies earth's rotation to the longitude, converts the longitude and latitude to 'Miller's' coordinates (longitude
+    is just longitude) and converts lat and lon to degrees.
+
+    - Must take lat and lon in radians.
+    - Miller's coordinates is a coordinate system designed to allow plotting on a 2D map of earth. Reference, can be
+    found here - https://en.wikipedia.org/wiki/Miller_cylindrical_projection#:~:text=The%20Miller%20cylindrical%20projection%20is,retain%20scale%20along%20the%20equator.
+
+    :param time: used to account for earth's rotation.
+    :param lon: longitude.
+    :param lat: latitude.
+    :return: lat, lon: augmented latitude and longitude.
+    """
+
     # Account for earth's rotation
     earth_rotation = EARTH_ROTATION_ANGLE * time
     lon -= earth_rotation
@@ -404,6 +452,17 @@ def prepare_latlon_for_graph(time: float, lon, lat):
     return lat, lon
 
 def create_covariance_plot(cov_mat, mean_lat, mean_lon):
+    """
+    Function to create a covariance ellipsis around the mean latitude and longitude.
+
+    A reference for how to do this comes from - https://cookierobotics.com/007/
+
+    :param cov_mat: covariance matrix (radians)
+    :param mean_lat: mean latitude (radians)
+    :param mean_lon: mean longitude (radians)
+    :return: covariance ellipsis latitude and longitude.
+    """
+
     assert cov_mat[0, 1] == cov_mat[1, 0], "off-diagonals of covariance matrix should be equal!"
 
     a = cov_mat[0, 0]
