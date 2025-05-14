@@ -1,20 +1,6 @@
-import numpy as np
-from scipy.integrate import solve_ivp
-import matplotlib.pyplot as plt
-
-from filterpy.kalman import UnscentedKalmanFilter as UKF
-from filterpy.kalman import MerweScaledSigmaPoints
 from filterpy.common import Q_discrete_white_noise
-# import numpy as np
-import math
-from numpy.random import randn
 from scipy.integrate import solve_ivp
-from math import atan2
-from tqdm import tqdm
-from visualiser.V3.debug import debug_print
 from visualiser.V3.simulator.simulator import lat_long_height, atmospheric_density
-
-
 # Import constants
 from visualiser.V3.partials.constants import *
 
@@ -90,14 +76,8 @@ def f(state_x, dt):
 def f_with_Cd(state_x, dt):
     """state vector = state_x = [x,y,z,vx, vy, vz, Cd]"""
     Cd = state_x[-1]
-    solution = solve_ivp(ode_with_Cd, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
+    solution = solve_ivp(ode_with_Cd, t_span=[0, dt], y0=state_x, method='RK23', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
-
-""" Define measurement function h(x) ================================================="""
-def h_radar(x):
-    """x is the state vector,
-    this H function assumes ra`rdar sends positions in global coordinate system"""
-    return x[:3] # return x,y,z position if state order is (x,y,z,vx,vy,vz)
 
 def ukf_Q(dim, dt, var_):
     Q = np.zeros((dim, dim))

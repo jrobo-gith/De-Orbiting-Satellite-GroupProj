@@ -385,7 +385,7 @@ class Earth(pg.GraphicsLayoutWidget):
         # Establish connection with helper
         prediction_requester_helper = Helper()
         prediction_requester_helper.changedSignal.connect(predictor.send_prediction, QtCore.Qt.QueuedConnection)
-        threading.Thread(target=self.request_prediction, args=(prediction_requester_helper,), daemon=True).start()
+        threading.Thread(target=self.request_prediction, args=(prediction_requester_helper,), daemon=True)
 
         #Connect button to function
         self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))

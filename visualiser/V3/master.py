@@ -61,7 +61,8 @@ class MasterWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle('SNOE Group Project ~ De-Orbiting Satellite')
-        self.resize(glob_setting['screen-height'], glob_setting['screen-width'])
+        # self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
+        self.showMaximized()
         self.setStyleSheet(f"""background-color: rgba{glob_setting['background-color']};
         background-image: url(visualiser/V3/partials/backgroundimage.jpg);
         background-repeat: no-repeat;""")
@@ -74,9 +75,11 @@ class MasterWindow(QMainWindow):
 
         self.setCentralWidget(self.stacked_widget)
 
+
 # Runs the application
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MasterWindow()
     window.show()
     sys.exit(app.exec_())
+
