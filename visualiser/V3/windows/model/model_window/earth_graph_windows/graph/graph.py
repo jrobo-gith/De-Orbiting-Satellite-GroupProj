@@ -212,6 +212,7 @@ class Grapher(QWidget):
         x_vals = np.array(x)
         y_vals = np.array(y)
         self.satellite_pos_live.update_plot(x_vals, y_vals)
+
         if name['name'] == 'no radar':
             self.satellite_pos_live.line.setPen(color=[255, 0, 0], width=5)
         else:

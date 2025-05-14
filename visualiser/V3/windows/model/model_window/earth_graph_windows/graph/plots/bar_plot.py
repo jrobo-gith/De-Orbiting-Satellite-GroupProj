@@ -86,4 +86,3 @@ class BarPlot(pg.PlotWidget):
             self.new_bar_plot = pg.BarGraphItem(x=self.x_axis[:len(self.init_y)], height=radar_hot_variable_copy[:len(self.init_y)], width=0.6)
             self.plot_allocation.addItem(self.new_bar_plot)
             self.plot_allocation.getAxis('bottom').setTicks([new_radar_ticks])
-

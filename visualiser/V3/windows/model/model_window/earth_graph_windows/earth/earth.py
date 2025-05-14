@@ -6,12 +6,15 @@ import numpy as np
 import threading
 from visualiser.V3.debug import debug_print
 from visualiser.V3.partials.constants import EARTH_ROTATION_ANGLE
+from visualiser.V3.simulator.simulator import lat_long_height
+from visualiser.V3.windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
+from filterpy.stats import covariance_ellipse
 
 root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 # Import necessary PyQt5 components
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QLabel, QGridLayout
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 from PyQt5 import QtCore
@@ -62,6 +65,9 @@ class Earth(pg.GraphicsLayoutWidget):
         self.lat, self.lon, self.t = full_sim_data
         self.radar_list = radar_list
 
+        # Keep track of number of predictions made
+        self.prediction_count = 0
+
         if len(self.lat) > 10_000:
             self.lat = self.lat[0:len(self.lat):10]
             self.lon = self.lon[0:len(self.lon):10]
@@ -70,6 +76,7 @@ class Earth(pg.GraphicsLayoutWidget):
             self.adjusted_t = self.t
 
         self.plot_widget = pg.PlotWidget()
+        self.earth_graph = pg.GraphicsLayoutWidget()
 
         world_map = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/earth/world_map.jpg")
         world_map = Image.open(world_map).convert('RGB')
@@ -87,6 +94,11 @@ class Earth(pg.GraphicsLayoutWidget):
 
         self.lon = (self.lon + 180) % 360 - 180  # wrap to [-180, 180]
 
+
+
+        # Get final crash location (pre-accounting for earth's rotation)
+        self.final_crash_vector = np.linalg.norm([self.lat[-1], self.lon[-1]])
+
         ## Switch x and y (lat and lon) to account for inverting world axis
         self.x = self.lat
         self.y = self.lon
@@ -94,10 +106,22 @@ class Earth(pg.GraphicsLayoutWidget):
         # Simulation Overlay
         full_sim_pixels = latlon2pixel(self.x, self.y)
         self.sim_plot = pg.ScatterPlotItem(x=full_sim_pixels[0][:-1], y=full_sim_pixels[1][:-1], size=5, brush=pg.mkBrush('yellow'))
-        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'))
+        self.crash_site = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=10, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+        self.crash_site_outline1 = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=20,
+                                             brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+        self.crash_site_outline2 = pg.ScatterPlotItem(x=[full_sim_pixels[0][-1]], y=[full_sim_pixels[1][-1]], size=30,
+                                             brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
         self.satellite_start_position = pg.ScatterPlotItem(x=[full_sim_pixels[0][0]], y=[full_sim_pixels[1][0]], size=20, brush=pg.mkBrush('black'))
+        # Keep array of live satellite position
+        self.live_satellite_array_x = [full_sim_pixels[0][0]]
+        self.live_satellite_array_y = [full_sim_pixels[0][1]]
+        # Plot live satellite array
+        self.live_satellite_trail = pg.ScatterPlotItem(x=self.live_satellite_array_x, y=self.live_satellite_array_y, size=5, brush=pg.mkBrush('red'), pen=pg.mkPen('red'))
+
         self.sim_plot.setOpacity(0.9)
         self.crash_site.setOpacity(0.9)
+        self.crash_site_outline1.setOpacity(0.4)
+        self.crash_site_outline2.setOpacity(0.1)
         self.satellite_start_position.setOpacity(0.9)
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
@@ -106,8 +130,12 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
         self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
         self.prediction_crash_point.setOpacity(0.9)
-        self.prediction_crash_1std.setOpacity(0.5)
-        self.prediction_crash_2std.setOpacity(0.25)
+        self.prediction_crash_1std.setOpacity(0.4)
+        self.prediction_crash_2std.setOpacity(0.1)
+
+        # Temp covariance plot
+        self.pred_cov = pg.ScatterPlotItem
+
 
         # Add Radars locations
         self.radar_plots = []
@@ -127,6 +155,9 @@ class Earth(pg.GraphicsLayoutWidget):
         # Add simulation data
         self.plot_widget.addItem(self.sim_plot)
         self.plot_widget.addItem(self.crash_site)
+        self.plot_widget.addItem(self.crash_site_outline1)
+        self.plot_widget.addItem(self.crash_site_outline2)
+        self.plot_widget.addItem(self.live_satellite_trail)
         self.plot_widget.addItem(self.satellite_start_position)
         # Add prediction data
         self.plot_widget.addItem(self.prediction_crash_point)
@@ -145,17 +176,21 @@ class Earth(pg.GraphicsLayoutWidget):
         self.viewbox.setRange(xRange=(0, 5400), yRange=(2700, 0))
         self.sim_plot.getViewBox().invertY(True) # Keep consistent with world map
 
-        # Filter details
-        self.filter_layout = QHBoxLayout()
-
-        self.simulation_checkbox = QCheckBox("Show Simulation")
+        self.simulation_checkbox = QCheckBox("Show Full Simulation")
         self.simulation_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
         self.simulation_checkbox.setChecked(True)
         self.simulation_checkbox.stateChanged.connect(self.sim_overlay_switch)
 
+        self.live_simulation_checkbox = QCheckBox("Show Live Satellite")
+        self.live_simulation_checkbox.setStyleSheet(
+            f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.live_simulation_checkbox.setChecked(True)
+        self.live_simulation_checkbox.stateChanged.connect(self.live_satellite_switch)
+
         self.radar_checkbox = QCheckBox("Show Radars")
         self.radar_checkbox.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
-        self.radar_checkbox.setChecked(True)
+        self.radar_checkbox.setChecked(False)
+        self.radar_overlay_switch()
         self.radar_checkbox.stateChanged.connect(self.radar_overlay_switch)
 
         self.prediction_checkbox = QCheckBox("Show Prediction")
@@ -164,22 +199,47 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_checkbox.stateChanged.connect(self.prediction_overlay_switch)
 
         self.make_prediction_button = QPushButton("Make Prediction")
-        self.make_prediction_button.setStyleSheet(f"background-color: rgba{glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
-        self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 35))
+        self.make_prediction_button.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 20))
 
-        self.filter_layout.addWidget(self.simulation_checkbox)
-        self.filter_layout.addWidget(self.radar_checkbox)
-        self.filter_layout.addWidget(self.prediction_checkbox)
+        self.filler = QLabel("Fill")
+        self.filler.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: {glob_setting['background-color']}")
+
+        # ## ADD EARTH RESIDUAL GRAPH
+        crash_res = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/crash_residual.json")
+        with open(crash_res) as f:
+            crash_res = json.load(f)
+        self.res_x = [[0]]
+        self.res_y = [[0]]
+        self.residual_plot = self.earth_graph.addPlot()
+        self.residual_plot = Plot(self.residual_plot,
+                                   self.res_x,
+                                   self.res_y,
+                                   args=crash_res)
+
+        # Filter details
+        self.filter_layout = QGridLayout()
+        self.filter_layout.addWidget(self.simulation_checkbox, 0, 0)
+        self.filter_layout.addWidget(self.live_simulation_checkbox, 0, 1)
+        self.filter_layout.addWidget(self.radar_checkbox, 0, 2)
+        self.filter_layout.addWidget(self.prediction_checkbox, 0, 3)
+        self.filter_layout.addWidget(self.filler, 0, 4)
+        self.filter_layout.addWidget(self.make_prediction_button, 0, 5)
         self.filter_layout.setAlignment(Qt.AlignCenter)
 
-        self.earth_filter = QVBoxLayout()
-        self.earth_filter.addWidget(self.plot_widget, stretch=19)
-        self.earth_filter.addLayout(self.filter_layout, stretch=1)
-        self.setLayout(self.earth_filter)
+        self.earth_checkboxes = QVBoxLayout()
+        self.earth_checkboxes.addWidget(self.plot_widget, stretch=19)
+        self.earth_checkboxes.addLayout(self.filter_layout, stretch=1)
+
+        self.global_grid = QHBoxLayout()
+
+        self.global_grid.addLayout(self.earth_checkboxes, stretch=15)
+        self.global_grid.addWidget(self.earth_graph, stretch=5)
+        self.setLayout(self.global_grid)
 
 
     @QtCore.pyqtSlot(dict, tuple)
-    def update_satellite_position(self, name, update):
+    def update_satellite_position(self, info, update):
         """
         Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
         from simulator/radar via multi-threading and a 'helper' function, which emits the satellite's location at a
@@ -188,12 +248,28 @@ class Earth(pg.GraphicsLayoutWidget):
 
         We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
 
-        :param name: redundant parameter
+        :param info: radar info, contains observed time
         :param update: contains one latitude and one longitude to update the satellite's position.
         """
-        lat, lon = update
+        XYZ = update[0]
+        ## Convert x, y, z to lat lon
+        lat, lon, _ = lat_long_height(XYZ[0], XYZ[1], XYZ[2])
+
+        # Account for earth's rotation and apply miller's coordinates.
+        lat, lon = prepare_latlon_for_graph(time=info['obs-time'], lat=lat, lon=lon)
+
         x, y = latlon2pixel([lat], [lon])
         self.satellite_start_position.setData(x, y)
+
+        if len(self.live_satellite_array_x) > 50:
+            # Remove oldest x, y
+            self.live_satellite_array_x = self.live_satellite_array_x[1:]
+            self.live_satellite_array_y = self.live_satellite_array_y[1:]
+        # Add new datapoint
+        self.live_satellite_array_x.append(x[0])
+        self.live_satellite_array_y.append(y[0])
+        # Plot data
+        self.live_satellite_trail.setData(x=self.live_satellite_array_x, y=self.live_satellite_array_y)
 
     @QtCore.pyqtSlot(dict, tuple)
     def update_prediction(self, info, update):
@@ -205,26 +281,25 @@ class Earth(pg.GraphicsLayoutWidget):
         :param info: contains info such as whether we are predicting landing or not
         :param update: contains the latitude and longitude of the predicted crash site
         """
-        lat, lon = update
+        self.prediction_count += 1
+        lat, lon, cov = update
 
-        # Account for earth's rotation
-        earth_rotation = EARTH_ROTATION_ANGLE * info['time']
-        lon -= earth_rotation
+        lat_cov, lon_cov = create_covariance_plot(cov_mat=cov, mean_lat=lat, mean_lon=lon)
+        lat_cov, lon_cov = prepare_latlon_for_graph(time=info['time'], lat=lat_cov, lon=lon_cov)
 
-        # Convert to miller coordinates
-        lat = (5/4) * np.arcsinh(np.tan((4*lat)/5))
 
-        # Convert to degrees
-        lon *= (180 / np.pi)
-        lat *= (180 / np.pi)
+        # Account for earth's rotation, also currently in radians
+        lat, lon = prepare_latlon_for_graph(time=info['time'], lat=lat, lon=lon)
 
-        # Keep between -180 and 180 degrees
-        lon = (lon + 180) % 360 - 180
+        # Compute error between two lat lon vectors and update the graph
+        prediction_residual = np.linalg.norm([lat, lon]) - self.final_crash_vector
+        self.update_crash_residual(prediction_residual)
 
         x, y = latlon2pixel([lat], [lon])
         self.prediction_crash_point.setData(x, y)
         self.prediction_crash_1std.setData(x, y)
         self.prediction_crash_2std.setData(x, y)
+
 
     def sim_overlay_switch(self):
         """
@@ -232,13 +307,21 @@ class Earth(pg.GraphicsLayoutWidget):
         function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.
         """
         if self.simulation_checkbox.isChecked():
-            self.satellite_start_position.show()
             self.sim_plot.show()
             self.crash_site.show()
+            self.crash_site_outline1.show()
+            self.crash_site_outline2.show()
         else:
-            self.satellite_start_position.hide()
             self.sim_plot.hide()
             self.crash_site.hide()
+            self.crash_site_outline1.hide()
+            self.crash_site_outline2.hide()
+
+    def live_satellite_switch(self):
+        if self.live_simulation_checkbox.isChecked():
+            self.satellite_start_position.show()
+        else:
+            self.satellite_start_position.hide()
 
     def radar_overlay_switch(self):
         """
@@ -247,8 +330,10 @@ class Earth(pg.GraphicsLayoutWidget):
         """
         if self.radar_checkbox.isChecked():
             [radar_plot.show() for radar_plot in self.radar_plots]
+            [radar_text.show() for radar_text in self.radar_texts]
         else:
             [radar_plot.hide() for radar_plot in self.radar_plots]
+            [radar_text.hide() for radar_text in self.radar_texts]
 
     def prediction_overlay_switch(self):
         """
@@ -277,8 +362,11 @@ class Earth(pg.GraphicsLayoutWidget):
         #Connect button to function
         self.make_prediction_button.clicked.connect(lambda: self.request_prediction(prediction_requester_helper))
 
-        self.filter_layout.addWidget(self.make_prediction_button)
+    def update_crash_residual(self, Y_data):
+        self.res_x[0].append(self.prediction_count)
+        self.res_y[0].append(Y_data)
 
+        self.residual_plot.update_plot(np.array([self.res_x[0][-1]]), np.array([self.res_y[0][-1]]))
 
 def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=2700) -> tuple:
     """
@@ -295,3 +383,49 @@ def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=270
         x.append(int((lon[i] + 180) * (screen_w / 360)))
         y.append(int((90 - lat[i]) * (screen_h / 180)))
     return x, y
+
+def prepare_latlon_for_graph(time: float, lon, lat):
+    # Account for earth's rotation
+    earth_rotation = EARTH_ROTATION_ANGLE * time
+    lon -= earth_rotation
+
+    # Convert to miller coordinates
+    lat = (5 / 4) * np.arcsinh(np.tan((4 * lat) / 5))
+
+    # Convert to degrees
+    lon *= (180 / np.pi)
+    lat *= (180 / np.pi)
+
+    # Keep between -180 and 180 degrees
+    lon = (lon + 180) % 360 - 180
+    return lat, lon
+
+def create_covariance_plot(cov_mat, mean_lat, mean_lon):
+    assert cov_mat[0, 1] == cov_mat[1, 0], "off-diagonals of covariance matrix should be equal!"
+
+    a = cov_mat[0, 0]
+    b = cov_mat[0, 1]
+    c = cov_mat[1, 0]
+
+    root = np.sqrt(((a+c)/2)**2 + b**2)
+
+    lambda_1 = ((a+c)/2) + root
+    lambda_2 = ((a+c)/2) - root
+
+    if b == 0 and a >= c:
+        theta = 0
+    elif b == 0 and a < c:
+        theta = np.pi/2
+    else:
+        theta = np.arctan2(lambda_1-a, b)
+
+    # Compute x and y in radians
+    t = np.linspace(0, 2*np.pi, 100)
+    lat_cov = np.sqrt(lambda_1) * np.cos(theta) * np.cos(t) - np.sqrt(lambda_2) * np.sin(theta) * np.sin(t) + mean_lat
+    lon_cov = np.sqrt(lambda_1) * np.sin(theta) * np.cos(t) + np.sqrt(lambda_2) * np.cos(theta) * np.sin(t) + mean_lon
+
+    return lat_cov, lon_cov
+
+
+
+

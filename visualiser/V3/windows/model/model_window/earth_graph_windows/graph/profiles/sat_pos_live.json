@@ -1,9 +1,9 @@
 {
   "plot-type": ["line"],
-  "title": "Live Satellite Position",
+  "title": "Live Satellite Position (Red: no obvs, green: obvs)",
   "label_title_x": "X Position (Km)",
   "label_title_y": "Y Position (Km)",
-  "line_names": ["Satellite Position"],
+  "line_names": ["sat pos"],
   "legend": false,
   "grid": false,
   "pens": [{"color": [255, 255, 255], "width": 5}],
