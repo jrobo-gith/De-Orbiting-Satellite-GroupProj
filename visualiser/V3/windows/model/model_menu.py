@@ -27,11 +27,14 @@ class ModelMenu(QWidget):
     Window displaying the model menu to allow the user to input initial conditions and begin the simulation. This
     limits the model from running as soon as the GUI is loaded and gives a more professional feel.
 
-    This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'simulation'
+    This window's parent is the MasterWindow in master.py, navigable to using the MainMenu under the 'Simulation'
     button.
 
     Functions:
    -  __init__(self, stacked_widget)
+   - load_sim(self)
+   - set_num_radars(self, btn_instance, n)
+   - set_equatorial_bool(self, btn_instance, equatorial_bool: bool)
 
     References:
         Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
@@ -61,14 +64,14 @@ class ModelMenu(QWidget):
         self.input_X_pos.setFont(QFont(glob_setting['font-family'], 22))
         self.input_X_pos.setText("X-pos")
         self.input_X_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_X_pos.setFixedWidth(120)
+        self.input_X_pos.setFixedWidth(200)
         self.input_X_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_pos = QLineEdit()
         self.input_Y_pos.setFont(QFont(glob_setting['font-family'], 22))
         self.input_Y_pos.setText("Y-pos")
         self.input_Y_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_Y_pos.setFixedWidth(120)
+        self.input_Y_pos.setFixedWidth(200)
         self.input_Y_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_pos = QLineEdit()
@@ -76,7 +79,7 @@ class ModelMenu(QWidget):
         self.input_Z_pos.setText("Z-pos")
         self.input_Z_pos.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_Z_pos.setFixedWidth(120)
+        self.input_Z_pos.setFixedWidth(200)
         self.input_Z_pos.setAlignment(Qt.AlignHCenter)
 
         positions = QHBoxLayout()
@@ -91,7 +94,7 @@ class ModelMenu(QWidget):
         self.input_X_vel.setText("X-vel")
         self.input_X_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_X_vel.setFixedWidth(120)
+        self.input_X_vel.setFixedWidth(200)
         self.input_X_vel.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_vel = QLineEdit()
@@ -99,7 +102,7 @@ class ModelMenu(QWidget):
         self.input_Y_vel.setText("Y-vel")
         self.input_Y_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_Y_vel.setFixedWidth(120)
+        self.input_Y_vel.setFixedWidth(200)
         self.input_Y_vel.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_vel = QLineEdit()
@@ -107,7 +110,7 @@ class ModelMenu(QWidget):
         self.input_Z_vel.setText("Z-vel")
         self.input_Z_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        self.input_Z_vel.setFixedWidth(120)
+        self.input_Z_vel.setFixedWidth(200)
         self.input_Z_vel.setAlignment(Qt.AlignHCenter)
 
         velocities = QHBoxLayout()
@@ -120,66 +123,66 @@ class ModelMenu(QWidget):
         radar_10 = QPushButton("10 Radars")
         radar_10.setFont(QFont(glob_setting['font-family'], 22))
         radar_10.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_10.setFixedWidth(200)
+        radar_10.setFixedWidth(250)
         radar_10.clicked.connect(lambda: self.set_num_radars(radar_10, 10))
 
         radar_25 = QPushButton("25 Radars")
         radar_25.setFont(QFont(glob_setting['font-family'], 22))
         radar_25.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_25.setFixedWidth(200)
+        radar_25.setFixedWidth(250)
         radar_25.clicked.connect(lambda: self.set_num_radars(radar_25, 25))
 
         radar_50 = QPushButton("50 Radars")
         radar_50.setFont(QFont(glob_setting['font-family'], 22))
         radar_50.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_50.setFixedWidth(200)
+        radar_50.setFixedWidth(250)
         radar_50.clicked.connect(lambda: self.set_num_radars(radar_50, 50))
 
         radar_100 = QPushButton("100 Radars")
         radar_100.setFont(QFont(glob_setting['font-family'], 22))
         radar_100.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_100.setFixedWidth(200)
+        radar_100.setFixedWidth(250)
         radar_100.clicked.connect(lambda: self.set_num_radars(radar_100, 100))
 
         radar_150 = QPushButton("150 Radars")
         radar_150.setFont(QFont(glob_setting['font-family'], 22))
         radar_150.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_150.setFixedWidth(200)
+        radar_150.setFixedWidth(250)
         radar_150.clicked.connect(lambda: self.set_num_radars(radar_150, 150))
 
         radar_200 = QPushButton("200 Radars")
         radar_200.setFont(QFont(glob_setting['font-family'], 22))
         radar_200.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_200.setFixedWidth(200)
+        radar_200.setFixedWidth(250)
         radar_200.clicked.connect(lambda: self.set_num_radars(radar_200, 200))
 
         radar_250 = QPushButton("250 Radars")
         radar_250.setFont(QFont(glob_setting['font-family'], 22))
         radar_250.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_250.setFixedWidth(200)
+        radar_250.setFixedWidth(250)
         radar_250.clicked.connect(lambda: self.set_num_radars(radar_250, 250))
 
         radar_500 = QPushButton("500 Radars")
         radar_500.setFont(QFont(glob_setting['font-family'], 22))
         radar_500.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_500.setFixedWidth(200)
+        radar_500.setFixedWidth(250)
         radar_500.clicked.connect(lambda: self.set_num_radars(radar_500, 500))
 
         # Add equatorial, non equatorial
         equatorial_btn = QPushButton("Equatorial Layout")
         equatorial_btn.setFont(QFont(glob_setting['font-family'], 22))
         equatorial_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        equatorial_btn.setFixedWidth(350)
+        equatorial_btn.setFixedWidth(400)
         equatorial_btn.clicked.connect(lambda: self.set_equatorial_bool(equatorial_btn, True))
 
         non_equatorial_btn = QPushButton("Non-Equatorial Layout")
         non_equatorial_btn.setFont(QFont(glob_setting['font-family'], 22))
         non_equatorial_btn.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        non_equatorial_btn.setFixedWidth(350)
+        non_equatorial_btn.setFixedWidth(400)
         non_equatorial_btn.clicked.connect(lambda: self.set_equatorial_bool(non_equatorial_btn, False))
 
         # Add all radar buttons to grid layout
@@ -211,8 +214,8 @@ class ModelMenu(QWidget):
         start_sim_btn = QPushButton("Start Simulation")
         start_sim_btn.setFont(QFont(glob_setting['font-family'], 27))
         start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        start_sim_btn.clicked.connect(self.loadSim)
-        start_sim_btn.setFixedWidth(270)
+        start_sim_btn.clicked.connect(self.load_sim)
+        start_sim_btn.setFixedWidth(250)
         start_sim_layout = QHBoxLayout()
         start_sim_layout.addWidget(start_sim_btn)
         start_sim_layout.setAlignment(Qt.AlignCenter)
@@ -229,7 +232,7 @@ class ModelMenu(QWidget):
         self.setLayout(page_container)
 
 
-    def loadSim(self):
+    def load_sim(self):
         """
         Connected to the 'start_sim_btn' QPushButton. Runs when the 'start_sim_btn' button is clicked. This takes the
         input values from each QLineEdit and constructions a list of 'initial conditions' to be fed into
@@ -277,19 +280,45 @@ class ModelMenu(QWidget):
             self.stacked_widget.setCurrentIndex(4)
 
     def set_num_radars(self, btn_instance, n):
+        """
+        Function to set the number of radars to use when initialising the random list of radars, to be fed into instance
+        of SimWidget. Also turns the rest of the buttons to green and the clicked button red to indicate the current
+        number radars.
+
+        :param btn_instance: Instance of button to set stylesheet to red
+        :param n: number of radars
+        """
+
         self.num_radars = n
         [oth_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;") for oth_btn in self.radar_buttons_list]
         btn_instance.setStyleSheet(f"color: rgb(255, 0, 0); background: {glob_setting['background-color']}; border-radius: 10%;")
 
     def set_equatorial_bool(self, btn_instance, equatorial_bool: bool):
+        """
+        Function to set the preference of radars to be initialised along the equator or to be randomly distributed
+        around the whole earth. This will be fed into the radar spawner 'give_random_radar_locations'. Also turns the
+        other option green and the clicked button red to make the choice clear.
+
+        :param btn_instance: Instance of button to set stylesheet to red
+        :param equatorial_bool: if true, spawn radars along the equator, if false, spawn radars randomly over the earth.
+        """
+
         [oth_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;") for oth_btn in self.equatorial_btn_list]
         btn_instance.setStyleSheet(f"color: rgb(255, 0, 0); background: {glob_setting['background-color']}; border-radius: 10%;")
+
         if equatorial_bool:
             self.equatorial_bool = True
         else:
             self.equatorial_bool = False
 
 def give_random_radar_locations(num_radars, equatorial:bool=True):
+    """
+    Generates a list of random [lat, lon, height] to specify radar locations placed on earth.
+
+    :param num_radars: Taken from 'set_num_radars' to specify the number of radars to be spawned (added to the list).
+    :param equatorial: Specifies whether to generate radars along the equator or not. Taken from 'set_equatorial_bool'
+    :return: list[[lat, lon, height]] specifying details about each radar.
+    """
     radar_list = []
     for i in range(num_radars):
         if equatorial:

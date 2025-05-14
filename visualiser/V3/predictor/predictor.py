@@ -116,7 +116,7 @@ class Predictor(QWidget):
         plot_x = [position_x, velocity_x, cov_x, residual_x, drag_x, alt_x]
         plot_y = [position_y, velocity_y, cov_y, residual_y, drag_y, alt_y]
 
-        first_update = (plot_x, plot_y)
+        first_update = (plot_x, plot_y, np.zeros((2,2)))
 
         self.grapher_helper = Helper()
         self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
@@ -181,7 +181,7 @@ class Predictor(QWidget):
                 # debug_print("predictor", f'self.x_post is: {self.x_post}')
                 # print(f'NO RADAR!!! x_post is: {self.x_post}')
 
-                x_cov = self.ukf.P_post.copy()
+                self.x_cov = self.ukf.P_post.copy()
                 # debug_print("predictor", f'P_post is:, {x_cov}')
 
                 self.dt_adjust = self.dt_adjust + self.dt
@@ -201,7 +201,7 @@ class Predictor(QWidget):
                 self.x_post = self.ukf.x_post
                 # debug_print("predictor", f'x_post is: {self.x_post}')
                 # print(f'RADAR Z: {radar_z} \nx_post is: {self.x_post}')
-                x_cov = self.ukf.P_post.copy()
+                self.x_cov = self.ukf.P_post.copy()
                 # debug_print("predictor", f'P_post is:, {x_cov}')
                 # self.ukf.Q =ukf_Q_7dim(dim=7, dt=self.dt_adjust, var_=0.001, Cd_var=1e-6)
                 # debug_print("predictor", f'Q = {self.ukf.Q}')
@@ -227,7 +227,7 @@ class Predictor(QWidget):
         ### this is in case we don't receive radar measurement around threshold altitude.
         if altitude_post <= pred_alt and update != (0, 0, 0, 0, 0, 0):
             ### sample from the updated state distribution and predict landing position
-            state_samples = np.random.multivariate_normal(mean=self.x_post, cov=x_cov, size=20)
+            state_samples = np.random.multivariate_normal(mean=self.x_post, cov=self.x_cov, size=20)
             # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
             start = self.latest_measurement_time
             end = start + 10000000000
@@ -275,7 +275,7 @@ class Predictor(QWidget):
             velocity_x = [info['state_no_noise'][3] * toKM, x_prior[3] * toKM, self.x_post[3] * toKM]
             velocity_y = [info['state_no_noise'][4] * toKM, x_prior[4] * toKM, self.x_post[4] * toKM]
 
-            covariance_trace = x_cov[0, 0] + x_cov[1, 1] + x_cov[2, 2]
+            covariance_trace = self.x_cov[0, 0] + self.x_cov[1, 1] + self.x_cov[2, 2]
 
             cov_x = [time_hrs]
             cov_y = [covariance_trace]
@@ -303,17 +303,31 @@ class Predictor(QWidget):
 
     @QtCore.pyqtSlot(str, tuple)
     def send_prediction(self, redund_name, redund_tuple):
+        state_samples = np.random.multivariate_normal(mean=self.x_post, cov=self.x_cov, size=5)
+        # state_samples = self.ukf.points_fn.sigma_points(x_post, x_cov)
         start = self.ts[-1]
         end = start + 10000000000
         stop_condition.terminal = True
         stop_condition.direction = -1
-        landing = solve_ivp(fun=ode, t_span=[start, end], y0=self.x_post[:6], method='RK45', t_eval=[end],
-                            max_step=50, events=stop_condition)
-        landing_position = landing.y_events[0][0][:3]
-        landing_position_latlon = lat_long_height(landing_position[0], landing_position[1],
-                                                  landing_position[2])[:2]
+        landing_latlon_arr = []
+        landing_time_arr = []
+        for sample in state_samples:
+            landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
+                                max_step=50, events=stop_condition)
+            landing_position = landing.y_events[0][0][:3]
+            landing_time = landing.t_events
+            # print('landing_position sample = \n',landing_position)
+            landing_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])[:2]
+            # print('landing_position sample = \n',landing_latlon)
+            landing_latlon_arr.append(landing_latlon)
+            landing_time_arr.append(landing_time)
+        # print('landing_position ALL = \n',landing_latlon_arr)
+        landing_latlon_mean = np.mean(landing_latlon_arr, axis=0)
+        # print('landing_position MEAN = \n', landing_latlon_mean)
+        landing_latlon_cov = np.cov(np.array(landing_latlon_arr).T)
 
-        earth_update = (landing_position_latlon[0], landing_position_latlon[1], np.zeros((2,2)))
+        earth_update = (landing_latlon_mean[0], landing_latlon_mean[1], landing_latlon_cov)
+
         send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.ts[-1]}, earth_update)
 
 def send_to_graph(helper, name: dict, update: tuple):

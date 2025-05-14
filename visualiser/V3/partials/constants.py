@@ -1,3 +1,5 @@
+## This is a file full of universal constants that the software uses in various files.
+
 import numpy as np
 
 G = 6.67430e-11                             # Gravitational constant (m^3 kg^-1 s^-2)

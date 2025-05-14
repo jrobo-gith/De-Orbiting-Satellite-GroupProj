@@ -18,8 +18,8 @@ from visualiser.V3.partials.constants import toHrs
 class Grapher(QWidget):
     """
     Class containing the plots for the graph window. This is the control hub for what the GUI plots in its plotting
-    window. Each plot is contained in a GraphicsLayoutWidget to separate plots that have access to simulations and
-    ones that don't. Each plot is an instance of the 'Plot' class which can be found in single_plot.py.
+    window. Each plot is contained in a GraphicsLayoutWidget. Each plot is an instance of the 'Plot' class which can be
+    found in single_plot.py.
 
     This window's parent is the SimWidget in simulator_window.py, navigable to using the SimWidget under the 'EarthView'
     button at the top right.
@@ -27,6 +27,7 @@ class Grapher(QWidget):
     Functions:
     - __init__(self)
     - update_plots(self, name, update)
+    - update_plot_no_radar(self, name, update)
 
     References:
     Tutorial followed for PyQt5 (GUI) can be found here - https://www.pythonguis.com/pyqt5-tutorial/
@@ -48,48 +49,50 @@ class Grapher(QWidget):
         pg.setConfigOption('foreground', 'white')
 
         # Import profiles
-        position = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/position.json")
+        position = os.path.join(root_dir,
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/position.json")
         with open(position) as f:
             position = json.load(f)
 
-        velocity = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/velocities.json")
+        velocity = os.path.join(root_dir,
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/velocities.json")
         with open(velocity) as f:
             velocity = json.load(f)
 
-        alt = os.path.join(root_dir, "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/altitude.json")
+        alt = os.path.join(root_dir,
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/altitude.json")
         with open(alt) as f:
             altitude = json.load(f)
 
         live_alt = os.path.join(root_dir,
-                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/live_altitude.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/live_altitude.json")
         with open(live_alt) as f:
             live_alt = json.load(f)
 
         post_covariance = os.path.join(root_dir,
-                           "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/post_covariance.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/post_covariance.json")
         with open(post_covariance) as f:
             post_covariance = json.load(f)
 
         prior_post_res = os.path.join(root_dir,
-                           "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/prior_post_res.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/prior_post_res.json")
         with open(prior_post_res) as f:
             prior_post_res = json.load(f)
 
         satellite_pos_live = os.path.join(root_dir,
-                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/sat_pos_live.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/sat_pos_live.json")
         with open(satellite_pos_live) as f:
             live_position = json.load(f)
 
         drag = os.path.join(root_dir,
-                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/drag.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/drag.json")
         with open(drag) as f:
             drag = json.load(f)
 
         percent_uptime = os.path.join(root_dir,
-                                      "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/percent_uptime.json")
+        "visualiser/V3/windows/model/model_window/earth_graph_windows/graph/profiles/percent_uptime.json")
         with open(percent_uptime) as f:
             percent_uptime = json.load(f)
-
 
         ## Create one graphics layout widget
         self.column0_graphs = pg.GraphicsLayoutWidget()
@@ -162,8 +165,7 @@ class Grapher(QWidget):
         self.radar_bar_graph = self.column1_graphs.addPlot(row=2, col=0)
         self.radar_bar_graph = BarPlot(self.radar_bar_graph,
                                        self.radar_list,
-                                       np.zeros(10),
-                                       args=live_position) # Temp args
+                                       np.zeros(10))
 
         self.percent_uptime = self.column1_graphs.addPlot(row=2, col=1,)
         self.percent_uptime.setYRange(0, 100)
@@ -188,9 +190,10 @@ class Grapher(QWidget):
         :param name: redundant parameter
         :param update: contains x and y to update the plots.
         """
-        assert type(name) == dict, debug_print("visualiser", "Name must be a dictionary")
-        assert type(update) == tuple, debug_print("visualiser", "Update must be a tuple")
-        assert type(update[0]) == type(update[1]) == list, debug_print("visualiser", f"""All of update must be a list, update[0]: {type(update[0])}, update[1]: {type(update[1])}""")
+        assert type(name) == dict, "Name must be a dictionary"
+        assert type(update) == tuple, "Update must be a tuple"
+        assert type(update[0]) == type(update[1]) == list, f"""All of update must be a list, update[0]: 
+                                                            {type(update[0])}, update[1]: {type(update[1])}"""
 
         x, y = update
 
@@ -200,20 +203,30 @@ class Grapher(QWidget):
             plot.update_plot(x_vals, y_vals)
 
     @QtCore.pyqtSlot(dict, tuple)
-    def update_plot_no_radar(self, name, update):
+    def update_plot_no_radar(self, info, update):
+        """
+        Updates the few plots in the graph view on the right that continue even if no radar sees the satellite, giving
+        us the simulated 'live' view of where the satellite actually is. Updates the live altitude plot, the bar graph,
+        and the percentage uptime plot.
+
+        :param info: Contains info on the update, like whether there is a radar observation or not.
+        :param update:
+        :return:
+        """
+
+        # Take ECEF coordinates from update
         XYZ = update[0]
         x, y, z = [XYZ[0]], [XYZ[1]], [XYZ[2]]
 
+        # Take radar altitude from update
         radar_alt = update[1]
         alt_x, alt_y = np.array(radar_alt[0]), np.array(radar_alt[1])
 
-        self.satellite_altitude_live.update_plot(alt_x, alt_y)
-
         x_vals = np.array(x)
         y_vals = np.array(y)
-        self.satellite_pos_live.update_plot(x_vals, y_vals)
 
-        if name['name'] == 'no radar':
+        # Set red if there is no radar, else set green
+        if info['name'] == 'no radar':
             self.satellite_pos_live.line.setPen(color=[255, 0, 0], width=5)
         else:
             self.satellite_pos_live.line.setPen(color=[0, 255, 0], width=5)
@@ -222,15 +235,19 @@ class Grapher(QWidget):
         radar_name = update[2]
         self.radar_bar_graph.update_plot(radar_name)
 
-        if name['name'] == 'no radar':
+        # Update downtime or uptime based on whether we see the satellite or not
+        if info['name'] == 'no radar':
             self.downtime += 1
         else:
             self.uptime += 1
 
-        current_time = np.array([name['obs-time']*toHrs])
+        # Compute current uptime percentage and add onto the existing array.
+        current_time = np.array([info['obs-time']*toHrs])
         percent_uptime = np.array([(self.uptime / (self.uptime + self.downtime)) * 100])
 
+        # Update plots
         self.percent_uptime.update_plot(current_time, percent_uptime)
-        self.percent_uptime.hideAxis('left')
-        self.percent_uptime.hideAxis('bottom')
+        self.satellite_altitude_live.update_plot(alt_x, alt_y)
+        self.satellite_pos_live.update_plot(x_vals, y_vals)
+
 

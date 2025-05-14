@@ -35,7 +35,7 @@ class SimWidget(QWidget):
     """
     Window that contains the simulation. This is the first window that is loaded when the user clicks 'run simulation'
     and is a navigational window that connects the graph plots and the earth plots. This window also runs the full
-    simulation, a solver taken from simulator_files/Py_Simulation_Jai_Testing, and parses it to earth script for
+    simulation, a solver taken from simulator/simulator.py, and parses it to earth script for
     plotting.
 
     This window's parent is the simulation menu in simulation_menu.py, navigable to using the simulation menu under the
