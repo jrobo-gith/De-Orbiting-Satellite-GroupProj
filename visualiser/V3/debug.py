@@ -12,4 +12,4 @@ def debug_print(module_name, print_str):
     if can_print[module_name]:
         print(print_str)
 
-dev_mode = True
+dev_mode = False
