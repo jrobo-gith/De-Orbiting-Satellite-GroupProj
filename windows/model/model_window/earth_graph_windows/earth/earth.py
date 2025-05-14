@@ -62,6 +62,8 @@ class Earth(pg.GraphicsLayoutWidget):
         self.predictor = predictor
         self.lat, self.lon, self.t = full_sim_data
         self.radar_list = radar_list
+        self.progress = 0
+        self.able_to_make_prediction = False
 
         # Keep track of number of predictions made
         self.prediction_count = 0
@@ -127,10 +129,6 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_crash_point.setOpacity(0.9)
         self.prediction_crash_1std.setOpacity(0.75)
 
-        # Temp covariance plot
-        self.pred_cov = pg.ScatterPlotItem
-
-
         # Add Radars locations
         self.radar_plots = []
         self.radar_texts = []
@@ -192,8 +190,9 @@ class Earth(pg.GraphicsLayoutWidget):
         self.prediction_checkbox.setChecked(True)
         self.prediction_checkbox.stateChanged.connect(self.prediction_overlay_switch)
 
-        self.make_prediction_button = QPushButton("Make Prediction")
-        self.make_prediction_button.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+        self.make_prediction_button = QPushButton()
+        self.make_prediction_button.setText("Can't Make\nPrediction Yet")
+        self.make_prediction_button.setStyleSheet(f"background-color: {glob_setting['background-color']}; color: rgb(255, 0, 0)")
         self.make_prediction_button.setFont(QFont(glob_setting['font-family'], 20))
 
         self.filler = QLabel("Fill")
@@ -246,6 +245,15 @@ class Earth(pg.GraphicsLayoutWidget):
         :param info: radar info, contains observed time
         :param update: contains one latitude and one longitude to update the satellite's position.
         """
+
+        self.progress += 1
+        # If we have made enough progress through the system
+        if self.progress > len(self.lat)/2:
+            self.able_to_make_prediction = True
+            self.make_prediction_button.setText("Make Prediction")
+            self.make_prediction_button.setStyleSheet(
+                f"background-color: {glob_setting['background-color']}; color: rgb{glob_setting['font-color']}")
+
         XYZ = update[0]
 
         ## Convert x, y, z to lat lon
@@ -365,7 +373,8 @@ class Earth(pg.GraphicsLayoutWidget):
         :param helper: helper to emit a signal to the function 'send_prediction' in prediction.py.
         """
 
-        helper.changedSignal.emit("Requested prediction", (0, 0))
+        if self.able_to_make_prediction:
+            helper.changedSignal.emit("Requested prediction", (0, 0))
 
     def set_predictor(self, predictor):
         """

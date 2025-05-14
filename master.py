@@ -10,18 +10,7 @@ sys.path.insert(0, root_dir)
 req_file = os.path.join(root_dir, "requirements.txt")
 debug_print("visualiser", os.path.exists(req_file))
 
-# Install required files
-cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
-subprocess.run(cmd, check=True)
-
-# Import windows from other files
-from windows.main_menu import MainMenu
-from windows.instructions import Instructions
-from windows.model.model_menu import ModelMenu
-from windows.credits import Credits
-
-# Import Necessary Widgets
-from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
+json_file = os.path.join(root_dir, "partials/global_settings.json")
 
 # Accommodate differences in windows and macOS/Linux by writing two different global_settings.json files.
 if os.name == 'nt':
@@ -35,23 +24,35 @@ if os.name == 'nt':
         "screen-height": 1080,
         "screen-width": 1080
     }
-    with open("partials/global_settings.json", "w") as f:
+    with open(json_file, "w") as f:
         f.write(json.dumps(global_settings))
 elif os.name == 'posix':
     # Write macOS/Linux global settings
     global_settings = {
         "font-family": "Verdana",
-        "font-size": 18,
+        "font-size": 22,
         "background-color": "rgba(0, 0, 0, 0.6)",
         "matrix-color": "(0, 143, 17)",
         "font-color": "(0, 255, 0)",
         "screen-height": 1080,
-        "screen-width": 1080
+        "screen-width": 1920
     }
-    with open("partials/global_settings.json", "w") as f:
+    with open(json_file, "w") as f:
         f.write(json.dumps(global_settings))
 
-json_file = os.path.join(root_dir, "partials/global_settings.json")
+# Install required files
+cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
+subprocess.run(cmd, check=True)
+
+# Import windows from other files
+from windows.main_menu import MainMenu
+from windows.instructions import Instructions
+from windows.model.model_menu import ModelMenu
+from windows.credits import Credits
+
+# Import Necessary Widgets
+from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
+
 with open(json_file) as f:
     glob_setting = json.load(f)
 
@@ -89,8 +90,7 @@ class MasterWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle('SNOE Group Project ~ De-Orbiting Satellite')
-        # self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
-        self.showMaximized()
+        self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
         self.setStyleSheet(f"""background-color: rgba{glob_setting['background-color']};
         background-image: url(partials/backgroundimage.jpg);
         background-repeat: no-repeat;""")
@@ -102,7 +102,6 @@ class MasterWindow(QMainWindow):
         self.stacked_widget.addWidget(Credits(self.stacked_widget))
 
         self.setCentralWidget(self.stacked_widget)
-
 
 # Runs the application
 if __name__ == "__main__":

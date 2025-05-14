@@ -54,7 +54,7 @@ class BarPlot(pg.PlotWidget):
         # Apply styling to plot
         self.plot_allocation.getAxis('bottom').setTicks([self.radar_ticks])
         self.plot_allocation.setLabel('left', 'Frequency of Observations')
-        self.plot_allocation.setTitle('Top 10 Radars by Most Observations')
+        self.plot_allocation.setTitle('Top 8 Radars by Most Observations')
 
     def update_plot(self, radar_name:str):
         """

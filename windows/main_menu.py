@@ -52,7 +52,7 @@ class MainMenu(QWidget):
         menu_layout = QHBoxLayout()
         menu_layout.addWidget(menu_title)
 
-        menu_welcome_text = QLabel("Welcome to our group project! Here we use the Unscented Kalman Filter to predict the crash site of a \nDe-orbiting satellite.")
+        menu_welcome_text = QLabel("Welcome to our group project! Here we use the\nUnscented Kalman Filter to predict the crash site of a \nDe-orbiting satellite.")
         menu_welcome_text.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         menu_welcome_text.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         menu_welcome_text.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: transparent;")

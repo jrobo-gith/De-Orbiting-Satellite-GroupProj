@@ -8,7 +8,8 @@ root_dir = os.getcwd()
 sys.path.insert(0, root_dir)
 
 # Import PyQt Widgets
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QLineEdit, QPushButton, QHBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QLineEdit, QPushButton, QHBoxLayout, QGridLayout, \
+    QLabel
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -63,21 +64,21 @@ class ModelMenu(QWidget):
         # Add input position ability
         self.input_X_pos = QLineEdit()
         self.input_X_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_X_pos.setText("X-pos")
+        self.input_X_pos.setText("X-pos (Km)")
         self.input_X_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_X_pos.setFixedWidth(200)
         self.input_X_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_pos = QLineEdit()
         self.input_Y_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Y_pos.setText("Y-pos")
+        self.input_Y_pos.setText("Y-pos (Km)")
         self.input_Y_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Y_pos.setFixedWidth(200)
         self.input_Y_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_pos = QLineEdit()
         self.input_Z_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Z_pos.setText("Z-pos")
+        self.input_Z_pos.setText("Z-pos (Km)")
         self.input_Z_pos.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Z_pos.setFixedWidth(200)
@@ -92,7 +93,7 @@ class ModelMenu(QWidget):
         # Add input velocity ability
         self.input_X_vel = QLineEdit()
         self.input_X_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_X_vel.setText("X-vel")
+        self.input_X_vel.setText("X-vel (Km/s)")
         self.input_X_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_X_vel.setFixedWidth(200)
@@ -100,7 +101,7 @@ class ModelMenu(QWidget):
 
         self.input_Y_vel = QLineEdit()
         self.input_Y_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Y_vel.setText("Y-vel")
+        self.input_Y_vel.setText("Y-vel (Km/s)")
         self.input_Y_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Y_vel.setFixedWidth(200)
@@ -108,7 +109,7 @@ class ModelMenu(QWidget):
 
         self.input_Z_vel = QLineEdit()
         self.input_Z_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Z_vel.setText("Z-vel")
+        self.input_Z_vel.setText("Z-vel (Km/s)")
         self.input_Z_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Z_vel.setFixedWidth(200)
@@ -221,17 +222,61 @@ class ModelMenu(QWidget):
         start_sim_layout.addWidget(start_sim_btn)
         start_sim_layout.setAlignment(Qt.AlignCenter)
 
+        recommendations_layout = QGridLayout()
+
+        # Short equatorial Crash
+        list_ = []
+        layout = QVBoxLayout()
+        equatorial_orbit_short = QLabel("Short Equatorial Crash (~7 Orbits)")
+        equatorial_orbit_position = QLabel("Position: [150, 0, 0]")
+        equatorial_orbit_velocity = QLabel("Velocity: [0, 7.82953, 0]")
+        equatorial_orbit_radars = QLabel("Recommended num radars: 150")
+        layout.addWidget(equatorial_orbit_short)
+        layout.addWidget(equatorial_orbit_position)
+        layout.addWidget(equatorial_orbit_velocity)
+        layout.addWidget(equatorial_orbit_radars)
+        list_.append(equatorial_orbit_short)
+        list_.append(equatorial_orbit_position)
+        list_.append(equatorial_orbit_velocity)
+        list_.append(equatorial_orbit_radars)
+        [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
+          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+        recommendations_layout.addLayout(layout, 0, 0)
+
+        # Medium non-equatorial crash
+        list_ = []
+        layout = QVBoxLayout()
+        non_equatorial_orbit_medium = QLabel("Medium non-Equatorial Crash (~10 Orbits)")
+        non_equatorial_orbit_position = QLabel("Position: [150, 0, 0]")
+        non_equatorial_orbit_velocity = QLabel("Velocity: [0, 5.586, 5.515]")
+        non_equatorial_orbit_radars = QLabel("Recommended num radars: 500")
+        layout.addWidget(non_equatorial_orbit_medium)
+        layout.addWidget(non_equatorial_orbit_position)
+        layout.addWidget(non_equatorial_orbit_velocity)
+        layout.addWidget(non_equatorial_orbit_radars)
+        list_.append(non_equatorial_orbit_medium)
+        list_.append(non_equatorial_orbit_position)
+        list_.append(non_equatorial_orbit_velocity)
+        list_.append(non_equatorial_orbit_radars)
+        [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
+          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+        recommendations_layout.addLayout(layout, 0, 1)
+
+        # recommendations_layout.addLayout(layout, 1, 0)
+        # recommendations_layout.addLayout(layout, 1, 1)
+
+
         page_layout = QVBoxLayout()
         page_layout.setAlignment(Qt.AlignCenter)
         page_layout.addLayout(positions)
         page_layout.addLayout(velocities)
         page_layout.addLayout(radar_buttons)
         page_layout.addLayout(start_sim_layout)
+        page_layout.addLayout(recommendations_layout)
 
         page_container.addWidget(navbar, stretch=1)
         page_container.addLayout(page_layout, stretch=19)
         self.setLayout(page_container)
-
 
     def load_sim(self):
         """
@@ -243,31 +288,31 @@ class ModelMenu(QWidget):
         It then checks if an instance of the simulation already exists, if so, it removes the instance and adds it back,
         effectively restarting the simulation. If it does not exist, it creates a new instance of the Simwidget.
         """
-        # init_x_p = int(self.input_X_pos.text()) + EARTH_SEMIMAJOR
-        # init_y_p = int(self.input_Y_pos.text())
-        # init_z_p = int(self.input_Z_pos.text())
-        #
-        # init_x_v = int(self.input_X_vel.text())
-        # init_y_v = int(self.input_Y_vel.text()) / np.sqrt(2)
-        # init_z_v = int(self.input_Z_vel.text()) / np.sqrt(2)
-        #
-        # initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
+        init_x_p = (float(self.input_X_pos.text()) * 1000)
+        init_y_p = (float(self.input_Y_pos.text()) * 1000)
+        init_z_p = (float(self.input_Z_pos.text()) * 1000)
 
-        # Stable non-equatorial
-        stable_condition_none = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, 7900/np.sqrt(2), 7800/np.sqrt(2)]
-        # Stable equitorial
-        stable_condition_e = [150e3 + EARTH_SEMIMAJOR, 0, 0 , 0, np.sqrt(MU_EARTH/(150e3 + EARTH_SEMIMAJOR)) * 1.002, 0]
+        if init_x_p != 0:
+            init_x_p += EARTH_SEMIMAJOR
+        if init_y_p != 0:
+            init_y_p += EARTH_SEMIMAJOR
+        if init_z_p != 0:
+            init_z_p += EARTH_SEMIMAJOR
+
+        init_x_v = (float(self.input_X_vel.text()) * 1000)
+        init_y_v = (float(self.input_Y_vel.text()) * 1000)
+        init_z_v = (float(self.input_Z_vel.text()) * 1000)
+
+        initial_conditions = [init_x_p, init_y_p, init_z_p, init_x_v, init_y_v, init_z_v]
 
         radar_list = give_random_radar_locations(self.num_radars, equatorial=self.equatorial_bool)
         print(f"INITIALISING RADARS, NUM RADARS = {self.num_radars}, and equatorial is {self.equatorial_bool}")
-
-        stable_condition = stable_condition_none
 
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
             self.sim_stacked_widget = QStackedWidget() # Create new simulation
             self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
-            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
+            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, initial_conditions, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)
             self.stacked_widget.setCurrentIndex(4)
@@ -275,7 +320,7 @@ class ModelMenu(QWidget):
             # Create stacked widget (load in sim window)
             self.sim_stacked_widget = QStackedWidget()
             self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
-            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, stable_condition, radar_list))
+            self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, initial_conditions, radar_list))
             self.sim_stacked_widget.setCurrentIndex(1)
             self.stacked_widget.addWidget(self.sim_stacked_widget)
             self.stacked_widget.setCurrentIndex(4)
