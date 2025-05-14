@@ -28,6 +28,8 @@ with open(json_file) as f:
 class Helper(QtCore.QObject):
     changedSignal = QtCore.pyqtSignal(str, tuple)
 
+import matplotlib.pyplot as plt
+
 class Earth(pg.GraphicsLayoutWidget):
     """
     Window displaying the Earth Window in the simulation, used for visualising the satellite orbit trajectory,
@@ -92,9 +94,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.lon *= (180 / np.pi)
         self.lat *= (180 / np.pi)
 
-        self.lon = (self.lon + 180) % 360 - 180  # wrap to [-180, 180]
-
-
+        self.lon = (self.lon + 180) % 360 - 180
 
         # Get final crash location (pre-accounting for earth's rotation)
         self.final_crash_vector = np.linalg.norm([self.lat[-1], self.lon[-1]])
@@ -126,12 +126,10 @@ class Earth(pg.GraphicsLayoutWidget):
 
         # Prediction Overlay (Alternate variable "size" to show uncertainty)
         x, y = latlon2pixel(np.array([0]), np.array([0]))
-        self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=10, brush=pg.mkBrush('green'), pen=pg.mkPen('green'))
-        self.prediction_crash_1std = pg.ScatterPlotItem(x=x, y=y, size=30, brush=pg.mkBrush(0, 255, 0))
-        self.prediction_crash_2std = pg.ScatterPlotItem(x=x, y=y, size=60, brush=pg.mkBrush((0, 255, 0), pen=pg.mkPen('green')))
+        self.prediction_crash_point = pg.ScatterPlotItem(x=x, y=y, size=20, brush=pg.mkBrush('green'), pen=pg.mkPen('green'))
+        self.prediction_crash_1std = pg.ScatterPlotItem(x=np.zeros(100), y=np.zeros(100), size=10, brush=pg.mkBrush(0, 255, 0))
         self.prediction_crash_point.setOpacity(0.9)
-        self.prediction_crash_1std.setOpacity(0.4)
-        self.prediction_crash_2std.setOpacity(0.1)
+        self.prediction_crash_1std.setOpacity(0.75)
 
         # Temp covariance plot
         self.pred_cov = pg.ScatterPlotItem
@@ -162,7 +160,7 @@ class Earth(pg.GraphicsLayoutWidget):
         # Add prediction data
         self.plot_widget.addItem(self.prediction_crash_point)
         self.plot_widget.addItem(self.prediction_crash_1std)
-        self.plot_widget.addItem(self.prediction_crash_2std)
+        # self.plot_widget.addItem(self.prediction_crash_2std)
         [self.plot_widget.addItem(radar_plot) for radar_plot in self.radar_plots]
         [self.plot_widget.addItem(radar_text) for radar_text in self.radar_texts]
 
@@ -288,6 +286,9 @@ class Earth(pg.GraphicsLayoutWidget):
         lat_cov, lon_cov = prepare_latlon_for_graph(time=info['time'], lat=lat_cov, lon=lon_cov)
 
 
+        # Convert to pixel values
+        x_cov, y_cov = latlon2pixel(lat_cov, lon_cov)
+
         # Account for earth's rotation, also currently in radians
         lat, lon = prepare_latlon_for_graph(time=info['time'], lat=lat, lon=lon)
 
@@ -297,8 +298,8 @@ class Earth(pg.GraphicsLayoutWidget):
 
         x, y = latlon2pixel([lat], [lon])
         self.prediction_crash_point.setData(x, y)
-        self.prediction_crash_1std.setData(x, y)
-        self.prediction_crash_2std.setData(x, y)
+        self.prediction_crash_1std.setData(x_cov, y_cov)
+        # self.prediction_crash_2std.setData(x, y)
 
 
     def sim_overlay_switch(self):
@@ -320,8 +321,10 @@ class Earth(pg.GraphicsLayoutWidget):
     def live_satellite_switch(self):
         if self.live_simulation_checkbox.isChecked():
             self.satellite_start_position.show()
+            self.live_satellite_trail.show()
         else:
             self.satellite_start_position.hide()
+            self.live_satellite_trail.hide()
 
     def radar_overlay_switch(self):
         """
@@ -343,11 +346,11 @@ class Earth(pg.GraphicsLayoutWidget):
         if self.prediction_checkbox.isChecked():
             self.prediction_crash_point.show()
             self.prediction_crash_1std.show()
-            self.prediction_crash_2std.show()
+            # self.prediction_crash_2std.show()
         else:
             self.prediction_crash_point.hide()
             self.prediction_crash_1std.hide()
-            self.prediction_crash_2std.hide()
+            # self.prediction_crash_2std.hide()
 
     def request_prediction(self, helper):
         helper.changedSignal.emit("Requested prediction", (0, 0))
@@ -405,9 +408,9 @@ def create_covariance_plot(cov_mat, mean_lat, mean_lon):
 
     a = cov_mat[0, 0]
     b = cov_mat[0, 1]
-    c = cov_mat[1, 0]
+    c = cov_mat[1, 1]
 
-    root = np.sqrt(((a+c)/2)**2 + b**2)
+    root = np.sqrt((((a-c)/2)**2) + b**2)
 
     lambda_1 = ((a+c)/2) + root
     lambda_2 = ((a+c)/2) - root
