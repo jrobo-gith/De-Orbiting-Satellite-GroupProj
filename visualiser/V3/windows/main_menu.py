@@ -46,7 +46,7 @@ class MainMenu(QWidget):
 
         menu_title = QLabel("Main Menu")
         menu_title.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        menu_title.setFont(QFont(glob_setting['font-family'], 30))
+        menu_title.setFont(QFont(glob_setting['font-family'], 25))
         menu_title.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: transparent; text-decoration: underline")
         menu_title.setFixedWidth(1080)
         menu_layout = QHBoxLayout()
@@ -54,14 +54,14 @@ class MainMenu(QWidget):
 
         menu_welcome_text = QLabel("Welcome to our group project! Here we use the Unscented Kalman Filter to predict the crash site of a \nDe-orbiting satellite.")
         menu_welcome_text.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        menu_welcome_text.setFont(QFont(glob_setting['font-family'], 20))
+        menu_welcome_text.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         menu_welcome_text.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: transparent;")
         menu_welcome_text.setFixedWidth(1080)
         menu_welcome_layout = QHBoxLayout()
         menu_welcome_layout.addWidget(menu_welcome_text)
 
         graph_button = QPushButton("Simulation")
-        graph_button.setFont(QFont(glob_setting['font-family'], 27))
+        graph_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         graph_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(1))
         graph_button.setFixedWidth(225)
@@ -69,7 +69,7 @@ class MainMenu(QWidget):
         graph_layout.addWidget(graph_button)
 
         instructions_button = QPushButton("Instructions")
-        instructions_button.setFont(QFont(glob_setting['font-family'], 25))
+        instructions_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         instructions_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         instructions_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(2))
         instructions_button.setFixedWidth(200)
@@ -77,7 +77,7 @@ class MainMenu(QWidget):
         instructions_layout.addWidget(instructions_button)
 
         credits_button = QPushButton("Credits")
-        credits_button.setFont(QFont(glob_setting['font-family'], 23))
+        credits_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         credits_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         credits_button.clicked.connect(lambda: stacked_widget.setCurrentIndex(3))
         credits_button.setFixedWidth(175)
@@ -85,7 +85,7 @@ class MainMenu(QWidget):
         credits_layout.addWidget(credits_button)
 
         exit_button = QPushButton("Exit")
-        exit_button.setFont(QFont(glob_setting['font-family'], 20))
+        exit_button.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         exit_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%; ")
         exit_button.clicked.connect(sys.exit)
         exit_button.setFixedWidth(100)
