@@ -35,6 +35,10 @@ then, once the repository is initialised, enter:
 ```bash
 git remote add origin https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj.git
 ```
+and
+```bash
+git pull origin main
+```
 to copy the files from the `main` branch onto the PC. 
 <br><br>
 Now, in the same file, create a python virtual environment by entering:
@@ -43,7 +47,7 @@ python -m venv venv
 ```
 and activate the environment using:
 ```bash
-python venv/bin/activate
+source venv/bin/activate
 ```
 <br>
 
