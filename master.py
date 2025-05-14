@@ -23,6 +23,34 @@ from windows.credits import Credits
 # Import Necessary Widgets
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
 
+# Accommodate differences in windows and macOS/Linux by writing two different global_settings.json files.
+if os.name == 'nt':
+    # Write windows global settings
+    global_settings = {
+        "font-family": "Verdana",
+        "font-size": 18,
+        "background-color": "rgba(0, 0, 0, 0.6)",
+        "matrix-color": "(0, 143, 17)",
+        "font-color": "(0, 255, 0)",
+        "screen-height": 1080,
+        "screen-width": 1080
+    }
+    with open("partials/global_settings.json", "w") as f:
+        f.write(json.dumps(global_settings))
+elif os.name == 'posix':
+    # Write macOS/Linux global settings
+    global_settings = {
+        "font-family": "Verdana",
+        "font-size": 18,
+        "background-color": "rgba(0, 0, 0, 0.6)",
+        "matrix-color": "(0, 143, 17)",
+        "font-color": "(0, 255, 0)",
+        "screen-height": 1080,
+        "screen-width": 1080
+    }
+    with open("partials/global_settings.json", "w") as f:
+        f.write(json.dumps(global_settings))
+
 json_file = os.path.join(root_dir, "partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
