@@ -4,6 +4,14 @@ import subprocess
 import os 
 from debug import debug_print
 
+# Get root directory to run from mac and windows.
+root_dir = os.getcwd()
+sys.path.insert(0, root_dir)
+req_file = os.path.join(root_dir, "requirements.txt")
+debug_print("visualiser", os.path.exists(req_file))
+
+json_file = os.path.join(root_dir, "partials/global_settings.json")
+
 # Accommodate differences in windows and macOS/Linux by writing two different global_settings.json files.
 if os.name == 'nt':
     # Write windows global settings
@@ -16,7 +24,7 @@ if os.name == 'nt':
         "screen-height": 1080,
         "screen-width": 1080
     }
-    with open("partials/global_settings.json", "w") as f:
+    with open(json_file, "w") as f:
         f.write(json.dumps(global_settings))
 elif os.name == 'posix':
     # Write macOS/Linux global settings
@@ -29,14 +37,8 @@ elif os.name == 'posix':
         "screen-height": 1080,
         "screen-width": 1920
     }
-    with open("partials/global_settings.json", "w") as f:
+    with open(json_file, "w") as f:
         f.write(json.dumps(global_settings))
-
-# Get root directory to run from mac and windows.
-root_dir = os.getcwd()
-sys.path.insert(0, root_dir)
-req_file = os.path.join(root_dir, "requirements.txt")
-debug_print("visualiser", os.path.exists(req_file))
 
 # Install required files
 cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
@@ -51,7 +53,6 @@ from windows.credits import Credits
 # Import Necessary Widgets
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
 
-json_file = os.path.join(root_dir, "partials/global_settings.json")
 with open(json_file) as f:
     glob_setting = json.load(f)
 
