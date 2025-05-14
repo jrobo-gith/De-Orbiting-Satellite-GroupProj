@@ -4,25 +4,6 @@ import subprocess
 import os 
 from debug import debug_print
 
-# Get root directory to run from mac and windows.
-root_dir = os.getcwd()
-sys.path.insert(0, root_dir)
-req_file = os.path.join(root_dir, "requirements.txt")
-debug_print("visualiser", os.path.exists(req_file))
-
-# Install required files
-cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
-subprocess.run(cmd, check=True)
-
-# Import windows from other files
-from windows.main_menu import MainMenu
-from windows.instructions import Instructions
-from windows.model.model_menu import ModelMenu
-from windows.credits import Credits
-
-# Import Necessary Widgets
-from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
-
 # Accommodate differences in windows and macOS/Linux by writing two different global_settings.json files.
 if os.name == 'nt':
     # Write windows global settings
@@ -50,6 +31,25 @@ elif os.name == 'posix':
     }
     with open("partials/global_settings.json", "w") as f:
         f.write(json.dumps(global_settings))
+
+# Get root directory to run from mac and windows.
+root_dir = os.getcwd()
+sys.path.insert(0, root_dir)
+req_file = os.path.join(root_dir, "requirements.txt")
+debug_print("visualiser", os.path.exists(req_file))
+
+# Install required files
+cmd = [sys.executable, "-m", "pip", "install", "-r", req_file]
+subprocess.run(cmd, check=True)
+
+# Import windows from other files
+from windows.main_menu import MainMenu
+from windows.instructions import Instructions
+from windows.model.model_menu import ModelMenu
+from windows.credits import Credits
+
+# Import Necessary Widgets
+from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow
 
 json_file = os.path.join(root_dir, "partials/global_settings.json")
 with open(json_file) as f:
