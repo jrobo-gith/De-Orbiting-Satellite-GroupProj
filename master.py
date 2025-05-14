@@ -27,7 +27,7 @@ elif os.name == 'posix':
         "matrix-color": "(0, 143, 17)",
         "font-color": "(0, 255, 0)",
         "screen-height": 1080,
-        "screen-width": 1080
+        "screen-width": 1920
     }
     with open("partials/global_settings.json", "w") as f:
         f.write(json.dumps(global_settings))
