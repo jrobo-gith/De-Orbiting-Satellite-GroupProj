@@ -164,7 +164,7 @@ class Grapher(QWidget):
         self.radar_bar_graph = self.column1_graphs.addPlot(row=2, col=0)
         self.radar_bar_graph = BarPlot(self.radar_bar_graph,
                                        self.radar_list,
-                                       np.zeros(10))
+                                       np.zeros(8))
 
         self.percent_uptime = self.column1_graphs.addPlot(row=2, col=1,)
         self.percent_uptime.setYRange(0, 100)

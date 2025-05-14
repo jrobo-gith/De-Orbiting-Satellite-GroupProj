@@ -22,7 +22,7 @@ elif os.name == 'posix':
     # Write macOS/Linux global settings
     global_settings = {
         "font-family": "Verdana",
-        "font-size": 18,
+        "font-size": 22,
         "background-color": "rgba(0, 0, 0, 0.6)",
         "matrix-color": "(0, 143, 17)",
         "font-color": "(0, 255, 0)",
@@ -89,8 +89,7 @@ class MasterWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle('SNOE Group Project ~ De-Orbiting Satellite')
-        # self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
-        self.showMaximized()
+        self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
         self.setStyleSheet(f"""background-color: rgba{glob_setting['background-color']};
         background-image: url(partials/backgroundimage.jpg);
         background-repeat: no-repeat;""")
@@ -102,7 +101,6 @@ class MasterWindow(QMainWindow):
         self.stacked_widget.addWidget(Credits(self.stacked_widget))
 
         self.setCentralWidget(self.stacked_widget)
-
 
 # Runs the application
 if __name__ == "__main__":
