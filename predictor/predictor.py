@@ -1,320 +1,244 @@
-import pandas as pd
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget
+
 import numpy as np
-import scipy as sp
-import matplotlib.pyplot as plt
-
-import filterpy
-import filterpy.kalman as kf
-from filterpy.kalman import KalmanFilter
-import filterpy.stats as fs
-from filterpy.stats import gaussian, rand_student_t
-from filterpy.kalman import predict
-from filterpy.kalman import update
-
-
-print('here')
-# radar measurements of satellite position are in the form of (distance, elevation, azimuth).
-# convert radar measurements to Cartesian coordinates
-def spherical_to_cartesian(distance, elevation, azimuth, ref_position):
-    """
-    distance = straight-line distance between reference (radar) and object (satellite)
-    ref_position = e.g. cartesian coordinate of the radar location
-    """
-    return (x,y,z)
-
-##############################################################################
-##############################################################################
-"""============= Take first one (or 2? need to get the initial velocity) measurement as the starting state ============="""
-##############################################################################
-##############################################################################
-# read Radar measurement file and take the first measurement
-# radar_measurements = pd.read_csv('radar_measurements.csv')
-radar1 = radar_reading()
-radar2 = radar_reading()
-init_measurement = radar_measurements.iloc[0]
-
-##############################################################################
-##############################################################################
-"""======================== initialise prior belief on the initial state ======================================"""
-##############################################################################
-##############################################################################
-# define a prior distribution using the first measurement
-prior_mean = np.array([init_measurement['x'], init_measurement['y'], init_measurement['z'], 
-                       init_measurement['vx'], init_measurement['vy'], init_measurement['vz']])
-
-
-
-##############################################################################
-##############################################################################
-"""======================== Design P (prior covariance matrix 6x6)======================================"""
-##############################################################################
-##############################################################################
-
-### set it as diagonal (6x6) since we don't know the covariance of position and velocity
-P = ...
-P = np.diag([100, 100, 100, 50, 50, 50])  # initial covariance matrix (assume variables are independent, and variance is wide)
-# change the 100 above??? e.g.:
-# prior_cov = np.diag([100, 100, 100, 50, 50, 50])  # initial covariance matrix (assume variables are independent, and variance is wide)
-
-
-##############################################################################
-##############################################################################
-"""======================== Design F (state transition matrix 6x6)======================================"""
-##############################################################################
-##############################################################################
-
-### one equation for each state
-dt = 0.1            # re-define dt!
-F = np.diag([1.]*6)
-F[0,3]=dt 
-F[1,4]=dt 
-F[2,5] =dt
-
-
-##############################################################################
-##############################################################################
-"""======================== Design Q (process covariance matrix 6x6)======================================"""
-##############################################################################
-##############################################################################
-
-Q = ...
-
-##############################################################################
-##############################################################################
-"""======================== u (Control input) and B (control input model) ======================================"""
-##############################################################################
-##############################################################################
-
-### the satellite is not controlled by us so u=0 and B=0
-# B=0
-# u=0
-
-##############################################################################
-##############################################################################
-"""======================== Predict step ======================================"""
-##############################################################################
-##############################################################################
-
-P = P+Q
-x, P = predict(x, P, F, Q)
-# x, P = predict(x, P, F, Q, B, u)  # this is the same as above since B=0, u=0
-
-
-
-##############################################################################
-##############################################################################
-"""======================== get z (radar measurement) ======================================"""
-##############################################################################
-##############################################################################
-
-### 
-z = 1.
-
-
-##############################################################################
-##############################################################################
-"""======================== Design H (measurement function) (3x6) ======================================"""
-"""======================== (converts predicted state (6x1) into measurement space (3x1) via z=Hx. This gives H as a (3x6) 
-=========================== Cartesian into spherical coord.)
-=========================== 0s for velocities, i.e. don't need to convert them) ========================"""
-##############################################################################
-##############################################################################
-
-H = [[..., ..., ..., 0, 0, 0],
-     [..., ..., ..., 0, 0, 0],
-     [..., ..., ..., 0, 0, 0]]
-# predicted_state =  H @ x 
-
-
-##############################################################################
-##############################################################################
-"""======================== Residual (measurement - predicted)======================================"""
-##############################################################################
-##############################################################################
-
-y = z - H @ x
-
-
-##############################################################################
-##############################################################################
-"""======================== Design R (measurement covariance matrix 3x3)======================================"""
-##############################################################################
-##############################################################################
-
-### measurement covariance matrix contains varainces of distance, elevation, azimuth, and covariances between them (assume independent, so 0s)
-R = np.diag(1, 2, 3)    # variance of distance, elevation, azimuth
-
-
-
-
-
-##############################################################################
-##############################################################################
-"""======================== Update step ======================================"""
-##############################################################################
-##############################################################################
-
-from filterpy.kalman import update
-x, P = update(x, P, z, R, H)
-print('x =', x)
-
-
-
-##############################################################################
-##############################################################################
-"""======================== Kalman Filter all ======================================"""
-##############################################################################
-##############################################################################
-
-### specify dimensions for the state and measurement
-sate_filter = KalmanFilter(dim_x = 6, dim_z= 3)
-
-# print("state x = \n", sate_filter.x)
-# print("state prior covariance matrix P = \n", sate_filter.P)
-# print("process model F = \n", sate_filter.F)
-# print("process noise covariance matrix Q = \n", sate_filter.Q)
-# print("measurement z = \n", sate_filter.z)
-# print("measurement noise covariance matrix R = \n", sate_filter.R)
-# print("measurement function H = \n", sate_filter.H)
-
-### create a function for it instead so it can be called easily ===============================
-def satellite_filter (x, P, F, Q, R, dt = 0.1):
-    kf = KalmanFilter(dim_x = 6, dim_z= 3)
-    kf.x = np.array([x[0], x[1], x[2], x[3], x[4], x[5]])
-    kf.P[:] = P 
-    kf.F = ...
-    kf.Q[:] = Q
-
-    kf.H = ...
-    kf.R[:] = R
-    return kf
-
-### Create a function to run Kalman filter =====================================================
-def run_kf (x0, P, Q, R, dt=0.1, zs = None, trajectory_actual = None, do_plot = False):
-    """zs = radar measurements"""
-    ### get data from the Simulator ===========
-    ...
-    x0 = ...
-    zs = ...
-
-    ### create kalman filter ===============
-    kf = satellite_filter(x0, P=P, Q=Q, R=R, dt=dt)
-
-    ### run kalman filter ================
-    xs, cov = [], []
-
-    for z in zs:
-        kf.predict()
-        kf.update(z)
-        xs.append(kf.x)
-        cov.append(kf.P)
-
-    xs, cov = np.array(xs), np.array(cov)
-
-    ### plot?
-    if do_plot:
-        ### compare trajectory_filter to trajectory_actual
-        ...
-    return xs, cov
-
-
-
-##############################################################################
-##############################################################################
-"""======================== Unscented Kalman Filter  ======================================"""
-##############################################################################
-##############################################################################
-
-"""============= Packages ============================"""
 from filterpy.kalman import UnscentedKalmanFilter as UKF
 from filterpy.kalman import MerweScaledSigmaPoints
-from filterpy.common import Q_discrete_white_noise
-import numpy as np
-import math
 
-"""============= Take first one (or 2? need to get the initial velocity) measurement as the starting state ============="""
+from simulator.simulator import lat_long_height
+from simulator.radar import radars
+from predictor.predctor_functions import stop_condition, solve_ivp, ukf_Q_7dim, ode_with_Cd, f_with_Cd
+from partials.coordinate_conversions import do_conversions, radM2eci
+from partials.constants import CD, toHrs, toKM
 
-def measurement_to_state_space(radar_pos, range, elev, azimuth):
-    "convert from radar measurement space to cartesian pos of the satellite"
-    x= ...
-    y=...
-    z=...
-    return x, y, z
+import sys
+import threading
 
-def hx(radar_pos, x,y,z):
-    "convert from cartesian pos of satellite to radar measurement space"
-    range=...
-    elev=...
-    azimuth=...
-    return range, elev, azimuth
+class Helper(QtCore.QObject):
+    changedSignal = QtCore.pyqtSignal(dict, tuple)
 
+class Predictor(QWidget):
+    def __init__(self, grapher, earth, state0, dt=50.0, Cd=2.0):
+        super().__init__()
+        self.grapher = grapher
+        self.earth = earth
 
-radar1 = radar_reading()
-radar2 = radar_reading()
-### unpack 
-radar_pos1, range1, elev1, azimuth1, time1 = radar1
-radar_pos2, range2, elev2, azimuth2, time2 = radar2
+        """state0 :list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1] """
 
-x1, y1, z1 = measurement_to_state_space(radar_pos1, range1, elev1, azimuth1)
-x2, y2, z2 = measurement_to_state_space(radar_pos2, range2, elev2, azimuth2)
+        """ =============== Generate sigma points """
+        ### initialise self.ukf
+        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.1, beta=2., kappa=-4.)  # kappa = 3-n.
+        self.ukf = UKF(dim_x=7, dim_z=6, fx=f_with_Cd, hx=None, dt=dt, points=self.sigmas_generator)
 
-dt = time2-time1
+        """ ============== Define items in self.ukf """
+        ### initial state values of (x,y,z,vx,vy,vz, Cd)
+        state0.append(Cd)
+        self.ukf.x = np.array(state0)  # set dummy initial state. this is the true starting position of the satellite
+        print(f'=============== Satellite starts at: {self.ukf.x}')
+        ### initial uncertainty of the state
+        self.ukf.P = np.diag([50000 ** 2, 50000 ** 2, 50000 ** 2, 100 ** 2, 100 ** 2, 100 ** 2, 0.5 ** 2])
+        ### uncertainty in the process model
+        self.ukf.Q = ukf_Q_7dim(dim=7, dt=dt, var_=1e-6, Cd_var=1e-6)
 
-### define initial values
-x_init = x2
-y_init = y2
-z_init = z2
+        ### uncertainty in the measurement
+        range_std = 100  # meters.
+        azim_std = 0.001  # radians. (theta)
+        elev_std = 0.001  # radians. (phi)
+        vel_std = 0.05
+        self.ukf.R = np.diag([range_std ** 2, azim_std ** 2, elev_std ** 2,
+                              vel_std ** 2, vel_std ** 2, vel_std ** 2])
 
-vx_init = (x2-x1)/dt
-vy_init = (y2-y1)/dt
-vz_init = (z2-z1)/dt
+        self.xs_prior = []
+        self.zs = []
+        self.xs = []
+        self.Ps = []
+        self.ts = [0.0]
 
-""" =============== Generate sigma points ================="""
-### initialise UKF
-sigmas_generator = MerweScaledSigmaPoints(n=6, alpha=0.1, beta = 2., kappa= 3-6)
-### generate sigma points
-# sigmas_generator.sigma_points(x = [x_init, vx_init, 
-#                                    y_init, vy_init, 
-#                                    z_init, vz_init],
-#                               P = np.diag([500**2, 50**2,
-#                                             500**2, 50**2,
-#                                             500**2, 50**2]))
-ukf = UKF(dim_x=6, dim_z=3, fx = f, hx =h, dt = dt, points=sigmas_generator)  # take f, h from Jai and Vijay
+        position_x = [0, 0, 0, 0]
+        position_y = [0, 0, 0, 0]
 
-### Define items in UKF
-ukf.x = np.array([x_init, vx_init, 
-                  y_init, vy_init, 
-                  z_init, vz_init])
+        velocity_x = [0, 0, 0]
+        velocity_y = [0, 0, 0]
 
-ukf.P = np.diag([500**2, 50**2,
-                 500**2, 50**2,
-                 500**2, 50**2])    # experiment this
+        residual_x = [0, 0, 0]
+        residual_y = [0, 0, 0]
 
-ukf.Q[0:2, 0:2] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
-ukf.Q[2:4, 2:4] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
-ukf.Q[4:6, 4:6] = Q_discrete_white_noise(dim=2, dt=dt, var=...) # experiment with var
+        cov_x = [0]
+        cov_y = [0]
 
+        drag_x = [0, 0]
+        drag_y = [2, 2]
 
-range_std = 10 # meters. change this!!!!!!!!!!!!!!!!!!!!!!
-elev_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!!
-azim_std = math.radians(1)  # 1 degree in radians. change this!!!!!!!!!!!!!!!!!!!!!1
-ukf.R = np.diag([range_std**2, elev_std**2, azim_std**2])
+        alt_x = [0, 0]
+        alt_y = [0, 0]
 
+        plot_x = [position_x, velocity_x, cov_x, residual_x, drag_x, alt_x]
+        plot_y = [position_y, velocity_y, cov_y, residual_y, drag_y, alt_y]
 
-"""=================== Run UKF ========================="""
-dt = 30
-time_duration = np.arange(0, 50000+dt, dt)
-xs = []
-for t in time_duration:
-    satellite.update(dt)    # want satellite to be a class. 
-    # want radar to be a class
-    radar_reading = radar.noisy_reading(satellite.position) # this is an array of [range, elev, azim]
-    
-    if radar_reading[0] is None:
-        dt += dt
-        skip
-    else:
-        ukf.predict()
-        ukf.update(radar_reading)
-        # ukf.update([radar_reading[0], radar_reading[1], radar_reading[2]] )
-        xs.append(ukf.x)
+        first_update = (plot_x, plot_y)
+
+        self.grapher_helper = Helper()
+        self.grapher_helper.changedSignal.connect(self.grapher.update_plots, QtCore.Qt.QueuedConnection)
+        threading.Thread(target=send_to_graph, args=(self.grapher_helper, {'shape': (3, 3)}, first_update),
+                         daemon=True).start()  # Target will be GRAPHS
+
+        self.x_cov = np.zeros((3, 3))
+
+        self.earth_helper = Helper()
+        self.earth_helper.changedSignal.connect(self.earth.update_prediction, QtCore.Qt.QueuedConnection)
+        threading.Thread(target=send_to_graph,
+                         args=(self.earth_helper, {'predicting-landing': False, "time": 0.}, (0, 0, self.x_cov)),
+                         daemon=True).start()
+
+        self.Cd = Cd
+        self.dt = dt
+        self.dt_adjust = dt
+
+        self.x_prior = self.ukf.x
+        self.x_post = self.ukf.x
+
+    @QtCore.pyqtSlot(dict, tuple)
+    def predictor_loop(self, info, update):
+
+        self.update = update
+
+        pred_alt = 140e3
+        self.ts.append(info['obs-time'])
+        stime, radar_name = info['stime'], info['name']
+        radobj = radars[radar_name] if radar_name != "no radar" else None
+        radar_z = list(update)
+
+        ### at time 0, take the radar measurement as state0 for UKF. A radar measurement at t=0 must be provided!
+        if info['obs-time'] == 0:
+            init_pos = radM2eci(radM=update, stime=stime, radar=radobj)  # get the radar z of position in ECI
+            init_vel = radar_z[3:]
+            init_state = np.concatenate([init_pos, init_vel, [self.Cd]]).tolist()  # complete the initial state
+            self.ukf.x = init_state
+
+            self.x_post = self.ukf.x.copy()
+        ### at time > 0, start UKF process
+        else:
+            ### Start predicting ====================================================
+            self.ukf.hx = lambda x: do_conversions(x[:6], stime, radobj)  # update hx according to radar pos
+            self.ukf.predict(dt=self.dt)
+            self.x_prior = self.ukf.x_prior.copy()
+
+            ### Decide whether to update ============================================
+            ###### if no radar measurement, don't update.
+            if update == (0, 0, 0, 0, 0, 0):
+
+                self.x_post = self.ukf.x_post.copy()
+                self.x_cov = self.ukf.P_post.copy()
+                self.dt_adjust = self.dt_adjust + self.dt
+            ###### if has radar measurement, update.
+            else:
+                self.dt_adjust = self.dt  # reset self.dt_adjust
+                self.latest_measurement_time = self.ts[-1]  #
+
+                ### Update
+                self.ukf.update(radar_z)
+                self.x_post = self.ukf.x_post
+                self.x_cov = self.ukf.P_post.copy()
+
+        altitude_post = lat_long_height(self.x_post[0], self.x_post[1], self.x_post[2])[2]
+        radar_z_pos_ECI = (0, 0, 0, 0, 0, 0)
+
+        if update != (0, 0, 0, 0, 0, 0):
+            radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
+            altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
+
+        if altitude_post < 0:
+            sys.exit()
+
+        # Predict landing ====================================================================="""
+
+        ### start predict landing if altitude of x_prior is below threshold.
+        ### this is in case we don't receive radar measurement around threshold altitude.
+        if altitude_post <= pred_alt and update != (0, 0, 0, 0, 0, 0):
+            ### sample from the updated state distribution and predict landing position
+            state_samples = np.random.multivariate_normal(mean=self.x_post, cov=self.x_cov, size=20)
+            start = self.latest_measurement_time
+            end = start + 10000000000
+            stop_condition.terminal = True
+            stop_condition.direction = -1
+            landing_latlon_arr = []
+            landing_time_arr = []
+            for sample in state_samples:
+                landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
+                                    max_step=50, events=stop_condition)
+                landing_position = landing.y_events[0][0][:3]
+                landing_time = landing.t_events
+                landing_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])[:2]
+                landing_latlon_arr.append(landing_latlon)
+                landing_time_arr.append(landing_time)
+
+            landing_latlon_mean = np.mean(landing_latlon_arr, axis=0)
+            landing_latlon_cov = np.cov(np.array(landing_latlon_arr).T)
+            landing_time_mean = np.mean(landing_time_arr)
+            earth_update = (landing_latlon_mean[0], landing_latlon_mean[1], landing_latlon_cov)
+
+            ### Should it be landing.t_events (ODE solved landing time) instead?
+            send_to_graph(self.earth_helper, {'predicting-landing': True, "time": landing_time_mean}, earth_update)
+
+        if info['name'] != 'no radar':
+            time_hrs = self.ts[-1] * toHrs
+
+            position_x = [info['state_no_noise'][0] * toKM, info['state_noise'][0] * toKM, self.x_prior[0] * toKM,
+                          self.x_post[0] * toKM]
+            position_y = [info['state_no_noise'][1] * toKM, info['state_noise'][1] * toKM, self.x_prior[1] * toKM,
+                          self.x_post[1] * toKM]
+
+            velocity_x = [info['state_no_noise'][3] * toKM, self.x_prior[3] * toKM, self.x_post[3] * toKM]
+            velocity_y = [info['state_no_noise'][4] * toKM, self.x_prior[4] * toKM, self.x_post[4] * toKM]
+
+            covariance_trace = self.x_cov[0, 0] + self.x_cov[1, 1] + self.x_cov[2, 2]
+
+            cov_x = [time_hrs]
+            cov_y = [covariance_trace]
+
+            prior_residual = np.linalg.norm([self.x_prior[0], self.x_prior[1], self.x_prior[2]]) - np.linalg.norm(
+                [info['state_no_noise'][0], info['state_no_noise'][1], info['state_no_noise'][2]])
+
+            post_residual = np.linalg.norm([self.x_post[0], self.x_post[1], self.x_post[2]]) - np.linalg.norm(
+                [info['state_no_noise'][0], info['state_no_noise'][1], info['state_no_noise'][2]])
+
+            residual_x = [time_hrs, time_hrs, time_hrs]
+            residual_y = [prior_residual, post_residual, 0]
+
+            drag_x = [time_hrs, time_hrs]
+            drag_y = [self.x_post[6], CD]
+
+            alt_x = [time_hrs, time_hrs]
+            alt_y = [altitude_post * toKM, 140e3 * toKM]
+
+            plot_x = [position_x, velocity_x, cov_x, residual_x, alt_x, drag_x]
+            plot_y = [position_y, velocity_y, cov_y, residual_y, alt_y, drag_y]
+
+            pred_update = (plot_x, plot_y)
+            send_to_graph(self.grapher_helper, {'shape': (3, 3)}, pred_update)
+
+    @QtCore.pyqtSlot(str, tuple)
+    def send_prediction(self, redund_name, redund_tuple):
+        state_samples = np.random.multivariate_normal(mean=self.x_post, cov=self.x_cov, size=5)
+        start = self.ts[-1]
+        end = start + 10000000000
+        stop_condition.terminal = True
+        stop_condition.direction = -1
+        landing_latlon_arr = []
+        landing_time_arr = []
+        for sample in state_samples:
+            landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
+                                max_step=50, events=stop_condition)
+            landing_position = landing.y_events[0][0][:3]
+            landing_time = landing.t_events
+            landing_latlon = lat_long_height(landing_position[0], landing_position[1], landing_position[2])[:2]
+            landing_latlon_arr.append(landing_latlon)
+            landing_time_arr.append(landing_time)
+        landing_latlon_mean = np.mean(landing_latlon_arr, axis=0)
+        landing_latlon_cov = np.cov(np.array(landing_latlon_arr).T)
+
+        earth_update = (landing_latlon_mean[0], landing_latlon_mean[1], landing_latlon_cov)
+        send_to_graph(self.earth_helper, {'predicting-landing': True, "time": self.ts[-1]}, earth_update)
+
+def send_to_graph(helper, name: dict, update: tuple):
+    helper.changedSignal.emit(name, update)
