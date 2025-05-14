@@ -262,7 +262,27 @@ class ModelMenu(QWidget):
           obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
         recommendations_layout.addLayout(layout, 0, 1)
 
-        # recommendations_layout.addLayout(layout, 1, 0)
+        # Short non-equatorial crash
+        list_ = []
+        layout = QVBoxLayout()
+        non_equatorial_orbit_short = QLabel("Short non-Equatorial Crash (~0 Orbits)")
+        short_non_equatorial_orbit_position = QLabel("Position: [200, 0, 0]")
+        short_non_equatorial_orbit_velocity = QLabel("Velocity: [0, 7.7, 1]")
+        short_non_equatorial_orbit_radars = QLabel("Recommended num radars: 250")
+        layout.addWidget(non_equatorial_orbit_short)
+        layout.addWidget(short_non_equatorial_orbit_position)
+        layout.addWidget(short_non_equatorial_orbit_velocity)
+        layout.addWidget(short_non_equatorial_orbit_radars)
+        list_.append(non_equatorial_orbit_short)
+        list_.append(short_non_equatorial_orbit_position)
+        list_.append(short_non_equatorial_orbit_velocity)
+        list_.append(short_non_equatorial_orbit_radars)
+        [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
+          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+        recommendations_layout.addLayout(layout, 1, 0)
+
+
+        recommendations_layout.addLayout(layout, 1, 0)
         # recommendations_layout.addLayout(layout, 1, 1)
 
 
@@ -288,6 +308,7 @@ class ModelMenu(QWidget):
         It then checks if an instance of the simulation already exists, if so, it removes the instance and adds it back,
         effectively restarting the simulation. If it does not exist, it creates a new instance of the Simwidget.
         """
+
         init_x_p = (float(self.input_X_pos.text()) * 1000)
         init_y_p = (float(self.input_Y_pos.text()) * 1000)
         init_z_p = (float(self.input_Z_pos.text()) * 1000)
@@ -310,6 +331,7 @@ class ModelMenu(QWidget):
 
         if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
             self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
+            self.sim_stacked_widget.destroy()
             self.sim_stacked_widget = QStackedWidget() # Create new simulation
             self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
             self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, initial_conditions, radar_list))

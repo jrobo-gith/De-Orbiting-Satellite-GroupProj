@@ -93,6 +93,7 @@ class Earth(pg.GraphicsLayoutWidget):
         self.lat *= (180 / np.pi)
 
         self.lon = (self.lon + 180) % 360 - 180
+        self.lat = (self.lat + 90) % 180 - 90
 
         # Get final crash location (pre-accounting for earth's rotation)
         self.final_crash_vector = np.linalg.norm([self.lat[-1], self.lon[-1]])
@@ -455,8 +456,8 @@ def prepare_latlon_for_graph(time: float, lon, lat):
     lon *= (180 / np.pi)
     lat *= (180 / np.pi)
 
-    # Keep between -180 and 180 degrees
     lon = (lon + 180) % 360 - 180
+    lat = (lat + 90) % 180 - 90
     return lat, lon
 
 def create_covariance_plot(cov_mat, mean_lat, mean_lon):
