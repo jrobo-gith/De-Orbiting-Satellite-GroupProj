@@ -26,6 +26,8 @@ data to feed to predictor.
 ## Installation Instructions
 
 To install the latest version of this software, you will need the 'git' software, if you don't have git installed on your PC, [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) is a link which outlines how to install git. Alternatively, you could navigate to the github repository and under the green button `<> Code`, download the zip folder and follow the instructions from creating a python environment after having unzipped and `cd`'d into this folder. 
+
+*For Mac and Linux, use the following steps:*
 <br><br>
 First, you must create a blank folder on your PC, `cd` into this folder, initialise a blank git repository by typing the following commands on the command line:
 ```bash
@@ -48,6 +50,34 @@ python venv/bin/activate
 <br>
 
 To run the software, use:
+```bash
+python master.py
+```
+which will run the master file, loading the necessary files dynamically.
+
+*For Windows, use the following steps:*
+
+First, you must create a blank folder on your PC, `cd` into this folder, and type the following commands:
+```bash
+git clone https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj.git
+```
+
+```bash
+cd De-Orbiting-Satellite-GroupProj
+```
+
+then, once it is initialised, enter:
+```bash
+python -m venv venv
+```
+and activate the environment using:
+```bash
+.\venv\scripts\activate.bat
+```
+<br>
+
+To run the software, use:
+
 ```bash
 python master.py
 ```
