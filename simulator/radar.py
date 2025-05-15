@@ -315,7 +315,7 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         earth_helper.changedSignal.emit(info, (radM_ecef_nn,))
         graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
 
-        time.sleep(0.1)
+        time.sleep(0.2)
     if dev_mode:
         fp.close()
     return True
@@ -333,6 +333,6 @@ def initialise_radars(lonlat:list):
         dict: Dictionary of radar objects.
     """
     for i, pos in enumerate(lonlat):
-        radars[f"radar{i}"] = Radar(pos, azfov=120, elfov=80, azcen=0, maxr=5e6)
+        radars[f"radar{i}"] = Radar(pos, azfov=240, elfov=80, azcen=0, maxr=5e6)
 
     return radars

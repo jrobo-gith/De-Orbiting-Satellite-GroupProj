@@ -110,7 +110,7 @@ def f(state_x, dt):
     Returns:
         solution y.flattened (np.ndarray): state vector [x, y, z, vx, vy, vz] at time t+dt
     """
-    solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK45', t_eval=[dt], max_step=dt)
+    solution = solve_ivp(ode, t_span=[0, dt], y0=state_x, method='RK23', t_eval=[dt], max_step=dt)
     return solution.y.flatten()
 
 def f_with_Cd(state_x, dt):
