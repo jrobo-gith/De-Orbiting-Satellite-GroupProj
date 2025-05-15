@@ -31,10 +31,18 @@ First, you must create a blank folder on your PC, `cd` into this folder, and typ
 ```bash
 git clone https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj.git
 ```
+then, once the repository is initialised, enter:
 ```bash
-cd De-Orbiting-Satellite-GroupProj
+cd folder
 ```
 then, once it is initialised, enter:
+and
+```bash
+git pull origin main
+```
+to copy the files from the `main` branch onto the PC. 
+<br><br>
+Now, in the same file, create a python virtual environment by entering:
 ```bash
 python -m venv venv
 ```

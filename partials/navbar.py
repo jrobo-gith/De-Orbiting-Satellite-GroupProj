@@ -53,7 +53,7 @@ class Navbar(QWidget):
 
         # Crude filler to get the title to stay in the middle and not appear off to the side.
         filler = QLabel("FILLER")
-        filler.setStyleSheet(f"color: {glob_setting['background-color']};")
+        filler.setStyleSheet(f"color: {glob_setting['background-color']}; background: transparent;")
 
         # Add all widgets to the layout.
         navbar.addWidget(title, 0, 1, Qt.AlignHCenter)

@@ -88,8 +88,9 @@ def latitude_iterator_and_height(x, y, z):
     Returns:
         tuple: Latitude in radians and height above the Earth in meters.
     """
-    r = np.sqrt(x**2 + y**2)
-    phi = np.arctan(z / (r * (1 - E_SQUARED)))
+    r = np.sqrt(x ** 2 + y ** 2)
+    phi = np.arctan2(z, (r * (1 - E_SQUARED)) + 1e-6)
+    # print(phi, r)
     phi_new = phi + 100
     N = curvature_in_prime_vertical(phi)
 
@@ -291,7 +292,7 @@ if __name__ == '__main__':
     initial_conditions = [x0, y0, z0, vx0, vy0, vz0]
 
     # Time span
-    t_span = 5000000
+    t_span = 500_000_000
     t_eval = np.linspace(0, t_span, 1000)  # Points for evaluation
 
     # Solve differential equations using RK45
