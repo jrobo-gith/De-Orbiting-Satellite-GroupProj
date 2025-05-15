@@ -37,7 +37,8 @@ class Instructions(QWidget):
         outlining the instructions and structured using a Vertical Box Layout (QVBoxLayout) to produce the instructions
         window.
 
-        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        Args:
+            stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
         """
         super().__init__()
         self.stacked_widget = stacked_widget
