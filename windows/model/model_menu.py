@@ -64,21 +64,21 @@ class ModelMenu(QWidget):
         # Add input position ability
         self.input_X_pos = QLineEdit()
         self.input_X_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_X_pos.setText("X-pos (Km)")
+        self.input_X_pos.setPlaceholderText("X-pos (Km)")
         self.input_X_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_X_pos.setFixedWidth(200)
         self.input_X_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Y_pos = QLineEdit()
         self.input_Y_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Y_pos.setText("Y-pos (Km)")
+        self.input_Y_pos.setPlaceholderText("Y-pos (Km)")
         self.input_Y_pos.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Y_pos.setFixedWidth(200)
         self.input_Y_pos.setAlignment(Qt.AlignHCenter)
 
         self.input_Z_pos = QLineEdit()
         self.input_Z_pos.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Z_pos.setText("Z-pos (Km)")
+        self.input_Z_pos.setPlaceholderText("Z-pos (Km)")
         self.input_Z_pos.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Z_pos.setFixedWidth(200)
@@ -93,7 +93,7 @@ class ModelMenu(QWidget):
         # Add input velocity ability
         self.input_X_vel = QLineEdit()
         self.input_X_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_X_vel.setText("X-vel (Km/s)")
+        self.input_X_vel.setPlaceholderText("X-vel (Km/s)")
         self.input_X_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_X_vel.setFixedWidth(200)
@@ -101,7 +101,7 @@ class ModelMenu(QWidget):
 
         self.input_Y_vel = QLineEdit()
         self.input_Y_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Y_vel.setText("Y-vel (Km/s)")
+        self.input_Y_vel.setPlaceholderText("Y-vel (Km/s)")
         self.input_Y_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Y_vel.setFixedWidth(200)
@@ -109,7 +109,7 @@ class ModelMenu(QWidget):
 
         self.input_Z_vel = QLineEdit()
         self.input_Z_vel.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        self.input_Z_vel.setText("Z-vel (Km/s)")
+        self.input_Z_vel.setPlaceholderText("Z-vel (Km/s)")
         self.input_Z_vel.setStyleSheet(
             f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         self.input_Z_vel.setFixedWidth(200)
@@ -280,11 +280,6 @@ class ModelMenu(QWidget):
         [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
           obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
         recommendations_layout.addLayout(layout, 1, 0)
-
-
-        recommendations_layout.addLayout(layout, 1, 0)
-        # recommendations_layout.addLayout(layout, 1, 1)
-
 
         page_layout = QVBoxLayout()
         page_layout.setAlignment(Qt.AlignCenter)

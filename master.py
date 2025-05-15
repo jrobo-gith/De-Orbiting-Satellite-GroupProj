@@ -57,7 +57,7 @@ with open(json_file) as f:
     glob_setting = json.load(f)
 
 # Root for background image
-image_file = os.path.join(root_dir, "partials/backgroundimage.jpg")
+image_file = os.path.join(root_dir, "partials/backgroundimage2.jpg")
 
 class MasterWindow(QMainWindow):
     """
@@ -92,8 +92,8 @@ class MasterWindow(QMainWindow):
         self.setWindowTitle('SNOE Group Project ~ De-Orbiting Satellite')
         self.resize(glob_setting['screen-width'], glob_setting['screen-height'])
         self.setStyleSheet(f"""background-color: rgba{glob_setting['background-color']};
-        background-image: url(partials/backgroundimage.jpg);
-        background-repeat: no-repeat;""")
+        background-image: url(partials/backgroundimage2.jpg);
+        background-repeat: no-repeat; background-position: center;""")
 
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
