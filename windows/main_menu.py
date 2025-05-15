@@ -36,7 +36,8 @@ class MainMenu(QWidget):
         other in a Vertical Box Layout (QVBoxLayout) to produce the main menu window. Each button is wrapped in a
         Horizontal Box Layout (QHBoxLayout) to keep the button in the middle, and not span the entire page.
 
-        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        Args:
+            stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
         """
         super().__init__()
         self.stacked_widget = stacked_widget
