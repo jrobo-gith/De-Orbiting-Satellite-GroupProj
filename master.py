@@ -17,7 +17,7 @@ if os.name == 'nt':
     # Write windows global settings
     global_settings = {
         "font-family": "Verdana",
-        "font-size": 18,
+        "font-size": 14,
         "background-color": "rgba(0, 0, 0, 0.6)",
         "matrix-color": "(0, 143, 17)",
         "font-color": "(0, 255, 0)",
