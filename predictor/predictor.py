@@ -164,7 +164,7 @@ class Predictor(QWidget):
             landing_latlon_arr = []
             landing_time_arr = []
             for sample in state_samples:
-                landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
+                landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK23', t_eval=[end],
                                     max_step=50, events=stop_condition)
                 landing_position = landing.y_events[0][0][:3]
                 landing_time = landing.t_events
@@ -227,7 +227,7 @@ class Predictor(QWidget):
         landing_latlon_arr = []
         landing_time_arr = []
         for sample in state_samples:
-            landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK45', t_eval=[end],
+            landing = solve_ivp(fun=ode_with_Cd, t_span=[start, end], y0=sample, method='RK23', t_eval=[end],
                                 max_step=50, events=stop_condition)
             landing_position = landing.y_events[0][0][:3]
             landing_time = landing.t_events

@@ -54,7 +54,7 @@ class ModelMenu(QWidget):
 
         super().__init__()
         self.stacked_widget = stacked_widget
-        self.num_radars = 10
+        self.num_radars = 50
         self.equatorial_bool = None
 
         ## Layout
@@ -121,19 +121,6 @@ class ModelMenu(QWidget):
         velocities.addWidget(self.input_Y_vel)
         velocities.addWidget(self.input_Z_vel)
 
-        ## Add radar locations ability
-        radar_10 = QPushButton("10 Radars")
-        radar_10.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        radar_10.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_10.setFixedWidth(250)
-        radar_10.clicked.connect(lambda: self.set_num_radars(radar_10, 10))
-
-        radar_25 = QPushButton("25 Radars")
-        radar_25.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
-        radar_25.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
-        radar_25.setFixedWidth(250)
-        radar_25.clicked.connect(lambda: self.set_num_radars(radar_25, 25))
-
         radar_50 = QPushButton("50 Radars")
         radar_50.setFont(QFont(glob_setting['font-family'], glob_setting['font-size']))
         radar_50.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
@@ -190,11 +177,9 @@ class ModelMenu(QWidget):
         # Add all radar buttons to grid layout
         radar_buttons = QGridLayout()
         radar_buttons.setAlignment(Qt.AlignCenter)
-        radar_buttons.addWidget(radar_10, 0, 0)
-        radar_buttons.addWidget(radar_25, 0, 1)
-        radar_buttons.addWidget(radar_50, 0, 2)
-        radar_buttons.addWidget(radar_100, 0, 3)
-        radar_buttons.addWidget(radar_150, 1, 0)
+        radar_buttons.addWidget(radar_50, 0, 1)
+        radar_buttons.addWidget(radar_100, 0, 2)
+        radar_buttons.addWidget(radar_150, 0, 3)
         radar_buttons.addWidget(radar_200, 1, 1)
         radar_buttons.addWidget(radar_250, 1, 2)
         radar_buttons.addWidget(radar_500, 1, 3)
@@ -202,8 +187,6 @@ class ModelMenu(QWidget):
         radar_buttons.addWidget(non_equatorial_btn, 2, 2, 1, 2)
 
         self.radar_buttons_list = []
-        self.radar_buttons_list.append(radar_10)
-        self.radar_buttons_list.append(radar_25)
         self.radar_buttons_list.append(radar_50)
         self.radar_buttons_list.append(radar_100)
         self.radar_buttons_list.append(radar_150)
