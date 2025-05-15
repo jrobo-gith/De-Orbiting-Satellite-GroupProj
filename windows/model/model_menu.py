@@ -49,7 +49,8 @@ class ModelMenu(QWidget):
         point numbers or ints, the program will not continue. A collection of QLabels, QLineEdits and a QPushButton are
         stacked and layed out to display the simulation menu.
 
-        :param stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
+        Args:
+            stacked_widget: Widget containing pages of the GUI, used to navigate back to the main menu.
         """
 
         super().__init__()
@@ -331,8 +332,9 @@ class ModelMenu(QWidget):
         of SimWidget. Also turns the rest of the buttons to green and the clicked button red to indicate the current
         number radars.
 
-        :param btn_instance: Instance of button to set stylesheet to red
-        :param n: number of radars
+        Args:
+            btn_instance: Instance of button to set stylesheet to red
+            n: number of radars
         """
 
         self.num_radars = n
@@ -345,8 +347,9 @@ class ModelMenu(QWidget):
         around the whole earth. This will be fed into the radar spawner 'give_random_radar_locations'. Also turns the
         other option green and the clicked button red to make the choice clear.
 
-        :param btn_instance: Instance of button to set stylesheet to red
-        :param equatorial_bool: if true, spawn radars along the equator, if false, spawn radars randomly over the earth.
+        Args:
+            btn_instance: Instance of button to set stylesheet to red
+            equatorial_bool: if true, spawn radars along the equator, if false, spawn radars randomly over the earth.
         """
 
         [oth_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;") for oth_btn in self.equatorial_btn_list]
@@ -361,9 +364,12 @@ def give_random_radar_locations(num_radars, equatorial:bool=True):
     """
     Generates a list of random [lat, lon, height] to specify radar locations placed on earth.
 
-    :param num_radars: Taken from 'set_num_radars' to specify the number of radars to be spawned (added to the list).
-    :param equatorial: Specifies whether to generate radars along the equator or not. Taken from 'set_equatorial_bool'
-    :return: list[[lat, lon, height]] specifying details about each radar.
+    Args:
+        num_radars: Taken from 'set_num_radars' to specify the number of radars to be spawned (added to the list).
+        equatorial: Specifies whether to generate radars along the equator or not. Taken from 'set_equatorial_bool'
+    
+    Returns:
+        list[[lat, lon, height]] specifying details about each radar.
     """
     radar_list = []
     for i in range(num_radars):

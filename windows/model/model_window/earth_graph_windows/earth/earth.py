@@ -54,8 +54,9 @@ class Earth(pg.GraphicsLayoutWidget):
         Also lays out optional checkboxes which turn simulation data, radar locations or prediction info off and on at
         the user's convenience.
 
-        :param full_sim_data: the full simulation data in lat lon, used to plot the full simulation on the 2d world map.
-        :param radar_list: list of radar lat lon's, initialised in model_window.py, used to plot on the 2d world map.
+        Args:
+            full_sim_data: the full simulation data in lat lon, used to plot the full simulation on the 2d world map.
+            radar_list: list of radar lat lon's, initialised in model_window.py, used to plot on the 2d world map.
         """
         super().__init__()
 
@@ -243,8 +244,9 @@ class Earth(pg.GraphicsLayoutWidget):
 
         We update the scatter plot 'self.satellite_start_position' using the function 'setData(x, y)'
 
-        :param info: radar info, contains observed time
-        :param update: contains one latitude and one longitude to update the satellite's position.
+        Args:
+            info: radar info, contains observed time
+            update: contains one latitude and one longitude to update the satellite's position.
         """
 
         self.progress += 1
@@ -284,8 +286,9 @@ class Earth(pg.GraphicsLayoutWidget):
         predictor/predictor.py via multi-threading and a 'helper' function, which emits the latitude and longitude of
         a point at which the satellite crashes onto earth.
 
-        :param info: contains info such as whether we are predicting landing or not.
-        :param update: contains the latitude and longitude of the predicted crash site.
+        Args:
+            info: contains info such as whether we are predicting landing or not.
+            update: contains the latitude and longitude of the predicted crash site.
         """
 
         self.prediction_count += 1
@@ -371,7 +374,8 @@ class Earth(pg.GraphicsLayoutWidget):
         the predictor to sample x_post and propagate those samples to a landing site, from which, we can compute the
         mean and covariance for the landing site which will be plotted on the earth via the function update_prediction.
 
-        :param helper: helper to emit a signal to the function 'send_prediction' in prediction.py.
+        Args:
+            helper: helper to emit a signal to the function 'send_prediction' in prediction.py.
         """
 
         if self.able_to_make_prediction:
@@ -386,7 +390,8 @@ class Earth(pg.GraphicsLayoutWidget):
         This function also builds a helper that connects to the 'send_prediction' function in predictor.py to allow
         signals to be sent to make predictions.
 
-        :param predictor: instance of the predictor
+        Args:
+            predictor: instance of the predictor
         """
 
         self.predictor = predictor
@@ -404,7 +409,8 @@ class Earth(pg.GraphicsLayoutWidget):
         Updates the plot in earth that plots the crash residual on the right of 'earth view'. Appends the number of
         guesses to self.res_x using the prediction count and adds the new residual calculated in 'update_prediction'.
 
-        :param Y_data: New residual to be added to the existing plot.
+        Args:
+            Y_data: New residual to be added to the existing plot.
         """
 
         self.res_x[0].append(self.prediction_count)
@@ -416,10 +422,14 @@ def latlon2pixel(lat:np.array, lon:np.array, screen_w:int=5400, screen_h:int=270
     """
     Returns pixel values for lat and lon. Returns tuple (x, y)
 
-    :param lat: latitude trajectory
-    :param lon: longitude trajectory
-    :param screen_w: screen width
-    :param screen_h: screen height
+    Args:
+        lat: latitude trajectory.
+        lon: longitude trajectory.
+        screen_w: screen width.
+        screen_h: screen height.
+    
+    Returns:
+        x, y: Longitude and latitude in pixels.
     """
 
     x = []
@@ -439,10 +449,13 @@ def prepare_latlon_for_graph(time: float, lon, lat):
     - Miller's coordinates is a coordinate system designed to allow plotting on a 2D map of earth. Reference, can be
     found here - https://en.wikipedia.org/wiki/Miller_cylindrical_projection#:~:text=The%20Miller%20cylindrical%20projection%20is,retain%20scale%20along%20the%20equator.
 
-    :param time: used to account for earth's rotation.
-    :param lon: longitude.
-    :param lat: latitude.
-    :return: lat, lon: augmented latitude and longitude.
+    Args:
+        time (float): used to account for earth's rotation.
+        lon (float): longitude.
+        lat (float): latitude.
+    
+    Returns:
+        lat, lon : latitude and longitude in degrees.
     """
 
     # Account for earth's rotation
@@ -466,10 +479,13 @@ def create_covariance_plot(cov_mat, mean_lat, mean_lon):
 
     A reference for how to do this comes from - https://cookierobotics.com/007/
 
-    :param cov_mat: covariance matrix (radians)
-    :param mean_lat: mean latitude (radians)
-    :param mean_lon: mean longitude (radians)
-    :return: covariance ellipsis latitude and longitude.
+    Args:
+        cov_mat: covariance matrix (radians)
+        mean_lat: mean latitude (radians)
+        mean_lon: mean longitude (radians)
+    
+    Returns
+        covariance ellipsis latitude and longitude.
     """
 
     assert cov_mat[0, 1] == cov_mat[1, 0], "off-diagonals of covariance matrix should be equal!"
@@ -496,7 +512,3 @@ def create_covariance_plot(cov_mat, mean_lat, mean_lon):
     lon_cov = np.sqrt(lambda_1) * np.sin(theta) * np.cos(t) + np.sqrt(lambda_2) * np.cos(theta) * np.sin(t) + mean_lon
 
     return lat_cov, lon_cov
-
-
-
-

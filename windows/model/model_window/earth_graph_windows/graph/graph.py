@@ -186,8 +186,9 @@ class Grapher(QWidget):
 
         The tuple contains the x and y values of the update, the dimensions of which must be what is described above.
 
-        :param name: redundant parameter
-        :param update: contains x and y to update the plots.
+        Args:
+            name: redundant parameter
+            update: contains x and y to update the plots.
         """
         assert type(name) == dict, "Name must be a dictionary"
         assert type(update) == tuple, "Update must be a tuple"
@@ -208,9 +209,9 @@ class Grapher(QWidget):
         us the simulated 'live' view of where the satellite actually is. Updates the live altitude plot, the bar graph,
         and the percentage uptime plot.
 
-        :param info: Contains info on the update, like whether there is a radar observation or not.
-        :param update:
-        :return:
+        Args:
+            info (dictionary): Contains info on the update, like whether there is a radar observation or not.
+            update (tuple): Radar measurements
         """
 
         # Take ECEF coordinates from update

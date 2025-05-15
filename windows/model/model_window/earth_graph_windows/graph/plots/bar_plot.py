@@ -22,9 +22,10 @@ class BarPlot(pg.PlotWidget):
         """
         Initialises the bar plot. Applies some simple styling to the plot.
 
-        :param plot_allocation: Provides access to the plot instance in pyqtgraph for styling and plotting.
-        :param radar_list: list of radars to use in the plot
-        :param init_y: Initial y value for the plot, just list of zeros where init_y.shape == radar_list.shape
+        Args:
+            plot_allocation: Provides access to the plot instance in pyqtgraph for styling and plotting.
+            radar_list: list of radars to use in the plot
+            init_y: Initial y value for the plot, just list of zeros where init_y.shape == radar_list.shape
         """
 
         super().__init__()

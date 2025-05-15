@@ -64,10 +64,11 @@ class SimWidget(QWidget):
         multithreading to allow the radar to send observations to the predictor in 'predictor_files/predictor.py' and to
         the earth script to update the satellite's position.
 
-        :param stacked_widget: QStackedWidget that contains the main windows such that the user can navigate back to the
-                               main menu.
-        :param initial_conditions: conditions specified in simulation menu by the user and used to run the full sim.
-        :param radar_list: list of radar location in lat and lon and height above sea level, used to plot on earth
+        Args:
+            stacked_widget: QStackedWidget that contains the main windows such that the user can navigate back to the
+                            main menu.
+            initial_conditions: conditions specified in simulation menu by the user and used to run the full sim.
+            radar_list: list of radar location in lat and lon and height above sea level, used to plot on earth
                            script.
         """
         super().__init__()
@@ -190,7 +191,3 @@ class SimWidget(QWidget):
         self.graph_earth_container.setCurrentIndex(1)
         self.earth_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; text-decoration: underline; background: {glob_setting['background-color']}")
         self.graph_button.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}")
-
-
-
-

@@ -6,10 +6,12 @@ from datetime import datetime, timedelta
 def eci2ecef_matrix(theta):
     """
     Function to create a rotation matrix for converting ECI coordinates to ECEF coordinates.
+    
     Args:
-        GMST (float): The angle of rotation in radians.
+        theta (float): The GMST angle of rotation in radians.
+    
     Returns:
-        np.ndarray: The rotation matrix.
+        np.ndarray (np.ndarray): The rotation matrix.
     """
     # Inputs  - GMST angle in radians
     # Outputs - Rotation matrix to convert from ECI to ECEF
@@ -21,8 +23,10 @@ def eci2ecef_matrix(theta):
 def ecef2lla(ecef_coords):
     """
     Function to convert ECEF coordinates to geodetic coordinates (latitude, longitude, altitude).
+
     Args:
         ecef_coords (np.ndarray): The ECEF coordinates to convert.
+    
     Returns:
         np.ndarray: The geodetic coordinates (latitude, longitude, altitude).
     """
@@ -39,8 +43,10 @@ def ecef2lla(ecef_coords):
 def lla2ecef(lla_coords):
     """
     Function to convert geodetic coordinates (latitude, longitude, altitude) to ECEF coordinates.
+
     Args:
         lla_coords (np.ndarray): The geodetic coordinates to convert.
+    
     Returns:
         np.ndarray: The ECEF coordinates.
     """
@@ -58,9 +64,11 @@ def lla2ecef(lla_coords):
 def enu2ecef(enu_coords, ref_lla_coords):
     """
     Function to convert ENU coordinates to ECEF coordinates.
+    
     Args:
         enu_coords (np.ndarray): The ENU coordinates to convert.
         ref_lla_coords (np.ndarray): The reference geodetic coordinates (latitude, longitude, altitude).
+    
     Returns:
         np.ndarray: The ECEF coordinates.
     """
@@ -80,9 +88,11 @@ def enu2ecef(enu_coords, ref_lla_coords):
 def ecef2enu(ecef_coords, ref_lla_coords):
     """
     Function to convert ECEF coordinates to ENU coordinates.
+
     Args:
         ecef_coords (np.ndarray): The ECEF coordinates to convert.
         ref_lla_coords (np.ndarray): The reference geodetic coordinates (latitude, longitude, altitude).
+    
     Returns:
         np.ndarray: The ENU coordinates.
     """
@@ -102,9 +112,11 @@ def ecef2enu(ecef_coords, ref_lla_coords):
 def lla2enu(lla_coords, ref_lla_coords):
     """
     Function to convert geodetic coordinates (latitude, longitude, altitude) to ENU coordinates.
+
     Args:
         lla_coords (np.ndarray): The geodetic coordinates to convert.
         ref_lla_coords (np.ndarray): The reference geodetic coordinates (latitude, longitude, altitude).
+    
     Returns:
         np.ndarray: The ENU coordinates.
     """
@@ -119,9 +131,11 @@ def lla2enu(lla_coords, ref_lla_coords):
 def enu2lla(enu_coords, ref_lla_coords):
     """
     Function to convert ENU coordinates to geodetic coordinates (latitude, longitude, altitude).
+    
     Args:
         enu_coords (np.ndarray): The ENU coordinates to convert.
         ref_lla_coords (np.ndarray): The reference geodetic coordinates (latitude, longitude, altitude).
+    
     Returns:
         np.ndarray: The geodetic coordinates (latitude, longitude, altitude).
     """
@@ -136,8 +150,10 @@ def enu2lla(enu_coords, ref_lla_coords):
 def sat_ecef2lla(sat_pos_ecef):
     """
     Function to convert satellite position from ECEF coordinates to geodetic coordinates (latitude, longitude, altitude).
+    
     Args:
         sat_pos_ecef (np.ndarray): The ECEF coordinates of the satellite.
+    
     Returns:
         np.ndarray: The geodetic coordinates (latitude, longitude, altitude) of the satellite.
     """
@@ -152,10 +168,12 @@ def sat_ecef2lla(sat_pos_ecef):
 def radM2eci(radM, stime, radar):
     """
     Function to convert radar measurements from ENU coordinates to ECI coordinates.
+    
     Args:
         radM (np.ndarray): The radar measurements in ENU coordinates.
-        stime (datetime): The time of the measurement.
+        stime (datetime): The time of the measurement encoded as a datetime object.
         radar (Radar): The radar object containing the radar's position and other parameters.
+    
     Returns:
         np.ndarray: The ECI coordinates of the radar measurements.
     """
@@ -169,8 +187,10 @@ def radM2eci(radM, stime, radar):
 def get_gmst(t):
     """
     Function to calculate the Greenwich Mean Sidereal Time (GMST) angle.
+    
     Args:
-        t (datetime): The time for which to calculate the GMST.
+        t (datetime): The time in datetime format for which to calculate the GMST.
+    
     Returns:
         float: The GMST angle in radians.
     """
@@ -186,10 +206,12 @@ def get_gmst(t):
 def do_conversions(radar_z_ECI, stime, radar):
     """
     Function to convert satellite position from ECI coordinates to radar's local spherical coordinates.
+    
     Args:
         radar_z_ECI (np.ndarray): The ECI coordinates of the satellite.
-        stime (datetime): The time of the measurement.
+        stime (datetime): The time of the measurement encoded as a datetime object.
         radar (Radar): The radar object containing the radar's position and other parameters.
+    
     Returns:
         np.ndarray: The radar's local spherical coordinates (range, azimuth, elevation).
     """

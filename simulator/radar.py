@@ -17,6 +17,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 def get_sat_data():
     """ 
     Reads satellite trajectory data from a file and converts it to ECEF coordinates.
+    
     Returns:
         sat_pos_ecef (np.ndarray): Satellite positions in ECEF coordinates.
         sat_pos_eci (np.ndarray): Satellite positions in ECI coordinates.
@@ -80,6 +81,7 @@ def get_sat_data():
 class Radar:
     """
     Radar class to simulate radar measurements and check field of view.
+    
     Attributes:
         lon (float): Longitude of the radar.
         lat (float): Latitude of the radar.
@@ -101,6 +103,7 @@ class Radar:
     def __init__(self, longlat, azfov=360, elfov=180, azcen=0, maxr=5e6, minr=10, minel=2):
         """
         Initializes the Radar object with given parameters.
+        
         Args:
             longlat (list): Latitude, longitude, and altitude of the radar.
             azfov (float): Azimuth field of view in degrees.
@@ -129,8 +132,10 @@ class Radar:
     def __add_noise(self, radM):
         """
         Adds noise to radar measurements.
+        
         Args:
             radM (tuple): Radar measurements (range, azimuth, elevation, velocity).
+        
         Returns:
             np.ndarray: Noisy radar measurements.
         """
@@ -149,10 +154,12 @@ class Radar:
     def radar_measurements(self, sat_enu_coords, sat_vel, noise=True):
         """
         Computes radar measurements from ENU coordinates.
+        
         Args:
             sat_enu_coords (np.ndarray): ENU coordinates of the object.
             sat_vel (np.ndarray): Velocity of the object.
             noise (bool): Whether to add noise to the measurements.
+        
         Returns:
             np.ndarray: Radar measurements (range, azimuth, elevation).
         """
@@ -177,8 +184,10 @@ class Radar:
     def radM2enu(self, radM_pos):
         """
         Converts radar measurements to ENU coordinates.
+        
         Args:
             radM_pos (np.ndarray): Radar measurements (range, azimuth, elevation).
+        
         Returns:
             np.ndarray: ENU coordinates of the object.
         """
@@ -194,8 +203,10 @@ class Radar:
     def check_fov(self, radM_pos):
         """
         Checks if the object is within the radar's field of view.
+        
         Args:
             radM_pos (np.ndarray): Radar measurements (range, azimuth, elevation).
+        
         Returns:
             bool: True if the object is within the field of view, False otherwise.
         """
@@ -221,11 +232,13 @@ class Radar:
 def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper):
     """
     Simulates radar measurements for a given set of radars and satellite positions.
+    
     Args:
         radars (dict): Dictionary of radar objects.
         graph_helper (Helper): Helper object for graph-related operations.
         earth_helper (Helper): Helper object for Earth-related operations.
         predictor_helper (Helper): Helper object for prediction-related operations.
+    
     Returns:
         bool: True if the simulation was successful.
     """
@@ -312,8 +325,10 @@ radars = {}
 def initialise_radars(lonlat:list):
     """
     Initializes radar objects with given latitude and longitude.
+    
     Args:
         lonlat (list): List of latitude and longitude coordinates for the radars.
+    
     Returns:
         dict: Dictionary of radar objects.
     """

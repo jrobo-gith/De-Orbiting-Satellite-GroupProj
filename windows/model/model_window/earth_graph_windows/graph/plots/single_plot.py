@@ -27,10 +27,11 @@ class Plot(pg.PlotWidget):
         example.json. This also plots the initial conditions of the graph, which are likely 0's and then will be updated
         later.
 
-        :param plot_allocation: Provides access to the plot instance in pyqtgraph for styling and plotting.
-        :param init_x: Initial x values
-        :param init_y: Initial y values
-        :param args: Profile of the plot, used for styling.
+        Args:
+            plot_allocation: Provides access to the plot instance in pyqtgraph for styling and plotting.
+            init_x: Initial x values
+            init_y: Initial y values
+            args: Profile of the plot, used for styling.
         """
 
         super().__init__()
@@ -86,11 +87,12 @@ class Plot(pg.PlotWidget):
         """
         Plots a line using pyqtgraph.
 
-        :param x: X value
-        :param y: Y value
-        :param line_name: name for legend
-        :param pen: line styling
-        :param symbol: datapoint styling
+        Args:
+            x: X value
+            y: Y value
+            line_name: name for legend
+            pen: line styling
+            symbol: datapoint styling
         """
         line = self.plot_allocation.plot(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1], pen=pen)
         return line
@@ -98,12 +100,13 @@ class Plot(pg.PlotWidget):
         """
         Plots a scatter plot using pyqtgraph.
 
-        :param x: X value
-        :param y: Y value
-        :param line_name: name for legend
-        :param symbol: datapoint styling
-        :param pen: line styling
-        :param brush: scatter point styling
+        Args:
+            x: X value
+            y: Y value
+            line_name: name for legend
+            symbol: datapoint styling
+            pen: line styling
+            brush: scatter point styling
         """
         scatter = pg.ScatterPlotItem(x=x, y=y, name=line_name, symbol=symbol[0], symbolSize=symbol[1],
                                      pen=pen, brush=brush)
@@ -118,8 +121,9 @@ class Plot(pg.PlotWidget):
         Setup so that the length of the initial values self.init_x/y grow until a specified length, then, once reached,
         begins removing the oldest value then adds the new one, keeping the length of the list constant.
 
-        :param new_data_X: New x values
-        :param new_data_Y: New y values
+        Args:
+            new_data_X: New x values
+            new_data_Y: New y values
         """
         assert type(new_data_X) == np.ndarray, f"New X must be a numpy array. {type(new_data_X)}"
         assert type(new_data_Y) == np.ndarray, f"New Y must be a numpy array. {type(new_data_Y)}"
