@@ -6,7 +6,7 @@ The task is to predict where a de-orbiting satellite will hit the surface of the
 ## The situation
 A satellite is orbiting earth with a decaying orbit. Around its perigee, its orbital motion has started to
 become affected by atmospheric drag. The satellite is no longer controllable. It is observed by a
-number of ground-based radar stations, which can get periodic fixes on its position. Aerodynamic
+number of ground-based radar stations, which can get periodic updates on its position and velocity. Aerodynamic
 drag will cause the satellite to slow down until it impacts the ground. For obvious reasons it would
 be interesting to know where this will happen.
 
@@ -53,7 +53,7 @@ and activate the environment using:
 .\venv\scripts\activate.bat
 ```
 
-*for Mac and Linux:*
+*for Mac:*
 ```bash
 source venv/bin/activate
 ```
