@@ -1,0 +1,17 @@
+{
+  "plot-type": ["line", "line"],
+  "title": "Spherical vs XYZ distance",
+  "label_title_x": "Time (s)",
+  "label_title_y": "Distance (m)",
+  "line_names": ["Spherical Distance", "Normal distance (XYZ)"],
+  "legend": true,
+  "grid": true,
+  "pens": [{"color": [255, 255, 255], "width": 5}, {"color": [0, 134, 193], "width": 5}],
+  "symbols": [["+", 2], ["o", 2]],
+  "x-lim": "None",
+  "y-lim": "None",
+  "label_style": {"color": "black", "font-size": "15px"},
+  "title_style": {"color": "black", "font-size": "20px"},
+  "array-limit": 50,
+  "hide-axes": false
+}

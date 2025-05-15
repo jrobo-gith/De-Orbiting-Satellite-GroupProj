@@ -1,0 +1,17 @@
+{
+  "plot-type": ["line", "line"],
+  "title": "Live Radar Altitude",
+  "label_title_x": "Time (Hrs)",
+  "label_title_y": "Altitude (Km)",
+  "line_names": ["Altitude", "Landing Prediction Point"],
+  "legend": true,
+  "grid": true,
+  "pens": [{"color": [255, 255, 255], "width": 5}, {"color": [0, 255, 0], "width": 5}],
+  "symbols": [["+", 2], ["+", 1]],
+  "x-lim": "None",
+  "y-lim": "None",
+  "label_style": {"color": "black", "font-size": "15px"},
+  "title_style": {"color": "black", "font-size": "20px"},
+  "array-limit": 100,
+  "hide-axes": false
+}

@@ -1,0 +1,18 @@
+{
+  "plot-type": ["line","scatter", "scatter"],
+  "title": "XY Velocity",
+  "label_title_x": "X Velocity (Km/s)",
+  "label_title_y": "Y Velocity (Km/s)",
+  "line_names": ["True Velocity","Prior Velocity", "Post Velocity"],
+  "legend": true,
+  "grid": false,
+  "pens": [{"color": [255, 255, 255], "width": 2}, {"color": [255, 0, 255], "width": 1}, {"color": [255, 255, 0], "width": 1}],
+  "brushes": [{"color":  [255, 255, 255]},{"color":  [255, 0, 255]}, {"color":  [255, 255, 0]}],
+  "symbols": [["+", 2], ["o", 2], ["o", 2]],
+  "x-lim": "None",
+  "y-lim": "None",
+  "label_style": {"color": "black", "font-size": "15px"},
+  "title_style": {"color": "black", "font-size": "20px"},
+  "array-limit": 50,
+  "hide-axes": false
+}
