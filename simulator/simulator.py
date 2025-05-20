@@ -205,6 +205,27 @@ def atmospheric_density_true(lat, long, altitude, time = None):
     
     return true_density[0, 0]  # Total mass density is the [0,0]th index of the pymsis.calculate() outputs
 
+# ------------------------------------------------------------------------------------------------------------------
+# ----------------------------------- FUNCTION FOR CALCULATING GRAVITY ---------------------------------------------
+# Computes gravity using WGS-84 gravity model
+def gravity_wgs84(lat_rad, altitude):
+    """
+    Computes the gravitational acceleration at a given latitude and altitude using the WGS-84 model.
+
+    Args:
+        lat_rad (float): Latitude in radians.
+        altitude (float): Altitude above sea level in kilometers.
+
+    Returns:
+        float: Gravitational acceleration in m/s^2.
+    """
+    altitude_m = altitude * 1000
+    g_e = 9.7803253359  # gravity at equator (m/s^2)
+    k = 0.00193185265241  # variation due to Earth's oblateness
+    g = g_e * (1 + k * np.sin(lat_rad)**2) - (3.086e-6) * altitude_m
+    return g
+
+
 # Diff. eqns for satellite motion
 def satellite_dynamics(t, y):
     """
@@ -222,7 +243,7 @@ def satellite_dynamics(t, y):
     lat, long, altitude = lat_long_height(x, y_pos, z)
 
     # Gravity
-    F_gravity = -G * M_EARTH / r**2
+    F_gravity = gravity_wgs84(lat, altitude)
 
     # Drag
     # rho = atmospheric_density_true(lat, long, altitude)
