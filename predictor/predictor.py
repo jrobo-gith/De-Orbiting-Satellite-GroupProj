@@ -27,7 +27,7 @@ class Predictor(QWidget):
 
         """ =============== Generate sigma points """
         ### initialise self.ukf
-        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.1, beta=2., kappa=-4.)  # kappa = 3-n.
+        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.2, beta=2., kappa=-4.)  # kappa = 3-n.
         self.ukf = UKF(dim_x=7, dim_z=6, fx=f_with_Cd, hx=None, dt=dt, points=self.sigmas_generator)
 
         """ ============== Define items in self.ukf """
@@ -147,8 +147,8 @@ class Predictor(QWidget):
             radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
             altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
 
-        if altitude_post < 0:
-            sys.exit()
+        # if altitude_post < 0:
+        #     sys.exit()
 
         # Predict landing ====================================================================="""
 

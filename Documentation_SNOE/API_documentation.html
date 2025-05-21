@@ -1,0 +1,1680 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SatTrack 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8a0f8b66"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            SatTrack
+          </a>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="#document-documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-SatTrack">SatTrack package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-supplementary_document">Supplementary document</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">SatTrack</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SatTrack 0.1 documentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sattrack-documentation">
+<h1>SatTrack documentation<a class="headerlink" href="#sattrack-documentation" title="Link to this heading"></a></h1>
+<p>This site contains the API documentation for the SatTrack software.</p>
+<div class="toctree-wrapper compound">
+<span id="document-documentation"></span><section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<embed src="_static/Documentation.pdf" width="100%" height="600px" type="application/pdf"></section>
+<span id="document-tutorial"></span><section id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h2>
+<embed src="_static/Tutorial_file_Group_SNOE.pdf" width="100%" height="600px" type="application/pdf"></section>
+<span id="document-SatTrack"></span><section id="sattrack-package">
+<h2>SatTrack package<a class="headerlink" href="#sattrack-package" title="Link to this heading"></a></h2>
+<section id="subpackages">
+<h3>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.partials"></span><section id="sattrack-partials-package">
+<h4>SatTrack.partials package<a class="headerlink" href="#sattrack-partials-package" title="Link to this heading"></a></h4>
+<section id="submodules">
+<h5>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h5>
+</section>
+<section id="module-SatTrack.partials.constants">
+<span id="sattrack-partials-constants-module"></span><h5>SatTrack.partials.constants module<a class="headerlink" href="#module-SatTrack.partials.constants" title="Link to this heading"></a></h5>
+</section>
+<section id="module-SatTrack.partials.coordinate_conversions">
+<span id="sattrack-partials-coordinate-conversions-module"></span><h5>SatTrack.partials.coordinate_conversions module<a class="headerlink" href="#module-SatTrack.partials.coordinate_conversions" title="Link to this heading"></a></h5>
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.do_conversions">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">do_conversions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radar_z_ECI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.do_conversions" title="Link to this definition"></a></dt>
+<dd><p>Function to convert satellite position from ECI coordinates to radar’s local spherical coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radar_z_ECI</strong> (<em>np.ndarray</em>) – The ECI coordinates of the satellite.</p></li>
+<li><p><strong>stime</strong> (<em>datetime</em>) – The time of the measurement encoded as a datetime object.</p></li>
+<li><p><strong>radar</strong> (<a class="reference internal" href="#document-SatTrack.simulator#SatTrack.simulator.radar.Radar" title="SatTrack.simulator.radar.Radar"><em>Radar</em></a>) – The radar object containing the radar’s position and other parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The radar’s local spherical coordinates (range, azimuth, elevation).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.ecef2enu">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">ecef2enu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ecef_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_lla_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.ecef2enu" title="Link to this definition"></a></dt>
+<dd><p>Function to convert ECEF coordinates to ENU coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ecef_coords</strong> (<em>np.ndarray</em>) – The ECEF coordinates to convert.</p></li>
+<li><p><strong>ref_lla_coords</strong> (<em>np.ndarray</em>) – The reference geodetic coordinates (latitude, longitude, altitude).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ENU coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.ecef2lla">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">ecef2lla</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ecef_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.ecef2lla" title="Link to this definition"></a></dt>
+<dd><p>Function to convert ECEF coordinates to geodetic coordinates (latitude, longitude, altitude).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ecef_coords</strong> (<em>np.ndarray</em>) – The ECEF coordinates to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The geodetic coordinates (latitude, longitude, altitude).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.eci2ecef_matrix">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">eci2ecef_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.eci2ecef_matrix" title="Link to this definition"></a></dt>
+<dd><p>Function to create a rotation matrix for converting ECI coordinates to ECEF coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>theta</strong> (<em>float</em>) – The GMST angle of rotation in radians.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rotation matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.enu2ecef">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">enu2ecef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enu_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_lla_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.enu2ecef" title="Link to this definition"></a></dt>
+<dd><p>Function to convert ENU coordinates to ECEF coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enu_coords</strong> (<em>np.ndarray</em>) – The ENU coordinates to convert.</p></li>
+<li><p><strong>ref_lla_coords</strong> (<em>np.ndarray</em>) – The reference geodetic coordinates (latitude, longitude, altitude).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ECEF coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.enu2lla">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">enu2lla</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enu_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_lla_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.enu2lla" title="Link to this definition"></a></dt>
+<dd><p>Function to convert ENU coordinates to geodetic coordinates (latitude, longitude, altitude).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enu_coords</strong> (<em>np.ndarray</em>) – The ENU coordinates to convert.</p></li>
+<li><p><strong>ref_lla_coords</strong> (<em>np.ndarray</em>) – The reference geodetic coordinates (latitude, longitude, altitude).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The geodetic coordinates (latitude, longitude, altitude).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.get_gmst">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">get_gmst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.get_gmst" title="Link to this definition"></a></dt>
+<dd><p>Function to calculate the Greenwich Mean Sidereal Time (GMST) angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>datetime</em>) – The time in datetime format for which to calculate the GMST.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The GMST angle in radians.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.lla2ecef">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">lla2ecef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lla_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.lla2ecef" title="Link to this definition"></a></dt>
+<dd><p>Function to convert geodetic coordinates (latitude, longitude, altitude) to ECEF coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lla_coords</strong> (<em>np.ndarray</em>) – The geodetic coordinates to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ECEF coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.lla2enu">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">lla2enu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lla_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_lla_coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.lla2enu" title="Link to this definition"></a></dt>
+<dd><p>Function to convert geodetic coordinates (latitude, longitude, altitude) to ENU coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lla_coords</strong> (<em>np.ndarray</em>) – The geodetic coordinates to convert.</p></li>
+<li><p><strong>ref_lla_coords</strong> (<em>np.ndarray</em>) – The reference geodetic coordinates (latitude, longitude, altitude).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ENU coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.radM2eci">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">radM2eci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.radM2eci" title="Link to this definition"></a></dt>
+<dd><p>Function to convert radar measurements from ENU coordinates to ECI coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radM</strong> (<em>np.ndarray</em>) – The radar measurements in ENU coordinates.</p></li>
+<li><p><strong>stime</strong> (<em>datetime</em>) – The time of the measurement encoded as a datetime object.</p></li>
+<li><p><strong>radar</strong> (<a class="reference internal" href="#document-SatTrack.simulator#SatTrack.simulator.radar.Radar" title="SatTrack.simulator.radar.Radar"><em>Radar</em></a>) – The radar object containing the radar’s position and other parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ECI coordinates of the radar measurements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.partials.coordinate_conversions.sat_ecef2lla">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.partials.coordinate_conversions.</span></span><span class="sig-name descname"><span class="pre">sat_ecef2lla</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_pos_ecef</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.coordinate_conversions.sat_ecef2lla" title="Link to this definition"></a></dt>
+<dd><p>Function to convert satellite position from ECEF coordinates to geodetic coordinates (latitude, longitude, altitude).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sat_pos_ecef</strong> (<em>np.ndarray</em>) – The ECEF coordinates of the satellite.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The geodetic coordinates (latitude, longitude, altitude) of the satellite.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.partials.navbar">
+<span id="sattrack-partials-navbar-module"></span><h5>SatTrack.partials.navbar module<a class="headerlink" href="#module-SatTrack.partials.navbar" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.partials.navbar.Navbar">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.partials.navbar.</span></span><span class="sig-name descname"><span class="pre">Navbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.partials.navbar.Navbar" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Universal Navbar used in model_menu.py, instructions.py, credits.py. Provides general navbar functions
+including a title, and a button that takes the user back to the main menu.</p>
+<p>Functions:
+- __init__(self, name, stacked_widget)</p>
+</dd></dl>
+
+</section>
+</section>
+<span id="document-SatTrack.predictor"></span><section id="sattrack-predictor-package">
+<h4>SatTrack.predictor package<a class="headerlink" href="#sattrack-predictor-package" title="Link to this heading"></a></h4>
+<section id="submodules">
+<h5>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h5>
+</section>
+<section id="module-SatTrack.predictor.predctor_functions">
+<span id="sattrack-predictor-predctor-functions-module"></span><h5>SatTrack.predictor.predctor_functions module<a class="headerlink" href="#module-SatTrack.predictor.predctor_functions" title="Link to this heading"></a></h5>
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.f">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.f" title="Link to this definition"></a></dt>
+<dd><p>A function that defines the process model of the orbit dynamics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_x</strong> (<em>np.ndarray</em>) – state vector [x, y, z, vx, vy, vz]</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – time step</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state vector [x, y, z, vx, vy, vz] at time t+dt</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>solution y.flattened (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.f_with_Cd">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">f_with_Cd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.f_with_Cd" title="Link to this definition"></a></dt>
+<dd><p>A function that defines the process model of the orbit dynamics with drag coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_x</strong> (<em>np.ndarray</em>) – state vector [x, y, z, vx, vy, vz, Cd]</p></li>
+<li><p><strong>dt</strong> – time step</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>state vector [x, y, z, vx, vy, vz] at time t+dt</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>solution y.flattened (np.addary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.ode">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">ode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.ode" title="Link to this definition"></a></dt>
+<dd><p>A function that defines the ODE of the orbit dynamics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – time</p></li>
+<li><p><strong>state_x</strong> (<em>np.ndarray</em>) – state vector [x, y, z, vx, vy, vz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>derivative of the state vector [vx, vy, vz, ax, ay, az]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dx (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.ode_with_Cd">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">ode_with_Cd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.ode_with_Cd" title="Link to this definition"></a></dt>
+<dd><p>A function that defines the ODE of the orbit dynamics with drag coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – time</p></li>
+<li><p><strong>state_y</strong> (<em>np.ndarray</em>) – state vector [x, y, z, vx, vy, vz, Cd]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>derivative of the state vector [vx, vy, vz, ax, ay, az, dCd_dt]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dx (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.stop_condition">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">stop_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.stop_condition" title="Link to this definition"></a></dt>
+<dd><p>Function to specify stop condition as required by scipy’s ODE solvers.
+This particular stop condition is used to stop the satellite propagation when altitude &lt;= 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – time</p></li>
+<li><p><strong>y</strong> (<em>np.ndarray</em>) – state vector [x, y, z, vx, vy, vz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>altitude of the satellite</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>altitude (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.ukf_Q">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">ukf_Q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.ukf_Q" title="Link to this definition"></a></dt>
+<dd><p>Function to create the process noise covariance matrix Q for the Unscented Kalman Filter (UKF).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> (<em>int</em>) – dimension of the state vector</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – time step</p></li>
+<li><p><strong>var</strong> (<em>float</em>) – process noise variance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>process noise covariance matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predctor_functions.ukf_Q_7dim">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predctor_functions.</span></span><span class="sig-name descname"><span class="pre">ukf_Q_7dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cd_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predctor_functions.ukf_Q_7dim" title="Link to this definition"></a></dt>
+<dd><p>Function to create the process noise covariance matrix Q for the Unscented Kalman Filter (UKF) with drag coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> (<em>int</em>) – dimension of the state vector</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – time step</p></li>
+<li><p><strong>var</strong> (<em>int</em>) – process noise variance</p></li>
+<li><p><strong>Cd_var</strong> (<em>float</em>) – drag coefficient variance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>process noise covariance matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Q(np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.predictor.predictor">
+<span id="sattrack-predictor-predictor-module"></span><h5>SatTrack.predictor.predictor module<a class="headerlink" href="#module-SatTrack.predictor.predictor" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Helper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predictor.</span></span><span class="sig-name descname"><span class="pre">Helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predictor.Helper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Helper.changedSignal">
+<span class="sig-name descname"><span class="pre">changedSignal</span></span><a class="headerlink" href="#SatTrack.predictor.predictor.Helper.changedSignal" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Predictor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predictor.</span></span><span class="sig-name descname"><span class="pre">Predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predictor.Predictor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Predictor.earth">
+<span class="sig-name descname"><span class="pre">earth</span></span><a class="headerlink" href="#SatTrack.predictor.predictor.Predictor.earth" title="Link to this definition"></a></dt>
+<dd><p>list. e.g. state0=[EARTH_SEMIMAJOR + 400e3, 1, -1, 1, 7700, 1]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>state0</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Predictor.predictor_loop">
+<span class="sig-name descname"><span class="pre">predictor_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predictor.Predictor.predictor_loop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.Predictor.send_prediction">
+<span class="sig-name descname"><span class="pre">send_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redund_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redund_tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predictor.Predictor.send_prediction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.predictor.predictor.send_to_graph">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.predictor.predictor.</span></span><span class="sig-name descname"><span class="pre">send_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">helper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.predictor.predictor.send_to_graph" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+<span id="document-SatTrack.simulator"></span><section id="sattrack-simulator-package">
+<h4>SatTrack.simulator package<a class="headerlink" href="#sattrack-simulator-package" title="Link to this heading"></a></h4>
+<section id="submodules">
+<h5>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h5>
+</section>
+<section id="module-SatTrack.simulator.radar">
+<span id="sattrack-simulator-radar-module"></span><h5>SatTrack.simulator.radar module<a class="headerlink" href="#module-SatTrack.simulator.radar" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Helper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.radar.</span></span><span class="sig-name descname"><span class="pre">Helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.Helper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Helper.changedSignal">
+<span class="sig-name descname"><span class="pre">changedSignal</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Helper.changedSignal" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.radar.</span></span><span class="sig-name descname"><span class="pre">Radar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">longlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azfov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elfov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azcen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.Radar" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Radar class to simulate radar measurements and check field of view.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.lon">
+<span class="sig-name descname"><span class="pre">lon</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.lon" title="Link to this definition"></a></dt>
+<dd><p>Longitude of the radar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.lat">
+<span class="sig-name descname"><span class="pre">lat</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.lat" title="Link to this definition"></a></dt>
+<dd><p>Latitude of the radar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.alt">
+<span class="sig-name descname"><span class="pre">alt</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.alt" title="Link to this definition"></a></dt>
+<dd><p>Altitude of the radar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.pos_lla">
+<span class="sig-name descname"><span class="pre">pos_lla</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.pos_lla" title="Link to this definition"></a></dt>
+<dd><p>Latitude, longitude, and altitude of the radar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.azfov">
+<span class="sig-name descname"><span class="pre">azfov</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.azfov" title="Link to this definition"></a></dt>
+<dd><p>Azimuth field of view in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.elfov">
+<span class="sig-name descname"><span class="pre">elfov</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.elfov" title="Link to this definition"></a></dt>
+<dd><p>Elevation field of view in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.azcen">
+<span class="sig-name descname"><span class="pre">azcen</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.azcen" title="Link to this definition"></a></dt>
+<dd><p>Azimuth center in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.maxr">
+<span class="sig-name descname"><span class="pre">maxr</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.maxr" title="Link to this definition"></a></dt>
+<dd><p>Maximum range of the radar in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.minr">
+<span class="sig-name descname"><span class="pre">minr</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.minr" title="Link to this definition"></a></dt>
+<dd><p>Minimum range of the radar in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.minel">
+<span class="sig-name descname"><span class="pre">minel</span></span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.minel" title="Link to this definition"></a></dt>
+<dd><p>Minimum elevation angle in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.check_fov">
+<span class="sig-name descname"><span class="pre">check_fov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radM_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.check_fov" title="Link to this definition"></a></dt>
+<dd><p>Checks if the object is within the radar’s field of view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>radM_pos</strong> (<em>np.ndarray</em>) – Radar measurements (range, azimuth, elevation).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the object is within the field of view, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.radM2enu">
+<span class="sig-name descname"><span class="pre">radM2enu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radM_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.radM2enu" title="Link to this definition"></a></dt>
+<dd><p>Converts radar measurements to ENU coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>radM_pos</strong> (<em>np.ndarray</em>) – Radar measurements (range, azimuth, elevation).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ENU coordinates of the object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.Radar.radar_measurements">
+<span class="sig-name descname"><span class="pre">radar_measurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_enu_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_vel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.Radar.radar_measurements" title="Link to this definition"></a></dt>
+<dd><p>Computes radar measurements from ENU coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sat_enu_coords</strong> (<em>np.ndarray</em>) – ENU coordinates of the object.</p></li>
+<li><p><strong>sat_vel</strong> (<em>np.ndarray</em>) – Velocity of the object.</p></li>
+<li><p><strong>noise</strong> (<em>bool</em>) – Whether to add noise to the measurements.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Radar measurements (range, azimuth, elevation).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.get_radar_measurements">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.radar.</span></span><span class="sig-name descname"><span class="pre">get_radar_measurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_helper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">earth_helper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_helper</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.get_radar_measurements" title="Link to this definition"></a></dt>
+<dd><p>Simulates radar measurements for a given set of radars and satellite positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radars</strong> (<em>dict</em>) – Dictionary of radar objects.</p></li>
+<li><p><strong>graph_helper</strong> (<a class="reference internal" href="#document-SatTrack.simulator#SatTrack.simulator.radar.Helper" title="SatTrack.simulator.radar.Helper"><em>Helper</em></a>) – Helper object for graph-related operations.</p></li>
+<li><p><strong>earth_helper</strong> (<a class="reference internal" href="#document-SatTrack.simulator#SatTrack.simulator.radar.Helper" title="SatTrack.simulator.radar.Helper"><em>Helper</em></a>) – Helper object for Earth-related operations.</p></li>
+<li><p><strong>predictor_helper</strong> (<a class="reference internal" href="#document-SatTrack.simulator#SatTrack.simulator.radar.Helper" title="SatTrack.simulator.radar.Helper"><em>Helper</em></a>) – Helper object for prediction-related operations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the simulation was successful.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.get_sat_data">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.radar.</span></span><span class="sig-name descname"><span class="pre">get_sat_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.get_sat_data" title="Link to this definition"></a></dt>
+<dd><p>Reads satellite trajectory data from a file and converts it to ECEF coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Satellite positions in ECEF coordinates.
+sat_pos_eci (np.ndarray): Satellite positions in ECI coordinates.
+sat_vel (np.ndarray): Satellite velocities.
+t_vals (np.ndarray): Time values corresponding to the satellite positions.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sat_pos_ecef (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.radar.initialise_radars">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.radar.</span></span><span class="sig-name descname"><span class="pre">initialise_radars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lonlat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.radar.initialise_radars" title="Link to this definition"></a></dt>
+<dd><p>Initializes radar objects with given latitude and longitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lonlat</strong> (<em>list</em>) – List of latitude and longitude coordinates for the radars.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of radar objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.simulator.simulator">
+<span id="sattrack-simulator-simulator-module"></span><h5>SatTrack.simulator.simulator module<a class="headerlink" href="#module-SatTrack.simulator.simulator" title="Link to this heading"></a></h5>
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.atmospheric_density">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">atmospheric_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">altitude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.atmospheric_density" title="Link to this definition"></a></dt>
+<dd><p>Calculate atmospheric density at a given altitude using a simplified model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude</strong> (<em>float</em>) – Altitude in meters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Atmospheric density in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.atmospheric_density_true">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">atmospheric_density_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.atmospheric_density_true" title="Link to this definition"></a></dt>
+<dd><p>Calculate atmospheric density using the NRLMSISE-00 model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em>) – Latitude in radians.</p></li>
+<li><p><strong>long</strong> (<em>float</em>) – Longitude in radians.</p></li>
+<li><p><strong>altitude</strong> (<em>float</em>) – Altitude in meters.</p></li>
+<li><p><strong>time</strong> (<em>datetime</em>) – Time for the calculation. If None, uses the current time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Atmospheric density in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.curvature_in_prime_vertical">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">curvature_in_prime_vertical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.curvature_in_prime_vertical" title="Link to this definition"></a></dt>
+<dd><p>Calculate the curvature in the prime vertical at a given latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>phi</strong> – Latitude in radians.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Curvature in the prime vertical at the given latitude in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.earth_radius_WGS84">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">earth_radius_WGS84</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.earth_radius_WGS84" title="Link to this definition"></a></dt>
+<dd><p>Calculate the radius of the Earth at a given latitude using the WGS-84 ellipsoid model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>latitude</strong> (<em>float</em><em> or </em><em>array-like</em>) – Latitude in radians.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Radius of the Earth at the given latitude in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.lat_long_height">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">lat_long_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.lat_long_height" title="Link to this definition"></a></dt>
+<dd><p>Calculate latitude, longitude, and height above the Earth using Bowring’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – X coordinate in meters.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Y coordinate in meters.</p></li>
+<li><p><strong>z</strong> (<em>float</em>) – Z coordinate in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latitude in radians, longitude in radians, and height above the Earth in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.lat_long_height_plot">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">lat_long_height_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.lat_long_height_plot" title="Link to this definition"></a></dt>
+<dd><p>Calculate latitude, longitude, and height above the Earth using Bowring’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – X coordinates in meters.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – Y coordinates in meters.</p></li>
+<li><p><strong>z</strong> (<em>array-like</em>) – Z coordinates in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latitude in radians, longitude in radians, and height above the Earth in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.latitude_iterator_and_height">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">latitude_iterator_and_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.latitude_iterator_and_height" title="Link to this definition"></a></dt>
+<dd><p>Calculate latitude and height above the Earth using Bowring’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – X coordinate in meters.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Y coordinate in meters.</p></li>
+<li><p><strong>z</strong> (<em>float</em>) – Z coordinate in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latitude in radians and height above the Earth in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.latitude_iterator_and_height_plot">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">latitude_iterator_and_height_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.latitude_iterator_and_height_plot" title="Link to this definition"></a></dt>
+<dd><p>Calculate latitude and height above the Earth using Bowring’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – X coordinates in meters.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – Y coordinates in meters.</p></li>
+<li><p><strong>z</strong> (<em>array-like</em>) – Z coordinates in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latitude in radians and height above the Earth in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.satellite_dynamics">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">satellite_dynamics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.satellite_dynamics" title="Link to this definition"></a></dt>
+<dd><p>Calculate the dynamics of a satellite in orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – State vector [x, y, z, vx, vy, vz].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Derivative of the state vector [vx, vy, vz, ax, ay, az].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.stop_condition">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">stop_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.stop_condition" title="Link to this definition"></a></dt>
+<dd><p>Event function to stop the simulation when altitude is less than or equal to zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – State vector [x, y, z, vx, vy, vz].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Altitude above the Earth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.simulator.simulator.system_solver">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.simulator.simulator.</span></span><span class="sig-name descname"><span class="pre">system_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_span_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conditions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.simulator.simulator.system_solver" title="Link to this definition"></a></dt>
+<dd><p>Solve the system of equations for satellite dynamics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_span</strong> (<em>float</em>) – Time span for the simulation.</p></li>
+<li><p><strong>initial_conditions</strong> (<em>list</em>) – Initial conditions [x0, y0, z0, vx0, vy0, vz0].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Solution object containing the results of the integration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>solution</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<span id="document-SatTrack.windows"></span><section id="sattrack-windows-package">
+<h4>SatTrack.windows package<a class="headerlink" href="#sattrack-windows-package" title="Link to this heading"></a></h4>
+<section id="subpackages">
+<h5>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h5>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.windows.model"></span><section id="sattrack-windows-model-package">
+<h6>SatTrack.windows.model package<a class="headerlink" href="#sattrack-windows-model-package" title="Link to this heading"></a></h6>
+<section id="subpackages">
+<h6 aria-level="7">Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h6>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.windows.model.model_window"></span><section id="sattrack-windows-model-model-window-package">
+<h6 aria-level="8">SatTrack.windows.model.model_window package<a class="headerlink" href="#sattrack-windows-model-model-window-package" title="Link to this heading"></a></h6>
+<section id="subpackages">
+<h6 aria-level="9">Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h6>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.windows.model.model_window.earth_graph_windows"></span><section id="sattrack-windows-model-model-window-earth-graph-windows-package">
+<h6 aria-level="10">SatTrack.windows.model.model_window.earth_graph_windows package<a class="headerlink" href="#sattrack-windows-model-model-window-earth-graph-windows-package" title="Link to this heading"></a></h6>
+<section id="subpackages">
+<h6 aria-level="11">Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h6>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.windows.model.model_window.earth_graph_windows.earth"></span><section id="sattrack-windows-model-model-window-earth-graph-windows-earth-package">
+<h6 aria-level="12">SatTrack.windows.model.model_window.earth_graph_windows.earth package<a class="headerlink" href="#sattrack-windows-model-model-window-earth-graph-windows-earth-package" title="Link to this heading"></a></h6>
+<section id="submodules">
+<h6 aria-level="13">Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h6>
+</section>
+<section id="module-SatTrack.windows.model.model_window.earth_graph_windows.earth.earth">
+<span id="sattrack-windows-model-model-window-earth-graph-windows-earth-earth-module"></span><h6 aria-level="13">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth module<a class="headerlink" href="#module-SatTrack.windows.model.model_window.earth_graph_windows.earth.earth" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.</span></span><span class="sig-name descname"><span class="pre">Earth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">GraphicsLayoutWidget</span></code></p>
+<p>Window displaying the Earth Window in the simulation, used for visualising the satellite orbit trajectory,
+prediction of landing sites, and radar locations where each one can be dynamically switched off to gain a better
+view of the user’s interest.
+This window’s parent is the SimWidget in simulator_window.py, navigable to using the SimWidget under the ‘EarthView’
+button at the top right.</p>
+<p>Functions:
+- __init__(self, stacked_widget)
+- update_satellite_position(self, name, update)
+- sim_overlay_switch(self)
+- radar_overlay_switch(self)
+- prediction_overlay_switch(self)</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.live_satellite_switch">
+<span class="sig-name descname"><span class="pre">live_satellite_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.live_satellite_switch" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.prediction_overlay_switch">
+<span class="sig-name descname"><span class="pre">prediction_overlay_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.prediction_overlay_switch" title="Link to this definition"></a></dt>
+<dd><p>Function that sits inside the ‘self.prediction_checkbox’ QCheckBox. When altered (checked or unchecked), the
+function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.radar_overlay_switch">
+<span class="sig-name descname"><span class="pre">radar_overlay_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.radar_overlay_switch" title="Link to this definition"></a></dt>
+<dd><p>Function that sits inside the ‘self.radar_checkbox’ QCheckBox. When altered (checked or unchecked), the
+function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.request_prediction">
+<span class="sig-name descname"><span class="pre">request_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">helper</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.request_prediction" title="Link to this definition"></a></dt>
+<dd><p>Sends a signal to the predictor to request a prediction. Sits inside the ‘make_prediction_button’ and triggers
+the predictor to sample x_post and propagate those samples to a landing site, from which, we can compute the
+mean and covariance for the landing site which will be plotted on the earth via the function update_prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>helper</strong> – helper to emit a signal to the function ‘send_prediction’ in prediction.py.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.set_predictor">
+<span class="sig-name descname"><span class="pre">set_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.set_predictor" title="Link to this definition"></a></dt>
+<dd><p>Function to get around adding a problem in ‘model_window.py’ where instance of earth is added to the instance
+of predictor and instance of predictor is added to instance of earth. We now initiate earth with
+(predictor=None) and add the predictor after the predictor is instantiated using this function.</p>
+<p>This function also builds a helper that connects to the ‘send_prediction’ function in predictor.py to allow
+signals to be sent to make predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predictor</strong> – instance of the predictor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.sim_overlay_switch">
+<span class="sig-name descname"><span class="pre">sim_overlay_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.sim_overlay_switch" title="Link to this definition"></a></dt>
+<dd><p>Function that sits inside the ‘self.simulation_checkbox’ QCheckBox. When altered (checked or unchecked), the
+function asks if the checkbox is checked, if not, it checks it, if it is, it unchecks it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_crash_residual">
+<span class="sig-name descname"><span class="pre">update_crash_residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_crash_residual" title="Link to this definition"></a></dt>
+<dd><p>Updates the plot in earth that plots the crash residual on the right of ‘earth view’. Appends the number of
+guesses to self.res_x using the prediction count and adds the new residual calculated in ‘update_prediction’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Y_data</strong> – New residual to be added to the existing plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_prediction">
+<span class="sig-name descname"><span class="pre">update_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_prediction" title="Link to this definition"></a></dt>
+<dd><p>Function to update the prediction of the crash site as it travels around the earth. Gets called from
+predictor/predictor.py via multi-threading and a ‘helper’ function, which emits the latitude and longitude of
+a point at which the satellite crashes onto earth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info</strong> – contains info such as whether we are predicting landing or not.</p></li>
+<li><p><strong>update</strong> – contains the latitude and longitude of the predicted crash site.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_satellite_position">
+<span class="sig-name descname"><span class="pre">update_satellite_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Earth.update_satellite_position" title="Link to this definition"></a></dt>
+<dd><p>Function to update the latitude and longitude of the satellite as it travels around the earth. Gets information
+from simulator/radar via multi-threading and a ‘helper’ function, which emits the satellite’s location at a
+given time interval. We receive the data as (dict, tuple), we use the dict (info) in this instance to collect
+the time to account for earth’s rotation, and the update is a tuple containing the latitude and longitude of the
+satellite.</p>
+<p>We update the scatter plot ‘self.satellite_start_position’ using the function ‘setData(x, y)’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info</strong> – radar info, contains observed time</p></li>
+<li><p><strong>update</strong> – contains one latitude and one longitude to update the satellite’s position.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Helper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.</span></span><span class="sig-name descname"><span class="pre">Helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Helper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Helper.changedSignal">
+<span class="sig-name descname"><span class="pre">changedSignal</span></span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.Helper.changedSignal" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.create_covariance_plot">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.</span></span><span class="sig-name descname"><span class="pre">create_covariance_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cov_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.create_covariance_plot" title="Link to this definition"></a></dt>
+<dd><p>Function to create a covariance ellipsis around the mean latitude and longitude.</p>
+<p>A reference for how to do this comes from - <a class="reference external" href="https://cookierobotics.com/007/">https://cookierobotics.com/007/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cov_mat</strong> – covariance matrix (radians)</p></li>
+<li><p><strong>mean_lat</strong> – mean latitude (radians)</p></li>
+<li><p><strong>mean_lon</strong> – mean longitude (radians)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>covariance ellipsis latitude and longitude.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.latlon2pixel">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.</span></span><span class="sig-name descname"><span class="pre">latlon2pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2700</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.latlon2pixel" title="Link to this definition"></a></dt>
+<dd><p>Returns pixel values for lat and lon. Returns tuple (x, y)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – latitude trajectory.</p></li>
+<li><p><strong>lon</strong> – longitude trajectory.</p></li>
+<li><p><strong>screen_w</strong> – screen width.</p></li>
+<li><p><strong>screen_h</strong> – screen height.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Longitude and latitude in pixels.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>x, y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.prepare_latlon_for_graph">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.</span></span><span class="sig-name descname"><span class="pre">prepare_latlon_for_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.earth.earth.prepare_latlon_for_graph" title="Link to this definition"></a></dt>
+<dd><p>Function that applies the necessary augmentations to existing lat lon data to be plotted on a 2d graph of earth.
+Applies earth’s rotation to the longitude, converts the longitude and latitude to ‘Miller’s’ coordinates (longitude
+is just longitude) and converts lat and lon to degrees.</p>
+<ul class="simple">
+<li><p>Must take lat and lon in radians.</p></li>
+<li><p>Miller’s coordinates is a coordinate system designed to allow plotting on a 2D map of earth. Reference, can be</p></li>
+</ul>
+<p>Found here - <a class="reference external" href="https://en.wikipedia.org/wiki/Miller_cylindrical_projection#:~:text=The%20Miller%20cylindrical%20projection%20is,retain%20scale%20along%20the%20equator">https://en.wikipedia.org/wiki/Miller_cylindrical_projection#:~:text=The%20Miller%20cylindrical%20projection%20is,retain%20scale%20along%20the%20equator</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – used to account for earth’s rotation.</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) – longitude.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – latitude.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>latitude and longitude in degrees.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>lat, lon</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<span id="document-SatTrack.windows.model.model_window.earth_graph_windows.graph"></span><section id="sattrack-windows-model-model-window-earth-graph-windows-graph-package">
+<h6 aria-level="12">SatTrack.windows.model.model_window.earth_graph_windows.graph package<a class="headerlink" href="#sattrack-windows-model-model-window-earth-graph-windows-graph-package" title="Link to this heading"></a></h6>
+<section id="subpackages">
+<h6 aria-level="13">Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h6>
+<div class="toctree-wrapper compound">
+<span id="document-SatTrack.windows.model.model_window.earth_graph_windows.graph.plots"></span><section id="sattrack-windows-model-model-window-earth-graph-windows-graph-plots-package">
+<h6 aria-level="14">SatTrack.windows.model.model_window.earth_graph_windows.graph.plots package<a class="headerlink" href="#sattrack-windows-model-model-window-earth-graph-windows-graph-plots-package" title="Link to this heading"></a></h6>
+<section id="submodules">
+<h6 aria-level="15">Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h6>
+</section>
+<section id="module-SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot">
+<span id="sattrack-windows-model-model-window-earth-graph-windows-graph-plots-bar-plot-module"></span><h6 aria-level="15">SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot module<a class="headerlink" href="#module-SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot.BarPlot">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot.</span></span><span class="sig-name descname"><span class="pre">BarPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot.BarPlot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotWidget</span></code></p>
+<p>Instance of a bar plot, very similar to the file ‘single_plot.py’ but applied to bar graph. Not as well-developed
+as there is only one plot that needs this graph so it updates manually instead of from a list.</p>
+<p>This window’s parent is the graph_script.py, where each instance of this class is instantiated there.</p>
+<p>Functions:
+- __init__(self, plot_allocation, init_x, init_y, args)
+- update_plot(self, radar_name:str)</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot.BarPlot.update_plot">
+<span class="sig-name descname"><span class="pre">update_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radar_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.bar_plot.BarPlot.update_plot" title="Link to this definition"></a></dt>
+<dd><p>Function called in graph.py which updates the bar plot. This is a very specific function which finds which radar
+made the latest observation, and adds 1 to their index in radar_hot_variable. A copy of this variable is then
+made, sorted from highest to lowest. And the top ten radars with the most observations are plotted.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot">
+<span id="sattrack-windows-model-model-window-earth-graph-windows-graph-plots-single-plot-module"></span><h6 aria-level="15">SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot module<a class="headerlink" href="#module-SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.</span></span><span class="sig-name descname"><span class="pre">Plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotWidget</span></code></p>
+<p>Instance of a single plot. Inside this class is a single plot, responsible for the styling of the plot and also the
+contents of the plot, the initial conditions and the styling.</p>
+<p>This window’s parent is the graph_script.py, where each instance of this class is instantiated there.</p>
+<p>Functions:
+- __init__(self, plot_allocation, init_x, init_y, args)
+- plot_line(self, x, y, line_name, pen, symbol)
+- plot_scatter(self, x, y, line_name, symbol, pen, brush)
+- update_plot(self, new_data_X, new_data_Y)</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.plot_line">
+<span class="sig-name descname"><span class="pre">plot_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.plot_line" title="Link to this definition"></a></dt>
+<dd><p>Plots a line using pyqtgraph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – X value</p></li>
+<li><p><strong>y</strong> – Y value</p></li>
+<li><p><strong>line_name</strong> – name for legend</p></li>
+<li><p><strong>pen</strong> – line styling</p></li>
+<li><p><strong>symbol</strong> – datapoint styling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.plot_scatter">
+<span class="sig-name descname"><span class="pre">plot_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brush</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.plot_scatter" title="Link to this definition"></a></dt>
+<dd><p>Plots a scatter plot using pyqtgraph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – X value</p></li>
+<li><p><strong>y</strong> – Y value</p></li>
+<li><p><strong>line_name</strong> – name for legend</p></li>
+<li><p><strong>symbol</strong> – datapoint styling</p></li>
+<li><p><strong>pen</strong> – line styling</p></li>
+<li><p><strong>brush</strong> – scatter point styling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.update_plot">
+<span class="sig-name descname"><span class="pre">update_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_data_X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_data_Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.plots.single_plot.Plot.update_plot" title="Link to this definition"></a></dt>
+<dd><p>Function called in graph_script.py in the update_plots function, inputs a 1xL vector where L is the number of
+lines needing to be plotted.</p>
+<p>Setup so that the length of the initial values self.init_x/y grow until a specified length, then, once reached,
+begins removing the oldest value then adds the new one, keeping the length of the list constant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_data_X</strong> – New x values</p></li>
+<li><p><strong>new_data_Y</strong> – New y values</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</div>
+</section>
+<section id="submodules">
+<h6 aria-level="13">Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h6>
+</section>
+<section id="module-SatTrack.windows.model.model_window.earth_graph_windows.graph.graph">
+<span id="sattrack-windows-model-model-window-earth-graph-windows-graph-graph-module"></span><h6 aria-level="13">SatTrack.windows.model.model_window.earth_graph_windows.graph.graph module<a class="headerlink" href="#module-SatTrack.windows.model.model_window.earth_graph_windows.graph.graph" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.</span></span><span class="sig-name descname"><span class="pre">Grapher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Class containing the plots for the graph window. This is the control hub for what the GUI plots in its plotting
+window. Each plot is contained in a GraphicsLayoutWidget. Each plot is an instance of the ‘Plot’ class which can be
+found in single_plot.py.</p>
+<p>This window’s parent is the SimWidget in simulator_window.py, navigable to using the SimWidget under the ‘EarthView’
+button at the top right.</p>
+<p>Functions:
+- __init__(self)
+- update_plots(self, name, update)
+- update_plot_no_radar(self, name, update)</p>
+<p>References:
+Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher.update_plot_no_radar">
+<span class="sig-name descname"><span class="pre">update_plot_no_radar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher.update_plot_no_radar" title="Link to this definition"></a></dt>
+<dd><p>Updates the few plots in the graph view on the right that continue even if no radar sees the satellite, giving
+us the simulated ‘live’ view of where the satellite actually is. Updates the live altitude plot, the bar graph,
+and the percentage uptime plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info</strong> (<em>dictionary</em>) – Contains info on the update, like whether there is a radar observation or not.</p></li>
+<li><p><strong>update</strong> (<em>tuple</em>) – Radar measurements</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher.update_plots">
+<span class="sig-name descname"><span class="pre">update_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.earth_graph_windows.graph.graph.Grapher.update_plots" title="Link to this definition"></a></dt>
+<dd><p>Updates each plot in the plot list given a matrix of P X L, where P is the number of plots and L is the number
+of lines in the plot. Then it update each plot with a vector of 1 X L where L is the number of lines needing
+updates.</p>
+<p>It receives data as a (dict, tuple) from the predictor_files/predictor.py via multi-threading and a helper
+function that emits data to this function.</p>
+<p>The tuple contains the x and y values of the update, the dimensions of which must be what is described above.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – redundant parameter</p></li>
+<li><p><strong>update</strong> – contains x and y to update the plots.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</div>
+</section>
+</section>
+</div>
+</section>
+<section id="submodules">
+<h6 aria-level="9">Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h6>
+</section>
+<section id="module-SatTrack.windows.model.model_window.model_window">
+<span id="sattrack-windows-model-model-window-model-window-module"></span><h6 aria-level="9">SatTrack.windows.model.model_window.model_window module<a class="headerlink" href="#module-SatTrack.windows.model.model_window.model_window" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.model_window.Helper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.model_window.</span></span><span class="sig-name descname"><span class="pre">Helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.model_window.Helper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<p>Helper function used to emit data via multi-threading</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.model_window.Helper.changedSignal">
+<span class="sig-name descname"><span class="pre">changedSignal</span></span><a class="headerlink" href="#SatTrack.windows.model.model_window.model_window.Helper.changedSignal" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.model_window.SimWidget">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_window.model_window.</span></span><span class="sig-name descname"><span class="pre">SimWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.model_window.SimWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Window that contains the simulation. This is the first window that is loaded when the user clicks ‘run simulation’
+and is a navigational window that connects the graph plots and the earth plots. This window also runs the full
+simulation, a solver taken from simulator/simulator.py, and parses it to earth script for
+plotting.</p>
+<p>This window’s parent is the simulation menu in simulation_menu.py, navigable to using the simulation menu under the
+‘run simulation’ button in the middle.</p>
+<p>Functions:
+- __init__(self, stacked_widget, initial_conditions, radar_list)
+- click_graph_button(self)
+- click_earth_button(self)</p>
+<p>References:
+Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.model_window.SimWidget.click_earth_button">
+<span class="sig-name descname"><span class="pre">click_earth_button</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.model_window.SimWidget.click_earth_button" title="Link to this definition"></a></dt>
+<dd><p>Function that sits inside the ‘self.earth_button’ QPushButton and navigates to the earth window when the button
+is clicked. Also underlines the earth script to indicate the earth window is the active window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_window.model_window.SimWidget.click_graph_button">
+<span class="sig-name descname"><span class="pre">click_graph_button</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_window.model_window.SimWidget.click_graph_button" title="Link to this definition"></a></dt>
+<dd><p>Function that sits inside the ‘self.graph_button’ QPushButton and navigates to the graph window when the button
+is clicked. Also underlines the graph script to indicate the graph window is the active window.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</div>
+</section>
+<section id="submodules">
+<h6 aria-level="7">Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h6>
+</section>
+<section id="module-SatTrack.windows.model.model_menu">
+<span id="sattrack-windows-model-model-menu-module"></span><h6 aria-level="7">SatTrack.windows.model.model_menu module<a class="headerlink" href="#module-SatTrack.windows.model.model_menu" title="Link to this heading"></a></h6>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_menu.ModelMenu">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_menu.</span></span><span class="sig-name descname"><span class="pre">ModelMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_menu.ModelMenu" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Window displaying the model menu to allow the user to input initial conditions and begin the simulation. This
+limits the model from running as soon as the GUI is loaded and gives a more professional feel.</p>
+<p>This window’s parent is the MasterWindow in master.py, navigable to using the MainMenu under the ‘Simulation’
+button.</p>
+<p>Functions:
+-  __init__(self, stacked_widget)
+- load_sim(self)
+- set_num_radars(self, btn_instance, n)
+- set_equatorial_bool(self, btn_instance, equatorial_bool: bool)</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_menu.ModelMenu.load_sim">
+<span class="sig-name descname"><span class="pre">load_sim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_menu.ModelMenu.load_sim" title="Link to this definition"></a></dt>
+<dd><p>Connected to the ‘start_sim_btn’ QPushButton. Runs when the ‘start_sim_btn’ button is clicked. This takes the
+input values from each QLineEdit and constructions a list of ‘initial conditions’ to be fed into
+‘simulation_window.py’. It also takes the inputs of radar locations into a list and passes it into
+‘simulation_window.py’.</p>
+<p>It then checks if an instance of the simulation already exists, if so, it removes the instance and adds it back,
+effectively restarting the simulation. If it does not exist, it creates a new instance of the Simwidget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_menu.ModelMenu.set_equatorial_bool">
+<span class="sig-name descname"><span class="pre">set_equatorial_bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">btn_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equatorial_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_menu.ModelMenu.set_equatorial_bool" title="Link to this definition"></a></dt>
+<dd><p>Function to set the preference of radars to be initialised along the equator or to be randomly distributed
+around the whole earth. This will be fed into the radar spawner ‘give_random_radar_locations’. Also turns the
+other option green and the clicked button red to make the choice clear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>btn_instance</strong> – Instance of button to set stylesheet to red</p></li>
+<li><p><strong>equatorial_bool</strong> – if true, spawn radars along the equator, if false, spawn radars randomly over the earth.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_menu.ModelMenu.set_num_radars">
+<span class="sig-name descname"><span class="pre">set_num_radars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">btn_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_menu.ModelMenu.set_num_radars" title="Link to this definition"></a></dt>
+<dd><p>Function to set the number of radars to use when initialising the random list of radars, to be fed into instance
+of SimWidget. Also turns the rest of the buttons to green and the clicked button red to indicate the current
+number radars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>btn_instance</strong> – Instance of button to set stylesheet to red</p></li>
+<li><p><strong>n</strong> – number of radars</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.windows.model.model_menu.give_random_radar_locations">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.windows.model.model_menu.</span></span><span class="sig-name descname"><span class="pre">give_random_radar_locations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_radars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equatorial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.model.model_menu.give_random_radar_locations" title="Link to this definition"></a></dt>
+<dd><p>Generates a list of random [lat, lon, height] to specify radar locations placed on earth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_radars</strong> – Taken from ‘set_num_radars’ to specify the number of radars to be spawned (added to the list).</p></li>
+<li><p><strong>equatorial</strong> – Specifies whether to generate radars along the equator or not. Taken from ‘set_equatorial_bool’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[[lat, lon, height]] specifying details about each radar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</div>
+</section>
+<section id="submodules">
+<h5>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h5>
+</section>
+<section id="module-SatTrack.windows.credits">
+<span id="sattrack-windows-credits-module"></span><h5>SatTrack.windows.credits module<a class="headerlink" href="#module-SatTrack.windows.credits" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.credits.Credits">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.credits.</span></span><span class="sig-name descname"><span class="pre">Credits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacked_widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.credits.Credits" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Window displaying the credits to attribute credit to the primary contributors of each section. By the end, everyone
+worked on each part but the main contributors are noted in this window.
+This window’s parent is the MasterWindow in master.py, navigable to using the MainMenu under the ‘credits’ button.</p>
+<p>Functions:
+- __init__(self, stacked_widget)
+.. rubric:: References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.windows.instructions">
+<span id="sattrack-windows-instructions-module"></span><h5>SatTrack.windows.instructions module<a class="headerlink" href="#module-SatTrack.windows.instructions" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.instructions.Instructions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.instructions.</span></span><span class="sig-name descname"><span class="pre">Instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacked_widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.instructions.Instructions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Window displaying instructions on how to navigate the GUI and run simulations.
+This window’s parent is the MasterWindow in master.py, navigable to using the MainMenu under the ‘instructions’
+button.</p>
+<p>Functions:
+- __init__(self, stacked_widget)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>References:</dt><dd><p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.windows.main_menu">
+<span id="sattrack-windows-main-menu-module"></span><h5>SatTrack.windows.main_menu module<a class="headerlink" href="#module-SatTrack.windows.main_menu" title="Link to this heading"></a></h5>
+<dl class="py class">
+<dt class="sig sig-object py" id="SatTrack.windows.main_menu.MainMenu">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.windows.main_menu.</span></span><span class="sig-name descname"><span class="pre">MainMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacked_widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.windows.main_menu.MainMenu" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Window displaying the main menu, where the user can navigate to any part of this project. At the top is a welcome
+message and underneath are buttons that, when pushed, take the user to the respective window.</p>
+<p>This window is the parent of model_menu.py, instructions.py and credits.py. It also has an ‘exit’ button which
+exits the program. Each button executes the function within the ‘clicked.connect()’ method. In this case, sets
+the live window in the stacked widget to whatever index that button is accessing.</p>
+<p>Functions:
+- __init__(self, stacked_widget):</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+</dd></dl>
+
+</section>
+</section>
+</div>
+</section>
+<section id="submodules">
+<h3>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h3>
+</section>
+<section id="sattrack-master-module">
+<h3>SatTrack.master module<a class="headerlink" href="#sattrack-master-module" title="Link to this heading"></a></h3>
+<p>This is the main module from which the software is run.</p>
+<dl class="py class" id="module-SatTrack.master">
+<dt class="sig sig-object py" id="SatTrack.master.MasterWindow">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SatTrack.master.</span></span><span class="sig-name descname"><span class="pre">MasterWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.master.MasterWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
+<p>Master window that collects all windows and loads them sequentially in a ‘stacked widget’. It is not a window
+itself, but a program that displays them.
+Imports .json file ‘global_settings’ containing the essential info for the entire window to provide easy access to
+changes if they need to be made.</p>
+<p>‘global_settings’ includes:
+“font-family”:
+“background-color”:
+“matrix-color”:
+“font-color”:
+“screen-height”:
+“screen-width”:</p>
+<p>Functions:
+- __init__(self):</p>
+<p class="rubric">References</p>
+<p>Tutorial followed for PyQt5 (GUI) can be found here - <a class="reference external" href="https://www.pythonguis.com/pyqt5-tutorial/">https://www.pythonguis.com/pyqt5-tutorial/</a></p>
+<p>Previous versions can be found in the Group GitHub - <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a></p>
+</dd></dl>
+
+</section>
+<section id="module-SatTrack.debug">
+<span id="sattrack-debug-module"></span><h3>SatTrack.debug module<a class="headerlink" href="#module-SatTrack.debug" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="SatTrack.debug.debug_print">
+<span class="sig-prename descclassname"><span class="pre">SatTrack.debug.</span></span><span class="sig-name descname"><span class="pre">debug_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SatTrack.debug.debug_print" title="Link to this definition"></a></dt>
+<dd><p>Print debug information if the module is set to print.
+:param module_name: Name of the module (simulator, predictor, visualiser)
+:param print_str: String to print</p>
+</dd></dl>
+
+</section>
+</section>
+<span id="document-supplementary_document"></span><section id="supplementary-document">
+<h2>Supplementary document<a class="headerlink" href="#supplementary-document" title="Link to this heading"></a></h2>
+<embed src="_static/UKF_convergence.pdf" width="100%" height="600px" type="application/pdf"></section>
+</div>
+<p><strong>Indices and tables</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<p>For more details, visit <a class="reference external" href="https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj">https://github.com/jrobo-gith/De-Orbiting-Satellite-GroupProj</a>.
+For any issues, contact us by raising an issue in GitHub.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Team SNOE.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

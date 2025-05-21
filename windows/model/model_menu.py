@@ -308,9 +308,9 @@ class ModelMenu(QWidget):
         radar_list = give_random_radar_locations(self.num_radars, equatorial=self.equatorial_bool)
         print(f"INITIALISING RADARS, NUM RADARS = {self.num_radars}, and equatorial is {self.equatorial_bool}")
 
-        if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget doesn't exist
-            self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
+        if self.stacked_widget.count() > 4: # Means self.sim_stacked_widget does exist
             self.sim_stacked_widget.destroy()
+            self.stacked_widget.removeWidget(self.sim_stacked_widget) # Remove old instance
             self.sim_stacked_widget = QStackedWidget() # Create new simulation
             self.sim_stacked_widget.addWidget(ModelMenu(self.stacked_widget))
             self.sim_stacked_widget.addWidget(SimWidget(self.stacked_widget, initial_conditions, radar_list))

@@ -1,4 +1,5 @@
 venv/
+venv2/
 __pycache__/
 sat_traj.dat
 rad_measurements.dat
