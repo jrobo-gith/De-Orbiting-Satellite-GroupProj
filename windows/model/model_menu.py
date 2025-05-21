@@ -198,10 +198,10 @@ class ModelMenu(QWidget):
         self.equatorial_btn_list = [equatorial_btn, non_equatorial_btn]
 
         start_sim_btn = QPushButton("Start Simulation")
-        start_sim_btn.setFont(QFont(glob_setting['font-family'], 23))
+        start_sim_btn.setFont(QFont(glob_setting['font-family'], 18))
         start_sim_btn.setStyleSheet(f"color: rgb{glob_setting['font-color']}; background: {glob_setting['background-color']}; border-radius: 10%;")
         start_sim_btn.clicked.connect(self.load_sim)
-        start_sim_btn.setFixedWidth(250)
+        start_sim_btn.setFixedWidth(500)
         start_sim_layout = QHBoxLayout()
         start_sim_layout.addWidget(start_sim_btn)
         start_sim_layout.setAlignment(Qt.AlignCenter)
@@ -224,7 +224,7 @@ class ModelMenu(QWidget):
         list_.append(equatorial_orbit_velocity)
         list_.append(equatorial_orbit_radars)
         [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
-          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+          obj.setFixedWidth(500), obj.setAlignment(Qt.AlignCenter), obj.setWordWrap(True), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
         recommendations_layout.addLayout(layout, 0, 0)
 
         # Medium non-equatorial crash
@@ -243,7 +243,7 @@ class ModelMenu(QWidget):
         list_.append(non_equatorial_orbit_velocity)
         list_.append(non_equatorial_orbit_radars)
         [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
-          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+          obj.setFixedWidth(500), obj.setAlignment(Qt.AlignCenter), obj.setWordWrap(True), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
         recommendations_layout.addLayout(layout, 0, 1)
 
         # Short non-equatorial crash
@@ -262,7 +262,7 @@ class ModelMenu(QWidget):
         list_.append(short_non_equatorial_orbit_velocity)
         list_.append(short_non_equatorial_orbit_radars)
         [(obj.setStyleSheet(f"color: rgb(150, 150, 150); background: {glob_setting['background-color']}; border-radius: 10%;"),
-          obj.setFixedWidth(350), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
+          obj.setFixedWidth(500), obj.setAlignment(Qt.AlignCenter), obj.setFont(QFont(glob_setting['font-family'], 14))) for obj in list_]
         recommendations_layout.addLayout(layout, 1, 0)
 
         page_layout = QVBoxLayout()
