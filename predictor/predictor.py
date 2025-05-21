@@ -97,6 +97,8 @@ class Predictor(QWidget):
         self.x_prior = self.ukf.x
         self.x_post = self.ukf.x
 
+        self.drag_tracker = []
+
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
@@ -204,6 +206,10 @@ class Predictor(QWidget):
 
             residual_x = [time_hrs, time_hrs, time_hrs]
             residual_y = [prior_residual, post_residual, 0]
+
+            # Compute drag mean
+            self.drag_tracker.append(self.x_post)
+            drag_mean = np.mean(self.drag_tracker)
 
             drag_x = [time_hrs, time_hrs]
             drag_y = [self.x_post[6], CD]
