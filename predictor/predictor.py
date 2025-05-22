@@ -27,7 +27,7 @@ class Predictor(QWidget):
 
         """ =============== Generate sigma points """
         ### initialise self.ukf
-        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.1, beta=2., kappa=-4.)  # kappa = 3-n.
+        self.sigmas_generator = MerweScaledSigmaPoints(n=7, alpha=0.2, beta=2., kappa=-4.)  # kappa = 3-n.
         self.ukf = UKF(dim_x=7, dim_z=6, fx=f_with_Cd, hx=None, dt=dt, points=self.sigmas_generator)
 
         """ ============== Define items in self.ukf """
@@ -97,6 +97,8 @@ class Predictor(QWidget):
         self.x_prior = self.ukf.x
         self.x_post = self.ukf.x
 
+        self.drag_tracker = []
+
     @QtCore.pyqtSlot(dict, tuple)
     def predictor_loop(self, info, update):
 
@@ -147,8 +149,8 @@ class Predictor(QWidget):
             radar_z_pos_ECI = radM2eci(radM=update, stime=stime, radar=radobj)
             altitude_z = lat_long_height(radar_z_pos_ECI[0], radar_z_pos_ECI[1], radar_z_pos_ECI[2])[2]
 
-        if altitude_post < 0:
-            sys.exit()
+        # if altitude_post < 0:
+        #     sys.exit()
 
         # Predict landing ====================================================================="""
 
@@ -204,6 +206,10 @@ class Predictor(QWidget):
 
             residual_x = [time_hrs, time_hrs, time_hrs]
             residual_y = [prior_residual, post_residual, 0]
+
+            # Compute drag mean
+            self.drag_tracker.append(self.x_post)
+            drag_mean = np.mean(self.drag_tracker)
 
             drag_x = [time_hrs, time_hrs]
             drag_y = [self.x_post[6], CD]

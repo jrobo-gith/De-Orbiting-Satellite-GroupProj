@@ -199,8 +199,7 @@ def get_gmst(t):
     epoch_J2000 = datetime(2000, 1, 1, 12, 0, 0)
     days_since_J2000 = (t - epoch_J2000).total_seconds() / 86400.0
     gmst = 2 * np.pi * (0.779057 + 1.002738 * days_since_J2000)
-    gmst %= 360
-    return np.radians(gmst)
+    return gmst % (2 * np.pi)
 
 # Function to convert satellite position in ECI to radar's local spherical coordinates
 def do_conversions(radar_z_ECI, stime, radar):

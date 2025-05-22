@@ -1,7 +1,6 @@
 import pyqtgraph as pg
 import numpy as np
 
-
 class BarPlot(pg.PlotWidget):
     """
     Instance of a bar plot, very similar to the file 'single_plot.py' but applied to bar graph. Not as well-developed
@@ -70,8 +69,8 @@ class BarPlot(pg.PlotWidget):
             self.radar_hot_variable[index] += 1
 
             radar_hot_variable_copy = self.radar_hot_variable.copy()
-            sorted_index_list = np.argsort(radar_hot_variable_copy)
-            radar_hot_variable_copy = radar_hot_variable_copy[sorted_index_list][::-1]
+            sorted_index_list = np.argsort(radar_hot_variable_copy)[::-1]
+            radar_hot_variable_copy = radar_hot_variable_copy[sorted_index_list]
             new_radar_ticks = []
             for i, index in enumerate(sorted_index_list[:len(self.init_y)]):
                 new_radar_ticks.append((i, f"R{index+1}"))
