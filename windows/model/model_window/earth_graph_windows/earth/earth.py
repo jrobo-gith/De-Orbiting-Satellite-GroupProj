@@ -4,7 +4,9 @@ from PIL import Image
 import json
 import numpy as np
 import threading
-from partials.constants import EARTH_ROTATION_ANGLE
+from datetime import datetime, timedelta
+from partials.constants import EARTH_ROTATION_ANGLE, SIM_START_TIME
+from partials.coordinate_conversions import get_gmst
 from simulator.simulator import lat_long_height
 from windows.model.model_window.earth_graph_windows.graph.plots.single_plot import Plot
 
@@ -85,8 +87,10 @@ class Earth(pg.GraphicsLayoutWidget):
         world_img = pg.ImageItem(world_map)
 
         ## Account for earth's rotation
-        EARTH_ROTATION =  EARTH_ROTATION_ANGLE * self.adjusted_t
-        self.lon -= EARTH_ROTATION
+        sim_start_time = datetime(*SIM_START_TIME)
+        sim_times = np.array([sim_start_time + timedelta(seconds=t) for t in self.adjusted_t])
+        earth_rotation = np.array([get_gmst(t) for t in sim_times])
+        self.lon -= earth_rotation
         ## Convert to Miller Coordinates
         self.lat = (5/4) * np.arcsinh(np.tan((4*self.lat)/5))
 
@@ -140,7 +144,7 @@ class Earth(pg.GraphicsLayoutWidget):
             self.radar_plots.append(radar_plot)
 
             # Add Radar Labels
-            self.txt = pg.TextItem(f'R{i+1}')
+            self.txt = pg.TextItem(f'R{i+1}', color=(255, 165, 0))
             self.txt.setPos(x[0]-1, y[0]+1)
             self.radar_texts.append(self.txt)
 
@@ -471,7 +475,8 @@ def prepare_latlon_for_graph(time: float, lon, lat):
     """
 
     # Account for earth's rotation
-    earth_rotation = EARTH_ROTATION_ANGLE * time
+    ut = datetime(*SIM_START_TIME) + timedelta(seconds=time)
+    earth_rotation = get_gmst(ut)
     lon -= earth_rotation
 
     # Convert to miller coordinates

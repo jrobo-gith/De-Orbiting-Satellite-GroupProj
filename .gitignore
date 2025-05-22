@@ -2,5 +2,6 @@ venv/
 venv2/
 __pycache__/
 sat_traj.dat
+sat_ecef_traj.dat
 rad_measurements.dat
 global_settings.json

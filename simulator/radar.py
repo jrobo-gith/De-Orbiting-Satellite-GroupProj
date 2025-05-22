@@ -9,7 +9,8 @@ class Helper(QtCore.QObject):
 
 from debug import debug_print, dev_mode
 from partials.constants import CD, toHrs, toKM
-from partials.coordinate_conversions import eci2ecef_matrix, lla2ecef, ecef2enu, enu2ecef, ecef2lla, get_gmst
+from partials.coordinate_conversions import eci2ecef_matrix, lla2ecef, ecef2enu, enu2ecef, ecef2lla, get_gmst, radM2eci
+from partials.constants import SIM_START_TIME
 from simulator.simulator import lat_long_height
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -64,7 +65,7 @@ def get_sat_data():
     nt = t_vals.shape[0]
     dt = t_vals[1] - t_vals[0]
 
-    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+    sim_start_time = datetime(*SIM_START_TIME)
     sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
 
     # Compute GMST angles for simulation times
@@ -72,9 +73,13 @@ def get_sat_data():
 
     # Convert ECI to ECEF
     sat_pos_ecef = np.zeros_like(sat_pos_eci)
-    for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
-        Rot_eci2ecef = eci2ecef_matrix(theta)
-        sat_pos_ecef[i] = Rot_eci2ecef.dot(pos)
+    sat_ecef_file = os.path.join(script_dir, 'sat_ecef_traj.dat')
+    with open(sat_ecef_file, 'w') as file:
+        for i, (pos, theta) in enumerate(zip(sat_pos_eci, gmst_angles)):
+            Rot_eci2ecef = eci2ecef_matrix(theta)
+            sat_pos_ecef[i] = Rot_eci2ecef.dot(pos)
+            file.write(f"{sat_pos_ecef[i]}\n")
+
     return sat_pos_ecef, sat_pos_eci, sat_vel, t_vals
 
 # Radar class - contains radar specifications and functions
@@ -250,7 +255,7 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
     nt = t_vals.shape[0]
     dt = t_vals[1] - t_vals[0]
 
-    sim_start_time = datetime(2025, 5, 4, 12, 0, 0)
+    sim_start_time = datetime(*SIM_START_TIME)
     sim_times = np.array([sim_start_time + timedelta(seconds=i * dt) for i in range(nt)])
 
     if dev_mode:
@@ -263,6 +268,8 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         curr_sat_pos_eci = sat_pos_eci[i]
         closest_radar_distance = np.inf
         seen_satellite = False
+        radar_name = "no radar"
+        measurement_nn = []
         for rname, radobj in radars.items():
             # Compute relative position of satellite from radar and range
             rel_pos = curr_sat_pos - radobj.pos_ecef
@@ -274,9 +281,8 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
                                              noise=True)  # Set it back to noise = TRUE later !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             radM_no_noise = radobj.radar_measurements(rel_pos_enu, sat_vel[i], noise=False)  # NO NOISE
 
-            # Convert radM to ecef for plotting
-            radM_enu_noise = radobj.radM2enu(radM[:3])
-            radM_ecef_noise = enu2ecef(radM_enu_noise, radobj.pos_lla)
+            # Convert radM to ECI for plotting
+            radM_eci_noise = radM2eci(radM[:3], sim_times[i], radobj)
 
             # Check if the satellite is in field of view of the radar
             if ((radobj.check_fov(radM_no_noise[:3])) or t_vals[i] == 0):
@@ -289,7 +295,21 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
                     true_pos = (*curr_sat_pos_eci, *sat_vel[i],CD)
                     info = {"name": rname, "obs-time": t_vals[i], "stime": sim_times[i],
                             'rdist': radM[0],
-                            "state_no_noise": true_pos, 'state_noise': radM_ecef_noise,}
+                            "state_no_noise": true_pos, 'state_noise': radM_eci_noise,}
+                    measurement_nn = (*radM_no_noise,)
+                    radar_name = rname
+            else:
+                # Set the closest radar observation for plotting
+                radar_dist = radM[0]
+                if radar_dist < closest_radar_distance:
+                    measurement_nn = (*radM_no_noise,)
+                    radar_name = rname
+
+        # No noise data for plotting
+        radM_enu_nn = radars[radar_name].radM2enu(measurement_nn[:3])
+        radM_ecef_nn = enu2ecef(radM_enu_nn, radars[radar_name].pos_lla)
+        radM_eci_nn = radM2eci(measurement_nn[:3], sim_times[i], radars[radar_name])
+        lat, lon, alt = ecef2lla(radM_ecef_nn)
 
         if seen_satellite:
             predictor_helper.changedSignal.emit(info, measurement)
@@ -298,24 +318,20 @@ def get_radar_measurements(radars, graph_helper, earth_helper, predictor_helper)
         else:
             info = {"name": "no radar", "obs-time": t_vals[i], "stime": sim_times[i], 'rdist': "none"}
             measurement = (0,0,0,0,0,0)
+            radar_name = "no radar"
             predictor_helper.changedSignal.emit(info, measurement)
             if dev_mode:
                 fp.write(f"{info}; {measurement}\n")
 
-        radM_enu_nn = radobj.radM2enu(radM_no_noise[:3])
-        radM_ecef_nn = enu2ecef(radM_enu_nn, radobj.pos_lla)
-        lat, lon, _ = ecef2lla(radM_ecef_nn)
-
-        altitude_sat = lat_long_height(radM_ecef_nn[0], radM_ecef_nn[1], radM_ecef_nn[2])[2]
+        altitude_sat = alt
         altitude_x = [t_vals[i]*toHrs, t_vals[i]*toHrs]
         altitude_y = [altitude_sat*toKM, 140e3*toKM]
         radar_alt = [altitude_x, altitude_y]
 
-        radar_name = info['name']
-        earth_helper.changedSignal.emit(info, (radM_ecef_nn,))
-        graph_helper.changedSignal.emit(info, (radM_ecef_nn*toKM, radar_alt, radar_name))
+        earth_helper.changedSignal.emit(info, (radM_eci_nn,))
+        graph_helper.changedSignal.emit(info, (radM_eci_nn*toKM, radar_alt, radar_name))
 
-        time.sleep(0.2)
+        time.sleep(0.1)
     if dev_mode:
         fp.close()
     return True
